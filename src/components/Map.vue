@@ -2,10 +2,9 @@
   <div class="map-wrap">
     <div class="map" ref="mapContainer" style="width: 100%; height: 500px"></div>
   </div>
-
   <button @click="mudarDark">Dark</button>
   <button @click="mudarClaro">Claro</button>
-  <button @click="adicionarGeoJson">Add rota</button>
+  <!--<button @click="adicionarGeoJson">Add rota</button>-->
 </template>
 
 <script setup>
