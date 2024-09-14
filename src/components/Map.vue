@@ -4,13 +4,15 @@
   </div>
   <button @click="mudarDark">Dark</button>
   <button @click="mudarClaro">Claro</button>
-  <!--<button @click="adicionarGeoJson">Add rota</button>-->
+  <button @click="adicionarGeoJson">Add rota</button>
 </template>
+
 
 <script setup>
 import { Map, MapStyle, config } from '@maptiler/sdk';
 import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
+import axios from 'axios';
 
 const mapContainer = shallowRef(null);
 const map = shallowRef(null); // Referência ao mapa
@@ -58,10 +60,10 @@ function mudarClaro() {
 async function adicionarGeoJson() {
   if (map.value) {
     try {
-      const response = await fetch(
+      const response = await axios.get(
         'https://api.maptiler.com/data/4dff6bfe-3e00-4393-9d52-036da416144f/features.json?key=tF1lf7jSig6Ou8IuaLtw'
       );
-      const geojson = await response.json();
+      const geojson = response.data;
 
       map.value.addSource('gps_tracks', {
         'type': 'geojson',

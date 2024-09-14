@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@maptiler/sdk": "^2.2.2",
+    "axios": "^1.7.7",
     "pinia": "^2.1.7",
     "vue": "^3.4.29",
     "vue-router": "^4.3.3"
