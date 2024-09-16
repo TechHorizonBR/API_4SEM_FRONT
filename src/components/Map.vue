@@ -157,9 +157,10 @@ onMounted(() => {
     son.style.border = "1px solid black";
     son.style.transition = "opacity 0.3s ease-in-out";
 
-    img.src = `https://png.pngtree.com/png-clipart/20230824/original/pngtree-location-pin-point-marker-placeholder-picture-image_8327419.png`;
-    img.style.width = `30px`;
-    img.style.height = `30px`;
+    img.src = `marker_${i%2 == 0 ? "1" : "2"}.png`;
+    img.style.width = `25px`;
+    img.style.height = `25px`;
+    img.style.filter = "drop-shadow(0px 0px 2px #000000)";
 
     el.appendChild(img);
     el.appendChild(son);
