@@ -1,45 +1,18 @@
 <script setup lang="ts">
 import { useMapModeStore } from '@/stores/useMapMode';
-import { watch } from 'vue';
 
 const mapModeStore = useMapModeStore();
 
-// Assista as mudanças no estado do tema para executar a função de mudança de tema
-watch(
-  () => mapModeStore.isDarkMode,
-  (newValue) => {
-    mudarTemaMapa(newValue);
-  }
-);
-
-// Função que muda o estilo do mapa (será substituída pela lógica real)
-function mudarTemaMapa(isDark: boolean) {
-  if (isDark) {
-    // Aplique o estilo dark no mapa
-    console.log('Mudando para modo escuro');
-  } else {
-    // Aplique o estilo light no mapa
-    console.log('Mudando para modo claro');
-  }
-}
-
-// Função para alternar o tema ao clicar no toggle
-function toggleTheme() {
-  mapModeStore.toggleMode();
-}
 </script>
 
 <template>
-  <!-- Rounded switch -->
   <label class="switch">
-    <!-- v-model ligará diretamente ao estado da store -->
     <input type="checkbox" v-model="mapModeStore.isDarkMode">
     <span class="slider round"></span>
   </label>
 </template>
 
 <style>
-/* Estilos para o switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -87,7 +60,6 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-/* Sliders arredondados */
 .slider.round {
   border-radius: 34px;
 }

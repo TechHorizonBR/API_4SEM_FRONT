@@ -19,9 +19,8 @@ import { useMapModeStore } from '@/stores/useMapMode';
 
 const mapContainer = shallowRef(null);
 const map = shallowRef(null);
-const mapModeStore = useMapModeStore(); // Usar a store de Pinia
+const mapModeStore = useMapModeStore();
 
-// Configura a chave de API ao montar o componente
 onMounted(() => {
   config.apiKey = 'tF1lf7jSig6Ou8IuaLtw';
   inicializarMapa();
@@ -33,7 +32,6 @@ onUnmounted(() => {
   }
 });
 
-// Função para inicializar o mapa
 function inicializarMapa() {
   const initialState = { lng: -45.79513, lat: -23.162272, zoom: 15 };
 
@@ -49,7 +47,6 @@ function inicializarMapa() {
   );
 }
 
-// Watch para observar as mudanças de tema
 watch(
   () => mapModeStore.isDarkMode,
   (isDarkMode) => {
@@ -63,7 +60,6 @@ watch(
   }
 );
 
-// Função para adicionar o GeoJSON ao mapa
 async function adicionarGeoJson() {
   if (map.value) {
     try {
