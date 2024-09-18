@@ -1,26 +1,29 @@
 <template>
   <div class="map-wrap">
-    <div class="map" ref="mapContainer" style="width: 100%; height: 500px"></div>
+    <div class="map" ref="mapContainer">
+      <div id="buttonConfig">
+        <LightDarkToggle />
+        <button @click="adicionarGeoJson" class="buttonConfig">Add rota</button>
+      </div>
+    </div>
   </div>
-  <button @click="mudarDark">Dark</button>
-  <button @click="mudarClaro">Claro</button>
-  <button @click="adicionarGeoJson">Add rota</button>
 </template>
 
-
-<script setup>
-import { Map, MapStyle, config } from '@maptiler/sdk';
-import { shallowRef, onMounted, onUnmounted, markRaw } from 'vue';
+<script setup   >
+import { Map, config } from '@maptiler/sdk';
+import { shallowRef, onMounted, onUnmounted, markRaw, watch } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
+import LightDarkToggle from './LightDarkToggle.vue';
 import axios from 'axios';
+import { useMapModeStore } from '@/stores/useMapMode';
 
 const mapContainer = shallowRef(null);
-const map = shallowRef(null); // Referência ao mapa
+const map = shallowRef(null);
+const mapModeStore = useMapModeStore(); // Usar a store de Pinia
 
 // Configura a chave de API ao montar o componente
 onMounted(() => {
   config.apiKey = 'tF1lf7jSig6Ou8IuaLtw';
-  // Inicializa o mapa ao montar o componente
   inicializarMapa();
 });
 
@@ -34,27 +37,31 @@ onUnmounted(() => {
 function inicializarMapa() {
   const initialState = { lng: -45.79513, lat: -23.162272, zoom: 15 };
 
-  map.value = markRaw(new Map({
-    container: mapContainer.value,
-    style: MapStyle.OPENSTREETMAP, // Estilo inicial do mapa
-    center: [initialState.lng, initialState.lat],
-    zoom: initialState.zoom,
-  }));
+  map.value = markRaw(
+    new Map({
+      container: mapContainer.value,
+      style: mapModeStore.isDarkMode
+        ? 'https://api.maptiler.com/maps/basic-v2-dark/style.json?key=tF1lf7jSig6Ou8IuaLtw'
+        : 'https://api.maptiler.com/maps/openstreetmap/style.json?key=tF1lf7jSig6Ou8IuaLtw',
+      center: [initialState.lng, initialState.lat],
+      zoom: initialState.zoom,
+    })
+  );
 }
 
-// Função para mudar para o tema escuro
-function mudarDark() {
-  if (map.value) {
-    map.value.setStyle('https://api.maptiler.com/maps/basic-v2-dark/style.json?key=tF1lf7jSig6Ou8IuaLtw');
+// Watch para observar as mudanças de tema
+watch(
+  () => mapModeStore.isDarkMode,
+  (isDarkMode) => {
+    if (map.value) {
+      map.value.setStyle(
+        isDarkMode
+          ? 'https://api.maptiler.com/maps/basic-v2-dark/style.json?key=tF1lf7jSig6Ou8IuaLtw'
+          : 'https://api.maptiler.com/maps/openstreetmap/style.json?key=tF1lf7jSig6Ou8IuaLtw'
+      );
+    }
   }
-}
-
-// Função para mudar para o tema claro
-function mudarClaro() {
-  if (map.value) {
-    map.value.setStyle('https://api.maptiler.com/maps/openstreetmap/style.json?key=tF1lf7jSig6Ou8IuaLtw');
-  }
-}
+);
 
 // Função para adicionar o GeoJSON ao mapa
 async function adicionarGeoJson() {
@@ -66,16 +73,16 @@ async function adicionarGeoJson() {
       const geojson = response.data;
 
       map.value.addSource('gps_tracks', {
-        'type': 'geojson',
-        'data': geojson,
+        type: 'geojson',
+        data: geojson,
       });
 
       map.value.addLayer({
-        'id': 'grand_teton',
-        'type': 'line',
-        'source': 'gps_tracks',
-        'layout': {},
-        'paint': {
+        id: 'grand_teton',
+        type: 'line',
+        source: 'gps_tracks',
+        layout: {},
+        paint: {
           'line-color': '#e11',
           'line-width': 4,
         },
@@ -94,6 +101,13 @@ async function adicionarGeoJson() {
 
 .map {
   width: 100%;
-  height: 500px;
+  height: 100vh
+}
+
+#buttonConfig{
+  position: absolute;
+  z-index: 10;
+  bottom: 60px;
+  right: 0;
 }
 </style>

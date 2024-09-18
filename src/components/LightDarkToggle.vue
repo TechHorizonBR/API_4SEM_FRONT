@@ -1,35 +1,58 @@
-<script setup>
+<script setup lang="ts">
+import { useMapModeStore } from '@/stores/useMapMode';
+import { watch } from 'vue';
 
+const mapModeStore = useMapModeStore();
 
+// Assista as mudanças no estado do tema para executar a função de mudança de tema
+watch(
+  () => mapModeStore.isDarkMode,
+  (newValue) => {
+    mudarTemaMapa(newValue);
+  }
+);
+
+// Função que muda o estilo do mapa (será substituída pela lógica real)
+function mudarTemaMapa(isDark: boolean) {
+  if (isDark) {
+    // Aplique o estilo dark no mapa
+    console.log('Mudando para modo escuro');
+  } else {
+    // Aplique o estilo light no mapa
+    console.log('Mudando para modo claro');
+  }
+}
+
+// Função para alternar o tema ao clicar no toggle
+function toggleTheme() {
+  mapModeStore.toggleMode();
+}
 </script>
+
 <template>
-
-<!-- Rounded switch -->
-<label class="switch">
-  <input type="checkbox">
-  <span class="slider round"></span>
-</label>
-
+  <!-- Rounded switch -->
+  <label class="switch">
+    <!-- v-model ligará diretamente ao estado da store -->
+    <input type="checkbox" v-model="mapModeStore.isDarkMode">
+    <span class="slider round"></span>
+  </label>
 </template>
 
 <style>
-
- /* The switch - the box around the slider */
- .switch {
+/* Estilos para o switch */
+.switch {
   position: relative;
   display: inline-block;
   width: 60px;
   height: 34px;
 }
 
-/* Hide default HTML checkbox */
 .switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-/* The slider */
 .slider {
   position: absolute;
   cursor: pointer;
@@ -38,7 +61,6 @@
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  -webkit-transition: .4s;
   transition: .4s;
 }
 
@@ -50,25 +72,22 @@
   left: 4px;
   bottom: 4px;
   background-color: white;
-  -webkit-transition: .4s;
   transition: .4s;
 }
 
 input:checked + .slider {
-  background-color: #35005D ;
+  background-color: #35005D;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #35005D ;
+  box-shadow: 0 0 1px #35005D;
 }
 
 input:checked + .slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
   transform: translateX(26px);
 }
 
-/* Rounded sliders */
+/* Sliders arredondados */
 .slider.round {
   border-radius: 34px;
 }
