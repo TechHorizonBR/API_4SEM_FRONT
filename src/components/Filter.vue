@@ -1,59 +1,55 @@
 <template>
     <div class="filter">
-      <form @submit.prevent="onSearch">
-        <div class="filter-name">
-          <label class="label-select" for="name">Name:</label>
-          <select id="name">
-            <option value="" selected disabled>
-              Select an option
-            </option>
-            <option v-for="device in deviceList" :key="device.idClient" :value="device">
-              {{ device.fullName }}
-            </option>
-          </select>
-        </div>
+      <div class="filter-name" v-if="showNameFilter">
+        <label class="label" for="name">Name:</label>
+        <Autocomplete :source="devices" v-model="device"/>
+      </div>
 
-        <div class="filter-device">
-          <label class="label-select" for="deviceInfo">Device:</label>
-          <select id="deviceInfo">
-            <option value="" selected disabled>
-              Select an option
-            </option>
-            <option v-for="device in deviceList" :key="device.idDevice" :value="device">
-              {{ device.codeDevice }}
-            </option>
-          </select>
-        </div>
+      <div class="filter-device">
+        <label class="label" for="deviceInfo">Device:</label>
+        <Autocomplete :source="devices" v-model="device"/>
+      </div>
 
-        <div class="filter-date" v-if="showDateFilter">
-          <label class="label-select" for="date">Date:</label>
-          <input class="input-date" type="date" id="date" />
+      <div class="filter-date" v-if="showDateFilter">
+        <label class="label" for="date">Date:</label>
+        <input class="input-date" type="date" id="date" v-model="filter_date"/>
 
-          <select id="deviceInfo">
-            <option value="" selected disabled>
-              Select an option
-            </option>
-            <option value="1">
-              Last 24 hours
-            </option>
-            <option value="7">
-              Last week
-            </option>
-            <option value="30">
-              Last month
-            </option>
-          </select>
-        </div>
+        <select class="filter-select" id="deviceInfo" v-model="filter_date">
+          <option value="" selected disabled>
+            Select an option
+          </option>
+          <option value="1">
+            Last 24 hours
+          </option>
+          <option value="7">
+            Last week
+          </option>
+          <option value="30">
+            Last month
+          </option>
+        </select>
+      </div>
 
-        <button type="submit">Search</button>
-      </form>
+      <button @click="onSearch">Search</button>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Autocomplete from './autocomplete/Autocomplete.vue';
+const devices = [
+  "Ana",
+  "Ana B",
+  "Luis",
+  "Maria"
+]
 
+const device = ref('')
+
+const showNameFilter = ref(false);
 const showDateFilter = ref(false);
+
+// onSearch: metodo pega os valores dos v-model e chama o método do service que bate no endpoint
 
 </script>
 
@@ -67,22 +63,28 @@ const showDateFilter = ref(false);
     box-shadow: 5px 5px 8px #929292
   }
 
-  .label-select {
+  .label {
+    width: 100%;
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    margin-top: 8px;
   }
 
   .input-date {
     width: 93%;
-  }
-
-  input,
-  select {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 16px;
+    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
+    font-size: 16px;
+  }
+
+  .filter-select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
   }
 
   button {
@@ -90,6 +92,7 @@ const showDateFilter = ref(false);
     background-color: #35005D;
     color: white;
     padding: 12px;
+    margin-top: 16px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
