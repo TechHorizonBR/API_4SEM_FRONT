@@ -100,10 +100,29 @@ async function adicionarGeoJson() {
   height: 100vh
 }
 
+.maplibregl-ctrl-top-right{
+    right: 0;
+    bottom: 6em !important;
+    top: auto !important;
+}
+
+.maplibregl-ctrl button .maplibregl-ctrl-icon{
+    background-color: #9e73bfd4;
+    border-radius: 5px;
+}
+
+.maplibregl-ctrl-group{
+    background: transparent !important;
+}
+
+
 #buttonConfig{
-  position: absolute;
-  z-index: 2;
-  bottom: 60px;
-  right: 0;
+    position: absolute;
+    z-index: 2;
+    bottom: 20px;
+    right: 10px;
+    display: inline-flex;
+    flex-direction: row-reverse;
+    align-items: center;
 }
 </style>
