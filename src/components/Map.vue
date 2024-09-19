@@ -10,7 +10,7 @@
 </template>
 
 <script setup   >
-import { Map, config } from '@maptiler/sdk';
+import { Map, MapStyle, config } from '@maptiler/sdk';
 import { shallowRef, onMounted, onUnmounted, markRaw, watch } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 import LightDarkToggle from './LightDarkToggle.vue';
@@ -39,8 +39,8 @@ function inicializarMapa() {
     new Map({
       container: mapContainer.value,
       style: mapModeStore.isDarkMode
-        ? 'https://api.maptiler.com/maps/basic-v2-dark/style.json?key=tF1lf7jSig6Ou8IuaLtw'
-        : 'https://api.maptiler.com/maps/openstreetmap/style.json?key=tF1lf7jSig6Ou8IuaLtw',
+        ? MapStyle.STREETS.DARK
+        : MapStyle.STREETS,
       center: [initialState.lng, initialState.lat],
       zoom: initialState.zoom,
     })
@@ -53,8 +53,8 @@ watch(
     if (map.value) {
       map.value.setStyle(
         isDarkMode
-          ? 'https://api.maptiler.com/maps/basic-v2-dark/style.json?key=tF1lf7jSig6Ou8IuaLtw'
-          : 'https://api.maptiler.com/maps/openstreetmap/style.json?key=tF1lf7jSig6Ou8IuaLtw'
+          ? MapStyle.STREETS.DARK
+          : MapStyle.STREETS
       );
     }
   }
@@ -102,7 +102,7 @@ async function adicionarGeoJson() {
 
 #buttonConfig{
   position: absolute;
-  z-index: 10;
+  z-index: 2;
   bottom: 60px;
   right: 0;
 }
