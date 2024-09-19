@@ -37,6 +37,7 @@
 <script setup>
 import { ref } from 'vue';
 import Autocomplete from './autocomplete/Autocomplete.vue';
+import FilterService from '../services/filterService.js'
 const devices = [
   "Ana",
   "Ana B",
@@ -49,7 +50,19 @@ const device = ref('')
 const showNameFilter = ref(false);
 const showDateFilter = ref(false);
 
-// onSearch: metodo pega os valores dos v-model e chama o método do service que bate no endpoint
+const onSearch = () => {
+  const filterData = {
+    device: device.value
+  };
+  FilterService.postFilter(filterData)
+  .then((response)=> response.json())
+  .then((data)=>{
+    console.log('Dados enviados com sucesso:', data);
+  })
+  .catch((error)=> {
+    console.error('Erro ao enviar os dados:', error);
+  });  
+}; 
 
 </script>
 
