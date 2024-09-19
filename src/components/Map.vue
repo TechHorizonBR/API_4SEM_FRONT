@@ -8,7 +8,6 @@
     </div>
   </div>
 </template>
-
 <script setup   >
 import { Map, MapStyle, config } from '@maptiler/sdk';
 import { shallowRef, onMounted, onUnmounted, markRaw, watch } from 'vue';
