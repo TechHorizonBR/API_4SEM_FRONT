@@ -21,12 +21,22 @@ import { useMapModeStore } from "@/stores/useMapMode";
 const mapContainer = shallowRef(null);
 const map = shallowRef(null);
 const mapModeStore = useMapModeStore();
+let dados;
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
     inicializarMapa();
-    plotPontos();
+    
+    (async () => {
+        let allPoints = await getPontos();
+        if (allPoints) {
+            dados = allPoints
+            plotPontos(dados);
+            // plotWay(allPoints);
+        }
+    })();
 });
+
 
 onUnmounted(() => {
     if (map.value) {
@@ -61,14 +71,13 @@ async function getPontos() {
     }
 }
 
-async function plotPontos() {
-    let allPoints = await getPontos();
-    if (allPoints) {
-        for (let i = 0; i < allPoints.length; i++) {
+async function plotPontos(allPoints) {
+    for (let i = 0; i < allPoints.length; i++) {
+        if(i == 0 || i == allPoints.length -1){
             let el = document.createElement("div");
             let img = document.createElement("img");
             let son = document.createElement("div");
-
+    
             son.textContent = `Long: ${allPoints[i].lng}, Lat: ${allPoints[i].lat}`;
             son.style.backgroundColor = "#FFF";
             son.style.display = "block";
@@ -83,29 +92,81 @@ async function plotPontos() {
             son.style.borderRadius = "10px";
             son.style.border = "1px solid black";
             son.style.transition = "opacity 0.3s ease-in-out";
-
-            img.src = `marker_${i % 2 == 0 ? "1" : "2"}.png`;
+    
+            img.src = `${i == 0 ? "start" : "finish"}.png`;
             img.style.width = `25px`;
             img.style.height = `25px`;
             img.style.filter = "drop-shadow(0px 0px 2px #000000)";
-
+    
             el.appendChild(img);
             el.appendChild(son);
-
+    
             el.addEventListener("mouseover", () => {
                 son.style.opacity = "1";
             });
-
+    
             el.addEventListener("mouseout", () => {
                 son.style.opacity = "0";
             });
-
-            new Marker({element: el})
-              .setLngLat([allPoints[i].lng, allPoints[i].lat])
-              .addTo(map.value);
+    
+            new Marker({ element: el })
+                .setLngLat([allPoints[i].lng, allPoints[i].lat])
+                .addTo(map.value);
         }
     }
 }
+
+function plotWay(allPoints) {
+    
+}
+
+function actualLocation(allPoints, count = 1) {
+    if (count === allPoints.length - 1) return;
+    let el = document.createElement("div");
+    let img = document.createElement("img");
+    let son = document.createElement("div");
+
+    son.textContent = `Long: ${allPoints[count].lng}, Lat: ${allPoints[count].lat}`;
+    son.style.backgroundColor = "#FFF";
+    son.style.display = "block";
+    son.style.opacity = "0";
+    son.style.width = "max-content";
+    son.style.position = "absolute";
+    son.style.bottom = "25px";
+    son.style.left = "50%";
+    son.style.zIndex = "1";
+    son.style.transform = "translate(-50%, -50%)";
+    son.style.padding = "5px";
+    son.style.borderRadius = "10px";
+    son.style.border = "1px solid black";
+    son.style.transition = "opacity 0.3s ease-in-out";
+
+    img.src = `marker_0.png`;
+    img.style.width = `25px`;
+    img.style.height = `25px`;
+    img.style.filter = "drop-shadow(0px 0px 2px #000000)";
+
+    el.appendChild(img);
+    el.appendChild(son);
+
+    el.addEventListener("mouseover", () => {
+        son.style.opacity = "1";
+    });
+
+    el.addEventListener("mouseout", () => {
+        son.style.opacity = "0";
+    });
+
+    const mark = new Marker({ element: el })
+        .setLngLat([allPoints[count].lng, allPoints[count].lat])
+        .addTo(map.value);
+
+    setTimeout(() => {
+        mark.remove();
+        actualLocation(allPoints, count + 1);
+    }, 100);
+}
+
 
 watch(
     () => mapModeStore.isDarkMode,
@@ -122,7 +183,7 @@ async function adicionarGeoJson() {
     if (map.value) {
         try {
             const response = await axios.get(
-                "https://api.maptiler.com/data/4dff6bfe-3e00-4393-9d52-036da416144f/features.json?key=tF1lf7jSig6Ou8IuaLtw"
+                "https://pontos.free.beeceptor.com/caminho"
             );
             const geojson = response.data;
 
@@ -144,6 +205,7 @@ async function adicionarGeoJson() {
         } catch (error) {
             console.error("Erro ao carregar o GeoJSON:", error);
         }
+        actualLocation(dados);
     }
 }
 </script>
@@ -167,6 +229,17 @@ async function adicionarGeoJson() {
 .maplibregl-ctrl button .maplibregl-ctrl-icon {
     background-color: #9e73bfd4;
     border-radius: 5px;
+}
+
+.mapboxgl-ctrl .mapboxgl-ctrl-icon,
+.maplibregl-ctrl .maplibregl-ctrl-icon {
+    transition: transform 0.5s ease;
+}
+
+.mapboxgl-ctrl .mapboxgl-ctrl-icon:hover,
+.maplibregl-ctrl .maplibregl-ctrl-icon:hover {
+    filter: none !important;
+    transform: scale(1.1);
 }
 
 .maplibregl-ctrl-group {
