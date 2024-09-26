@@ -2,33 +2,38 @@
     <nav class="navbar">
       <ul class="navbar-list">
         <li class="navbar-item">
-          <button @click="triggerAlert"> 
-            <i class="icon-alert"></i> Alerts
+          <button @click="triggerAlert">
+            <font-awesome-icon :icon="['fas', 'bell']" />
+            Alerts
           </button>
         </li>
         <li class="navbar-item">
           <button @click="goToMapMarker">
-            <i class="icon-map-marker"></i> Map Marker
+            <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
+            Map Marker
           </button>
         </li>
         <li class="navbar-item">
           <button @click="showMap">
-            <i class="icon-map"></i> Map
+            <font-awesome-icon :icon="['fas', 'map']" />
+            Map
           </button>
         </li>
         <li class="navbar-item">
           <button @click="addUser">
-            <i class="icon-add-user"></i> Add User
+            <font-awesome-icon :icon="['fas', 'user-plus']" />
+            Add User
           </button>
         </li>
         <li class="navbar-item">
           <button @click="signInOut">
-            <i class="icon-sign-in-out"></i> Sign in/out
+            <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
+            Sign in/out
           </button>
         </li>
       </ul>
     </nav>
-  </template>
+  </template>  
   
   <script lang="ts">
   import { defineComponent } from 'vue';
