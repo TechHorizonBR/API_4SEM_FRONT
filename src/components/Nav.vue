@@ -2,7 +2,7 @@
   <nav class="navbar">
     <ul class="navbar-list">
       <li class="navbar-item">
-        <button @click="showFilter">
+        <button @click="toggleFilter">
           <font-awesome-icon :icon="['fas', 'filter']" />
           Filter
         </button>
@@ -46,14 +46,15 @@ export default defineComponent({
     FontAwesomeIcon
   },
   methods: {
+    toggleFilter() {
+      // Emite um evento para o componente pai alternar a visibilidade do filtro
+      this.$emit('toggleFilter');
+    },
     triggerAlert() {
       console.log('Alerts clicked');
     },
     goToMapMarker() {
       console.log('Map Marker clicked');
-    },
-    showFilter() {
-      console.log('Filter clicked');
     },
     addUser() {
       console.log('Add User clicked');
@@ -68,24 +69,23 @@ export default defineComponent({
 <style scoped>
 .navbar {
   position: fixed;
-  margin-bottom: 20px; /* Ajuste o valor conforme a necessidade */
-  bottom: 0; /* Posiciona a barra no final da página */
-  left: 50%; /* Move o ponto de referência horizontalmente para o centro */
-  transform: translateX(-50%); /* Centraliza a barra horizontalmente */
+  margin-bottom: 20px;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   justify-content: center;
   background-color: #f7f7f7;
-  padding: 10px 105px; /* Ajusta o padding para mais espaço nas laterais */
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Sombras suaves no topo da barra */
-  border-radius: 8px 8px 0 0; /* Bordas arredondadas no topo */
-  max-width: 95%; /* Limita a largura máxima da barra */
-  z-index: 1000; /* Garante que a barra fique sempre acima dos outros elementos */
+  padding: 10px 30px;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px 8px 8px 8px;
+  z-index: 1000;
 }
 
 .navbar-list {
   list-style: none;
   display: flex;
-  gap: 10px; /* Espaçamento entre os itens */
+  gap: 20px; /* Aumenta o espaçamento entre os itens */
   padding: 0;
   margin: 0;
 }
@@ -103,7 +103,7 @@ export default defineComponent({
   align-items: center;
   cursor: pointer;
   color: #4b0076;
-  font-size: 11px; /* Tamanho menor do texto */
+  font-size: 12px;
   font-weight: bold;
 }
 
@@ -112,15 +112,14 @@ export default defineComponent({
 }
 
 .icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
-  font-size: 14px; /* Tamanho menor dos ícones */
-  margin-bottom: 1px; /* Aproxima o ícone do texto */
+  font-size: 18px;
+  margin-bottom: 5px;
 }
 
-/* Responsividade para dispositivos móveis */
 @media (max-width: 600px) {
   .navbar-list {
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
   }
 }
 </style>
