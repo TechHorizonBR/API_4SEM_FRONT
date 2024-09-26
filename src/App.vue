@@ -1,9 +1,7 @@
 <script setup>
-  import Map from './components/Map.vue';
+import Map from "./components/Map.vue";
 </script>
 <template>
   <Map />
 </template>
-<style scoped>
-</style>
-
+<style scoped></style>
