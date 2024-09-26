@@ -1,64 +1,70 @@
 <template>
-    <nav class="navbar">
-      <ul class="navbar-list">
-        <li class="navbar-item">
-          <button @click="triggerAlert">
-            <font-awesome-icon :icon="['fas', 'bell']" />
-            Alerts
-          </button>
-        </li>
-        <li class="navbar-item">
-          <button @click="goToMapMarker">
-            <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
-            Map Marker
-          </button>
-        </li>
-        <li class="navbar-item">
-          <button @click="showMap">
-            <font-awesome-icon :icon="['fas', 'map']" />
-            Map
-          </button>
-        </li>
-        <li class="navbar-item">
-          <button @click="addUser">
-            <font-awesome-icon :icon="['fas', 'user-plus']" />
-            Add User
-          </button>
-        </li>
-        <li class="navbar-item">
-          <button @click="signInOut">
-            <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
-            Sign in/out
-          </button>
-        </li>
-      </ul>
-    </nav>
-  </template>  
-  
-  <script lang="ts">
-  import { defineComponent } from 'vue';
-  
-  export default defineComponent({
-    name: 'Navbar',
-    methods: {
-      triggerAlert() {
-        console.log('Alerts clicked');
-      },
-      goToMapMarker() {
-        console.log('Map Marker clicked');
-      },
-      showMap() {
-        console.log('Map clicked');
-      },
-      addUser() {
-        console.log('Add User clicked');
-      },
-      signInOut() {
-        console.log('Sign In/Out clicked');
-      }
+  <nav class="navbar">
+    <ul class="navbar-list">
+      <li class="navbar-item">
+        <button @click="showFilter">
+          <font-awesome-icon :icon="['fas', 'filter']" />
+          Filter
+        </button>
+      </li>
+      <li class="navbar-item">
+        <button @click="goToMapMarker">
+          <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
+          Map Marker
+        </button>
+      </li>
+      <li class="navbar-item">
+        <button @click="triggerAlert">
+          <font-awesome-icon :icon="['fas', 'bell']" />
+          Alerts
+        </button>
+      </li>
+      <li class="navbar-item">
+        <button @click="addUser">
+          <font-awesome-icon :icon="['fas', 'user-plus']" />
+          Add User
+        </button>
+      </li>
+      <li class="navbar-item">
+        <button @click="signInOut">
+          <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
+          Sign in/out
+        </button>
+      </li>
+    </ul>
+  </nav>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+
+export default defineComponent({
+  name: 'Navbar',
+  components: {
+    FontAwesomeIcon
+  },
+  methods: {
+    triggerAlert() {
+      console.log('Alerts clicked');
+    },
+    goToMapMarker() {
+      console.log('Map Marker clicked');
+    },
+    showFilter() {
+      console.log('Filter clicked');
+    },
+    addUser() {
+      console.log('Add User clicked');
+    },
+    signInOut() {
+      console.log('Sign In/Out clicked');
     }
-  });
-  </script>
+  }
+});
+</script>
+
 <style scoped>
 .navbar {
   position: fixed;
@@ -105,7 +111,7 @@
   color: #7d009b;
 }
 
-.icon-alert, .icon-map-marker, .icon-map, .icon-add-user, .icon-sign-in-out {
+.icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
   font-size: 14px; /* Tamanho menor dos ícones */
   margin-bottom: 1px; /* Aproxima o ícone do texto */
 }
@@ -118,5 +124,3 @@
   }
 }
 </style>
-
-  
