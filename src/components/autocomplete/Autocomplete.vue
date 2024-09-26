@@ -1,58 +1,117 @@
 <template>
-  <div class="teste">
-    <input type="text" :value="modelValue" @input="handleInput" class="dropdown-input">
-    <ul v-if="searchResults.length" class="dropdown-menu">
-      <li
-        v-for="result in searchResults"
-        :key="result"
-        @click="setSelected(result)"
-        class="dropdown-item">
-        {{ result }}
-      </li>
-    </ul>
+  <div class="autocomplete">
+    <div class="autocomplete-fullName">
+      <label class="label" for="name">Name:</label>
+      <input
+        type="text"
+        v-model="searchName"
+        @input="handleNameInput"
+        class="dropdown-input"
+      />
+      <ul v-if="showNameResults" class="dropdown-menu">
+        <li
+          v-for="result in nameResults"
+          :key="result.fullName"
+          @click="setSelected(result, 'name')"
+          class="dropdown-item">
+          {{ result.fullName }}
+        </li>
+      </ul>
+    </div>
+
+    <div class="autocomplete-codeDevice">
+      <label class="label" for="deviceInfo">Device:</label>
+      <input
+        type="text"
+        v-model="searchCode"
+        @input="handleCodeInput"
+        class="dropdown-input"
+      />
+      <ul v-if="showCodeResults" class="dropdown-menu">
+        <li
+          v-for="result in codeResults"
+          :key="result.codeDevice"
+          @click="setSelected(result, 'code')"
+          class="dropdown-item">
+          {{ result.codeDevice }}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue';
+<script setup lang="ts">
+  import { ref, computed } from 'vue';
 
-  const props = defineProps({
-    source: {
-      type: Array,
-      required: true,
-      default: () => []
-    },
-    modelValue: String
-  })
+  interface Device {
+    fullName: string;
+    codeDevice: string;
+  }
 
-  const emit = defineEmits(['update:modelValue'])
+  const props = defineProps<{
+    source: Device[];
+    modelValueFullName: string;
+    modelValueCodeDevice: string;
+  }>();
 
-  const search = ref('')
+  const emit = defineEmits<{
+    (e: 'update:modelValueFullName', value: string): void;
+    (e: 'update:modelValueCodeDevice', value: string): void;
+  }>();
 
-  const searchResults = computed(() => {
-    if (search.value === '') {
-      return []
+  const searchName = ref<string>(props.modelValueFullName);
+  const searchCode = ref<string>(props.modelValueCodeDevice);
+  const showNameResults = ref<boolean>(false);
+  const showCodeResults = ref<boolean>(false);
+
+  const nameResults = computed(() => {
+    if (searchName.value === '') {
+      return [];
+    }
+    return props.source.filter(item => item.fullName.toLowerCase().includes(searchName.value.toLowerCase()));
+  });
+
+  const codeResults = computed(() => {
+    if (searchCode.value === '') {
+      return [];
+    }
+    return props.source.filter(item => item.codeDevice.toLowerCase().includes(searchCode.value.toLowerCase()));
+  });
+
+  const setSelected = (item: Device, type: 'name' | 'code') => {
+    if (type === 'name') {
+      searchName.value = item.fullName;
+      searchCode.value = item.codeDevice;
+      emit('update:modelValueFullName', item.fullName);
+      emit('update:modelValueCodeDevice', item.codeDevice);
+    } else {
+      searchCode.value = item.codeDevice;
+      searchName.value = item.fullName;
+      emit('update:modelValueCodeDevice', item.codeDevice);
+      emit('update:modelValueFullName', item.fullName);
     }
 
-    return props.source.filter(item => {
-      return item.toLowerCase().includes(search.value.toLowerCase())
-    })
-  })
+    showNameResults.value = false;
+    showCodeResults.value = false;
+  };
 
-  const setSelected = item => {
-    search.value = item
-    emit('update:modelValue', search.value)
-    search.value = '';
-  }
+  const handleNameInput = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    searchName.value = target.value;
+    showNameResults.value = true;
+    emit('update:modelValueFullName', searchName.value);
+  };
 
-  const handleInput = event => {
-    search.value = event.target.value
-    emit('update:modelValue', search.value)
-  }
+  const handleCodeInput = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    searchCode.value = target.value;
+    showCodeResults.value = true;
+    emit('update:modelValueCodeDevice', searchCode.value);
+  };
 </script>
 
 <style scoped>
-  .teste {
+  .autocomplete {
     position: relative;
     display: inline-block;
     width: 100%;
