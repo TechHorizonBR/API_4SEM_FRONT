@@ -22,21 +22,22 @@ const mapContainer = shallowRef(null);
 const map = shallowRef(null);
 const mapModeStore = useMapModeStore();
 let dados;
+let geojson;
+let mark;
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
     inicializarMapa();
-    
+
     (async () => {
-        let allPoints = await getPontos();
-        if (allPoints) {
-            dados = allPoints
+        dados = await getPontos();
+        geojson = await getTrack();
+        if (dados && geojson) {
             plotPontos(dados);
             // plotWay(allPoints);
         }
     })();
 });
-
 
 onUnmounted(() => {
     if (map.value) {
@@ -45,7 +46,7 @@ onUnmounted(() => {
 });
 
 function inicializarMapa() {
-    const initialState = { lng: -45.79513, lat: -23.162272, zoom: 15 };
+    const initialState = { lng:  -73.973110, lat: 40.764240, zoom: 15 };
 
     map.value = markRaw(
         new Map({
@@ -62,7 +63,7 @@ function inicializarMapa() {
 async function getPontos() {
     try {
         // Link mockado, corrigir quando endpoint estiver pronto
-        const req = await axios.get(`https://pontos.free.beeceptor.com`);
+        const req = await axios.get(`https://plots.free.beeceptor.com`);
         if (req) {
             return req.data.points;
         }
@@ -71,13 +72,27 @@ async function getPontos() {
     }
 }
 
+async function getTrack() {
+    try {
+        // Link mockado, corrigir quando endpoint estiver pronto
+        const req = await axios.get(
+            `https://plots.free.beeceptor.com/caminho`
+        );
+        if (req) {
+            return req.data;
+        }
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
 async function plotPontos(allPoints) {
     for (let i = 0; i < allPoints.length; i++) {
-        if(i == 0 || i == allPoints.length -1){
+        if (i == 0 || i == allPoints.length - 1) {
             let el = document.createElement("div");
             let img = document.createElement("img");
             let son = document.createElement("div");
-    
+
             son.textContent = `Long: ${allPoints[i].lng}, Lat: ${allPoints[i].lat}`;
             son.style.backgroundColor = "#FFF";
             son.style.display = "block";
@@ -92,23 +107,23 @@ async function plotPontos(allPoints) {
             son.style.borderRadius = "10px";
             son.style.border = "1px solid black";
             son.style.transition = "opacity 0.3s ease-in-out";
-    
+
             img.src = `${i == 0 ? "start" : "finish"}.png`;
             img.style.width = `25px`;
             img.style.height = `25px`;
             img.style.filter = "drop-shadow(0px 0px 2px #000000)";
-    
+
             el.appendChild(img);
             el.appendChild(son);
-    
+
             el.addEventListener("mouseover", () => {
                 son.style.opacity = "1";
             });
-    
+
             el.addEventListener("mouseout", () => {
                 son.style.opacity = "0";
             });
-    
+
             new Marker({ element: el })
                 .setLngLat([allPoints[i].lng, allPoints[i].lat])
                 .addTo(map.value);
@@ -116,12 +131,16 @@ async function plotPontos(allPoints) {
     }
 }
 
-function plotWay(allPoints) {
-    
-}
+function plotWay(allPoints) {}
 
-function actualLocation(allPoints, count = 1) {
-    if (count === allPoints.length - 1) return;
+function actualLocation(allPoints, data, count = 0) {
+    if (count === allPoints.length){
+        return;
+    }
+
+    if(count + 1 === allPoints.length - 1){
+        
+    }
     let el = document.createElement("div");
     let img = document.createElement("img");
     let son = document.createElement("div");
@@ -157,16 +176,37 @@ function actualLocation(allPoints, count = 1) {
         son.style.opacity = "0";
     });
 
-    const mark = new Marker({ element: el })
+    if (count + 1 === allPoints.length) {
+        mark = new Marker({ element: el })
+            .setLngLat([allPoints[count].lng, allPoints[count].lat]);
+    } else {
+            mark = new Marker({ element: el })
         .setLngLat([allPoints[count].lng, allPoints[count].lat])
         .addTo(map.value);
+    }
+
+    map.value.addSource(`gps_track${count}`, {
+        type: "geojson",
+        data: data,
+    });
+
+    map.value.addLayer({
+        id: `grand_teton${count}`,
+        type: "line",
+        source: `gps_track${count}`,
+        layout: {},
+        paint: {
+            "line-color": "#e11",
+            "line-width": 3,
+        },
+    });
 
     setTimeout(() => {
         mark.remove();
-        actualLocation(allPoints, count + 1);
-    }, 100);
+        data.features[0].geometry.coordinates.push(geojson.features[0].geometry.coordinates[count + 1]);
+        actualLocation(allPoints, data, count + 1);
+    }, 1000);
 }
-
 
 watch(
     () => mapModeStore.isDarkMode,
@@ -181,31 +221,10 @@ watch(
 
 async function adicionarGeoJson() {
     if (map.value) {
-        try {
-            const response = await axios.get(
-                "https://pontos.free.beeceptor.com/caminho"
-            );
-            const geojson = response.data;
-
-            map.value.addSource("gps_tracks", {
-                type: "geojson",
-                data: geojson,
-            });
-
-            map.value.addLayer({
-                id: "grand_teton",
-                type: "line",
-                source: "gps_tracks",
-                layout: {},
-                paint: {
-                    "line-color": "#e11",
-                    "line-width": 4,
-                },
-            });
-        } catch (error) {
-            console.error("Erro ao carregar o GeoJSON:", error);
-        }
-        actualLocation(dados);
+        let newgeo = JSON.parse(JSON.stringify(geojson));
+        newgeo.features[0].geometry.coordinates =
+            newgeo.features[0].geometry.coordinates.slice(0, 1);
+        actualLocation(dados, newgeo);
     }
 }
 </script>
