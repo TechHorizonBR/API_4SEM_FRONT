@@ -62,13 +62,14 @@
 <style scoped>
 .navbar {
   position: fixed;
+  margin-bottom: 20px; /* Ajuste o valor conforme a necessidade */
   bottom: 0; /* Posiciona a barra no final da página */
   left: 50%; /* Move o ponto de referência horizontalmente para o centro */
   transform: translateX(-50%); /* Centraliza a barra horizontalmente */
   display: flex;
   justify-content: center;
   background-color: #f7f7f7;
-  padding: 3px 15px; /* Ajusta o padding para mais espaço nas laterais */
+  padding: 10px 105px; /* Ajusta o padding para mais espaço nas laterais */
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Sombras suaves no topo da barra */
   border-radius: 8px 8px 0 0; /* Bordas arredondadas no topo */
   max-width: 95%; /* Limita a largura máxima da barra */

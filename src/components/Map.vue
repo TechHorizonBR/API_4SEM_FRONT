@@ -116,7 +116,7 @@ async function adicionarGeoJson() {
 }
 .nav-container {
   position: absolute;
-  z-index: 1000;
+
 }
 
 .maplibregl-ctrl-top-right{
