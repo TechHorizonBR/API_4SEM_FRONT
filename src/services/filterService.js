@@ -1,13 +1,17 @@
-import Axios from 'axios';
+import axios from 'axios';
 
 class FilterService{
-  postFilter() {
-    return Axios.post('http://localhost:8080/', {   //O Endpoint vai nessa linha
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(filterData),
-    })
+  async postFilter(body) {
+    try{
+      let response = await axios.post('http://localhost:8080/', body);
+      if (response.status === 200){
+        return response.data;
+      } else {
+        throw new Error("Houve um erro na requisição");
+      }
+    } catch (error) {
+      throw new Error("Houve um erro na requisição");
+    }   
   }
 }
 

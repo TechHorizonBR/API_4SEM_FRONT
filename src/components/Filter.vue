@@ -50,18 +50,12 @@ const device = ref('')
 const showNameFilter = ref(false);
 const showDateFilter = ref(false);
 
-const onSearch = () => {
+const onSearch = async () => {
   const filterData = {
-    device: device.value
+    page: 0
   };
-  FilterService.postFilter(filterData)
-  .then((response)=> response.json())
-  .then((data)=>{
-    console.log('Dados enviados com sucesso:', data);
-  })
-  .catch((error)=> {
-    console.error('Erro ao enviar os dados:', error);
-  });  
+  const dados = await FilterService.postFilter(filterData);
+  console.log (dados);
 }; 
 
 </script>
