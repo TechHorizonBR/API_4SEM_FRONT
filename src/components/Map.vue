@@ -24,6 +24,7 @@ const mapModeStore = useMapModeStore();
 let dados;
 let geojson;
 let mark;
+let places;
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
@@ -32,6 +33,7 @@ onMounted(() => {
     (async () => {
         dados = await getPontos();
         geojson = await getTrack();
+        places = geojson.features[0].geometry.coordinates;
         if (dados && geojson) {
             plotPontos(dados);
             // plotWay(allPoints);
@@ -138,9 +140,6 @@ function actualLocation(allPoints, data, count = 0) {
         return;
     }
 
-    if(count + 1 === allPoints.length - 1){
-        
-    }
     let el = document.createElement("div");
     let img = document.createElement("img");
     let son = document.createElement("div");
@@ -203,7 +202,7 @@ function actualLocation(allPoints, data, count = 0) {
 
     setTimeout(() => {
         mark.remove();
-        data.features[0].geometry.coordinates.push(geojson.features[0].geometry.coordinates[count + 1]);
+        data.features[0].geometry.coordinates.push(places[count + 1]);
         actualLocation(allPoints, data, count + 1);
     }, 1000);
 }
@@ -221,10 +220,9 @@ watch(
 
 async function adicionarGeoJson() {
     if (map.value) {
-        let newgeo = JSON.parse(JSON.stringify(geojson));
-        newgeo.features[0].geometry.coordinates =
-            newgeo.features[0].geometry.coordinates.slice(0, 1);
-        actualLocation(dados, newgeo);
+        geojson.features[0].geometry.coordinates =
+            geojson.features[0].geometry.coordinates.slice(0, 1);
+        actualLocation(dados, geojson);
     }
 }
 </script>
