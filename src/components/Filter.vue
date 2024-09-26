@@ -8,8 +8,11 @@
     </div>
 
     <div class="filter-date" v-if="showDateFilter">
-      <label class="label" for="date">Date:</label>
-      <input class="input-date" type="date" id="date" v-model="filter_date"/>
+      <label class="label" for="startDate">Start Date:</label>
+      <input class="input-date" type="date" id="startDate" v-model="startDate"/>
+
+      <label class="label" for="endDate">End Date:</label>
+      <input class="input-date" type="date" id="endDate" v-model="endDate"/>
 
       <select class="filter-select" id="deviceInfo" v-model="filter_date">
         <option value="" selected disabled>
@@ -26,31 +29,34 @@
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import Autocomplete from './autocomplete/Autocomplete.vue';
+  import DevicesService from '../services/devices';
 
   interface Device {
     fullName: string;
     codeDevice: string;
   }
 
-  const devices: Device[] = [
-    { fullName: "Ana", codeDevice: '1234' },
-    { fullName: "Ana B", codeDevice: '****' },
-    { fullName: "Luis", codeDevice: '####' },
-    { fullName: "Maria", codeDevice: '@@@@' }
-  ];
-
+  const devices = ref<Device[]>([]);
   const fullName = ref<string>('');
   const codeDevice = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
-  const showDateFilter = ref<boolean>(true);
-  const filter_date = ref<string>('');
+  const showDateFilter = ref<boolean>(false);
+  const startDate = ref<string>('');
+  const endDate = ref<string>('');
 
-  // Método de busca
-  const onSearch = () => {
-    console.log('Searching with:', { fullName: fullName.value, codeDevice: codeDevice.value });
+  const fetchDevices = async () => {
+    try {
+      devices.value = await DevicesService.getDevices();
+    } catch (error) {
+      console.error('Erro ao buscar dispositivos:', error);
+    }
   };
+
+  onMounted(() => {
+    fetchDevices();
+  });
 </script>
 
 <style scoped>
