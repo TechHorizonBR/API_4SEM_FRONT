@@ -59,20 +59,26 @@
     }
   });
   </script>
-
 <style scoped>
 .navbar {
+  position: fixed;
+  bottom: 0; /* Posiciona a barra no final da página */
+  left: 50%; /* Move o ponto de referência horizontalmente para o centro */
+  transform: translateX(-50%); /* Centraliza a barra horizontalmente */
   display: flex;
   justify-content: center;
   background-color: #f7f7f7;
-  padding: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 3px 15px; /* Ajusta o padding para mais espaço nas laterais */
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1); /* Sombras suaves no topo da barra */
+  border-radius: 8px 8px 0 0; /* Bordas arredondadas no topo */
+  max-width: 95%; /* Limita a largura máxima da barra */
+  z-index: 1000; /* Garante que a barra fique sempre acima dos outros elementos */
 }
 
 .navbar-list {
   list-style: none;
   display: flex;
-  gap: 20px;
+  gap: 10px; /* Espaçamento entre os itens */
   padding: 0;
   margin: 0;
 }
@@ -90,7 +96,7 @@
   align-items: center;
   cursor: pointer;
   color: #4b0076;
-  font-size: 14px;
+  font-size: 11px; /* Tamanho menor do texto */
   font-weight: bold;
 }
 
@@ -99,15 +105,15 @@
 }
 
 .icon-alert, .icon-map-marker, .icon-map, .icon-add-user, .icon-sign-in-out {
-  font-size: 20px;
-  margin-bottom: 5px;
+  font-size: 14px; /* Tamanho menor dos ícones */
+  margin-bottom: 1px; /* Aproxima o ícone do texto */
 }
 
-/* Responsividade */
+/* Responsividade para dispositivos móveis */
 @media (max-width: 600px) {
   .navbar-list {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 }
 </style>

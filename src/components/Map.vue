@@ -5,6 +5,7 @@
         <LightDarkToggle />
         <button @click="adicionarGeoJson" class="buttonConfig">Add rota</button>
       </div>
+      <div class="nav-container"><Nav /></div>
 
       <div class="filter-container">
         <Filter v-if="showFilter" :isDarkMode="mapModeStore.isDarkMode" />
@@ -18,6 +19,7 @@ import { shallowRef, onMounted, onUnmounted, markRaw, watch } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 import LightDarkToggle from './LightDarkToggle.vue';
 import Filter from './Filter.vue';
+import Nav from './Nav.vue';
 import axios from 'axios';
 import { useMapModeStore } from '@/stores/useMapMode';
 
@@ -111,6 +113,10 @@ async function adicionarGeoJson() {
   left: 3%;
   z-index: 1000;
   border-radius: 8px;
+}
+.nav-container {
+  position: absolute;
+  z-index: 1000;
 }
 
 .maplibregl-ctrl-top-right{
