@@ -47,7 +47,6 @@ export default defineComponent({
   },
   methods: {
     toggleFilter() {
-      // Emite um evento para o componente pai alternar a visibilidade do filtro
       this.$emit('toggleFilter');
     },
     triggerAlert() {

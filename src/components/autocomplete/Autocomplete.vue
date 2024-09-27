@@ -46,12 +46,14 @@ import { ref, computed } from 'vue';
 interface Device {
   nome: string;
   codigoDevice: string;
+  idUsuario: string;
 }
 
 const props = defineProps<{
   source: Device[];
   modelValueFullName: string;
   modelValueCodeDevice: string;
+  modelValueUserCode: string;
 }>();
 
 const emit = defineEmits<{
@@ -61,6 +63,7 @@ const emit = defineEmits<{
 
 const searchName = ref<string>(props.modelValueFullName);
 const searchCode = ref<string>(props.modelValueCodeDevice);
+const userCode = ref<string>('');
 const showNameResults = ref<boolean>(false);
 const showCodeResults = ref<boolean>(false);
 
@@ -82,13 +85,17 @@ const setSelected = (item: Device, type: 'name' | 'code') => {
   if (type === 'name') {
     searchName.value = item.nome;
     searchCode.value = item.codigoDevice;
+    userCode.value = item.idUsuario;
     emit('update:modelValueFullName', item.nome);
     emit('update:modelValueCodeDevice', item.codigoDevice);
+    emit('update:modelValueUserCode', item.idUsuario);
   } else {
     searchCode.value = item.codigoDevice;
     searchName.value = item.nome;
+    userCode.value = item.idUsuario;
     emit('update:modelValueCodeDevice', item.codigoDevice);
     emit('update:modelValueFullName', item.nome);
+    emit('update:modelValueUserCode', item.idUsuario);
   }
 
   showNameResults.value = false;

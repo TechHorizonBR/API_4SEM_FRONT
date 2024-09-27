@@ -4,6 +4,7 @@
       <Autocomplete :source="devices"
         v-model:modelValueFullName="fullName"
         v-model:modelValueCodeDevice="codeDevice"
+        v-model:modelValueUserCode="userCode"
       />
     </div>
 
@@ -24,7 +25,7 @@
       </select>
     </div>
 
-    <button @click="onSearch">Search</button>
+    <button @click="triggerSearch">Search</button>
   </div>
 </template>
 
@@ -36,15 +37,18 @@
   interface Device {
     fullName: string;
     codeDevice: string;
+    userCode: string;
   }
 
   const devices = ref<Device[]>([]);
   const fullName = ref<string>('');
   const codeDevice = ref<string>('');
+  const userCode = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
   const showDateFilter = ref<boolean>(false);
   const startDate = ref<string>('');
   const endDate = ref<string>('');
+  const emit = defineEmits(['search']);
 
   const fetchDevices = async () => {
     try {
@@ -57,20 +61,26 @@
   onMounted(() => {
     fetchDevices();
   });
+
+  const triggerSearch = () => {
+    emit('search', { fullName: fullName.value, codeDevice: codeDevice.value, userCode: userCode.value});
+  };
+
 </script>
 
 <style scoped>
-  .filter {
-    position: absolute;
-    top: 5vh;
+.filter {
+  position: absolute;
+    top: 3vh;
     left: 3vw;
     padding: 25px 40px;
-    background-color: #f5f5f5;
+    background-color: #f5f5f5e4;
     border-radius: 20px;
     width: 250px;
-    margin: 0 auto;
-    box-shadow: 5px 5px 8px #929292
-  }
+    z-index: 1000;
+  /*  box-shadow: 5px 5px 8px #929292;*/
+}
+
 
   .label {
     width: 100%;
