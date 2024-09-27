@@ -32,6 +32,7 @@
   import { ref, onMounted } from 'vue';
   import Autocomplete from './autocomplete/Autocomplete.vue';
   import DevicesService from '../services/devices';
+  import RegistrosService from '../services/registros'
 
   interface Device {
     fullName: string;
@@ -57,6 +58,7 @@
   onMounted(() => {
     fetchDevices();
   });
+
 </script>
 
 <style scoped>
