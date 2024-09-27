@@ -5,6 +5,9 @@
         <LightDarkToggle />
         <button @click="adicionarGeoJson" class="buttonConfig">Add rota</button>
       </div>
+      <div class="nav-container">
+        <Nav @toggleFilter="showFilter = !showFilter" />
+      </div>
 
       <div class="filter-container">
         <Filter v-if="showFilter" :isDarkMode="mapModeStore.isDarkMode" />
@@ -12,19 +15,21 @@
     </div>
   </div>
 </template>
-<script setup   >
+
+<script setup>
 import { Map, MapStyle, config } from '@maptiler/sdk';
 import { shallowRef, onMounted, onUnmounted, markRaw, watch } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 import LightDarkToggle from './LightDarkToggle.vue';
 import Filter from './Filter.vue';
+import Nav from './Nav.vue';
 import axios from 'axios';
 import { useMapModeStore } from '@/stores/useMapMode';
 
 const mapContainer = shallowRef(null);
 const map = shallowRef(null);
 const mapModeStore = useMapModeStore();
-const showFilter = true;
+const showFilter = shallowRef(false); // Inicialmente falso para não exibir o filtro
 
 onMounted(() => {
   config.apiKey = 'tF1lf7jSig6Ou8IuaLtw';
@@ -95,7 +100,7 @@ async function adicionarGeoJson() {
 }
 </script>
 
-<style>
+<style scoped>
 .map-wrap {
   position: relative;
 }
@@ -107,25 +112,34 @@ async function adicionarGeoJson() {
 
 .filter-container {
   position: absolute;
-  top: 3%;
-  left: 3%;
-  z-index: 1000;
+  top: 10%; /* Ajustado para evitar sobreposição com a navbar */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000; /* Maior que o z-index do mapa para garantir que o filtro esteja na frente */
   border-radius: 8px;
 }
 
-.maplibregl-ctrl-top-right{
-    right: 0;
-    bottom: 6em !important;
-    top: auto !important;
+.nav-container {
+  position: absolute;
+  bottom: 2;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1500; /* Para garantir que a Nav fique acima do mapa */
 }
 
-.maplibregl-ctrl button .maplibregl-ctrl-icon{
-    background-color: #9e73bfd4;
-    border-radius: 5px;
+.maplibregl-ctrl-top-right {
+  right: 0;
+  bottom: 6em !important;
+  top: auto !important;
 }
 
-.maplibregl-ctrl-group{
-    background: transparent !important;
+.maplibregl-ctrl button .maplibregl-ctrl-icon {
+  background-color: #9e73bfd4;
+  border-radius: 5px;
+}
+
+.maplibregl-ctrl-group {
+  background: transparent !important;
 }
 
 #buttonConfig {
