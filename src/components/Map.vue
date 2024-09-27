@@ -7,14 +7,26 @@
                     Add rota
                 </button>
             </div>
+
+            <Nav @toggleFilter="toggleFilter" />
+
+            <Filter
+                @search="handleSearch"
+                v-if="showFilter"
+                :isDarkMode="mapModeStore.isDarkMode"
+            />
         </div>
     </div>
 </template>
 <script setup>
-import { Map, MapStyle, Marker, config } from "@maptiler/sdk";
+import { Map, MapStyle, config, Marker } from "@maptiler/sdk";
 import { shallowRef, onMounted, onUnmounted, markRaw, watch } from "vue";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import LightDarkToggle from "./LightDarkToggle.vue";
+import Filter from "./Filter.vue";
+import RegistrosService from "../services/registros"
+import Nav from "./Nav.vue";
+
 import { useMapModeStore } from "@/stores/useMapMode";
 
 const mapContainer = shallowRef(null);
@@ -37,30 +49,40 @@ let geojson = {
 };
 let mark;
 let places;
+const showFilter = shallowRef(true);
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
     inicializarMapa();
 });
 
-const getPoints = async() => {
-    try{
-        // const req = getPontos();
-        // if(req){
-        //     transformData(req.data);
-        // }
-    }catch(error){
-        console.error("Error:", error)
+const toggleFilter = () => {
+    showFilter.value = !showFilter.value;
+};
+
+const handleSearch = (searchParams) => {
+    getPoints(searchParams.userCode);
+};
+
+const getPoints = async (id) => {
+    try {
+        const req = await RegistrosService.getRegistros(id);
+        if(req){
+            transformData(req);
+        }
+    } catch (error) {
+        console.error("Error:", error);
     }
-}
+};
 
 function transformData(data) {
     if (data) {
         dados = data;
-        geojson.features[0].geometry.coordinates = dados.points.map((point) => [
-            point.lng,
-            point.lat,
+        geojson.features[0].geometry.coordinates = dados.map((point) => [
+            point.longitude,
+            point.latitude,
         ]);
+        console.log(geojson);
         plotPontos(dados);
     }
 }
@@ -72,7 +94,7 @@ onUnmounted(() => {
 });
 
 function inicializarMapa() {
-    const initialState = { lng:  -73.973110, lat: 40.764240, zoom: 15 };
+    const initialState = { lng: -60.6714, lat: 2.81954, zoom: 18 };
 
     map.value = markRaw(
         new Map({
@@ -87,48 +109,30 @@ function inicializarMapa() {
 }
 
 async function plotPontos(allPoints) {
-    for (let i = 0; i < allPoints.length; i++) {
-        if (i == 0 || i == allPoints.length - 1) {
-            let el = document.createElement("div");
-            let img = document.createElement("img");
-            let son = document.createElement("div");
+    const fin = allPoints.length - 1;
+    console.log(allPoints[fin].latitude)
+    
+    let el_start = createMarkerElement(
+        allPoints[0].longitude,
+        allPoints[0].latitude,
+        "start.png"
+    );
 
-            son.textContent = `Long: ${allPoints[i].lng}, Lat: ${allPoints[i].lat}`;
-            son.style.backgroundColor = "#FFF";
-            son.style.display = "block";
-            son.style.opacity = "0";
-            son.style.width = "max-content";
-            son.style.position = "absolute";
-            son.style.bottom = "25px";
-            son.style.left = "50%";
-            son.style.zIndex = "1";
-            son.style.transform = "translate(-50%, -50%)";
-            son.style.padding = "5px";
-            son.style.borderRadius = "10px";
-            son.style.border = "1px solid black";
-            son.style.transition = "opacity 0.3s ease-in-out";
+    let el_finish = createMarkerElement(
+        allPoints[fin].longitude,
+        allPoints[fin].latitude,
+        "finish.png"
+    );
 
-            img.src = `${i == 0 ? "start" : "finish"}.png`;
-            img.style.width = `25px`;
-            img.style.height = `25px`;
-            img.style.filter = "drop-shadow(0px 0px 2px #000000)";
+    new Marker({ element: el_start })
+        .setLngLat([allPoints[0].longitude, allPoints[0].latitude])
+        .addTo(map.value);
 
-            el.appendChild(img);
-            el.appendChild(son);
+    new Marker({ element: el_finish })
+        .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
+        .addTo(map.value);
 
-            el.addEventListener("mouseover", () => {
-                son.style.opacity = "1";
-            });
-
-            el.addEventListener("mouseout", () => {
-                son.style.opacity = "0";
-            });
-
-            new Marker({ element: el })
-                .setLngLat([allPoints[i].lng, allPoints[i].lat])
-                .addTo(map.value);
-        }
-    }
+    adicionarGeoJson();
 }
 
 function createMarkerElement(lng, lat, imgSrc) {
@@ -171,19 +175,19 @@ function actualLocation(allPoints, data, count = 0) {
     }
 
     let el = createMarkerElement(
-        allPoints[count].lng,
-        allPoints[count.lat],
+        allPoints[count].longitude,
+        allPoints[count].latitude,
         "marker_0.png"
     );
 
     if (count + 1 === allPoints.length) {
         mark = new Marker({ element: el }).setLngLat([
-            allPoints[count].lng,
-            allPoints[count].lat,
+            allPoints[count].longitude,
+            allPoints[count].latitude,
         ]);
     } else {
         mark = new Marker({ element: el })
-            .setLngLat([allPoints[count].lng, allPoints[count].lat])
+            .setLngLat([allPoints[count].longitude, allPoints[count].latitude])
             .addTo(map.value);
     }
 
@@ -205,7 +209,8 @@ function actualLocation(allPoints, data, count = 0) {
 
     setTimeout(() => {
         mark.remove();
-        data.features[0].geometry.coordinates.push(places[count + 1]);
+        console.log(allPoints[count + 1]);
+        data.features[0].geometry.coordinates.push(allPoints[count + 1]);
         actualLocation(allPoints, data, count + 1);
     }, 1000);
 }
@@ -221,7 +226,7 @@ watch(
     }
 );
 
-async function adicionarGeoJson() {
+function adicionarGeoJson() {
     if (map.value) {
         geojson.features[0].geometry.coordinates =
             geojson.features[0].geometry.coordinates.slice(0, 1);
@@ -231,7 +236,7 @@ async function adicionarGeoJson() {
 }
 </script>
 
-<style>
+<style scoped>
 .map-wrap {
     position: relative;
 }
@@ -239,6 +244,14 @@ async function adicionarGeoJson() {
 .map {
     width: 100%;
     height: 100vh;
+}
+
+.nav-container {
+    position: absolute;
+    bottom: 2;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1500;
 }
 
 .maplibregl-ctrl-top-right {
