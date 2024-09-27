@@ -11,10 +11,10 @@
       <ul v-if="showNameResults" class="dropdown-menu">
         <li
           v-for="result in nameResults"
-          :key="result.fullName"
+          :key="result.nome"
           @click="setSelected(result, 'name')"
           class="dropdown-item">
-          {{ result.fullName }}
+          {{ result.nome }}
         </li>
       </ul>
     </div>
@@ -30,10 +30,10 @@
       <ul v-if="showCodeResults" class="dropdown-menu">
         <li
           v-for="result in codeResults"
-          :key="result.codeDevice"
+          :key="result.codigoDevice"
           @click="setSelected(result, 'code')"
           class="dropdown-item">
-          {{ result.codeDevice }}
+          {{ result.codigoDevice }}
         </li>
       </ul>
     </div>
@@ -41,73 +41,73 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+import { ref, computed } from 'vue';
 
-  interface Device {
-    fullName: string;
-    codeDevice: string;
+interface Device {
+  nome: string;
+  codigoDevice: string;
+}
+
+const props = defineProps<{
+  source: Device[];
+  modelValueFullName: string;
+  modelValueCodeDevice: string;
+}>();
+
+const emit = defineEmits<{
+  (e: 'update:modelValueFullName', value: string): void;
+  (e: 'update:modelValueCodeDevice', value: string): void;
+}>();
+
+const searchName = ref<string>(props.modelValueFullName);
+const searchCode = ref<string>(props.modelValueCodeDevice);
+const showNameResults = ref<boolean>(false);
+const showCodeResults = ref<boolean>(false);
+
+const nameResults = computed(() => {
+  if (searchName.value === '') {
+    return [];
+  }
+  return props.source.filter(item => item.nome.toLowerCase().includes(searchName.value.toLowerCase()));
+});
+
+const codeResults = computed(() => {
+  if (searchCode.value === '') {
+    return [];
+  }
+  return props.source.filter(item => item.codigoDevice.toLowerCase().includes(searchCode.value.toLowerCase()));
+});
+
+const setSelected = (item: Device, type: 'name' | 'code') => {
+  if (type === 'name') {
+    searchName.value = item.nome;
+    searchCode.value = item.codigoDevice;
+    emit('update:modelValueFullName', item.nome);
+    emit('update:modelValueCodeDevice', item.codigoDevice);
+  } else {
+    searchCode.value = item.codigoDevice;
+    searchName.value = item.nome;
+    emit('update:modelValueCodeDevice', item.codigoDevice);
+    emit('update:modelValueFullName', item.nome);
   }
 
-  const props = defineProps<{
-    source: Device[];
-    modelValueFullName: string;
-    modelValueCodeDevice: string;
-  }>();
+  showNameResults.value = false;
+  showCodeResults.value = false;
+};
 
-  const emit = defineEmits<{
-    (e: 'update:modelValueFullName', value: string): void;
-    (e: 'update:modelValueCodeDevice', value: string): void;
-  }>();
+const handleNameInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  searchName.value = target.value;
+  showNameResults.value = true;
+  emit('update:modelValueFullName', searchName.value);
+};
 
-  const searchName = ref<string>(props.modelValueFullName);
-  const searchCode = ref<string>(props.modelValueCodeDevice);
-  const showNameResults = ref<boolean>(false);
-  const showCodeResults = ref<boolean>(false);
-
-  const nameResults = computed(() => {
-    if (searchName.value === '') {
-      return [];
-    }
-    return props.source.filter(item => item.fullName.toLowerCase().includes(searchName.value.toLowerCase()));
-  });
-
-  const codeResults = computed(() => {
-    if (searchCode.value === '') {
-      return [];
-    }
-    return props.source.filter(item => item.codeDevice.toLowerCase().includes(searchCode.value.toLowerCase()));
-  });
-
-  const setSelected = (item: Device, type: 'name' | 'code') => {
-    if (type === 'name') {
-      searchName.value = item.fullName;
-      searchCode.value = item.codeDevice;
-      emit('update:modelValueFullName', item.fullName);
-      emit('update:modelValueCodeDevice', item.codeDevice);
-    } else {
-      searchCode.value = item.codeDevice;
-      searchName.value = item.fullName;
-      emit('update:modelValueCodeDevice', item.codeDevice);
-      emit('update:modelValueFullName', item.fullName);
-    }
-
-    showNameResults.value = false;
-    showCodeResults.value = false;
-  };
-
-  const handleNameInput = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    searchName.value = target.value;
-    showNameResults.value = true;
-    emit('update:modelValueFullName', searchName.value);
-  };
-
-  const handleCodeInput = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    searchCode.value = target.value;
-    showCodeResults.value = true;
-    emit('update:modelValueCodeDevice', searchCode.value);
-  };
+const handleCodeInput = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  searchCode.value = target.value;
+  showCodeResults.value = true;
+  emit('update:modelValueCodeDevice', searchCode.value);
+};
 </script>
 
 <style scoped>
