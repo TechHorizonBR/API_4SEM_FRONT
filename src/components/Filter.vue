@@ -1,63 +1,62 @@
 <template>
-    <div class="filter">
-      <div class="filter-name" v-if="showNameFilter">
-        <label class="label" for="name">Name:</label>
-        <Autocomplete :source="devices" v-model="device"/>
-      </div>
-
-      <div class="filter-device">
-        <label class="label" for="deviceInfo">Device:</label>
-        <Autocomplete :source="devices" v-model="device"/>
-      </div>
-
-      <div class="filter-date" v-if="showDateFilter">
-        <label class="label" for="date">Date:</label>
-        <input class="input-date" type="date" id="date" v-model="filter_date"/>
-
-        <select class="filter-select" id="deviceInfo" v-model="filter_date">
-          <option value="" selected disabled>
-            Select an option
-          </option>
-          <option value="1">
-            Last 24 hours
-          </option>
-          <option value="7">
-            Last week
-          </option>
-          <option value="30">
-            Last month
-          </option>
-        </select>
-      </div>
-
-      <button @click="onSearch">Search</button>
+  <div class="filter">
+    <div class="filter-autocomplete" v-if="showAutocompleteFilter">
+      <Autocomplete :source="devices"
+        v-model:modelValueFullName="fullName"
+        v-model:modelValueCodeDevice="codeDevice"
+      />
     </div>
+
+    <div class="filter-date" v-if="showDateFilter">
+      <label class="label" for="startDate">Start Date:</label>
+      <input class="input-date" type="date" id="startDate" v-model="startDate"/>
+
+      <label class="label" for="endDate">End Date:</label>
+      <input class="input-date" type="date" id="endDate" v-model="endDate"/>
+
+      <select class="filter-select" id="deviceInfo" v-model="filter_date">
+        <option value="" selected disabled>
+          Select an option
+        </option>
+        <option value="1">Last 24 hours</option>
+        <option value="7">Last week</option>
+        <option value="30">Last month</option>
+      </select>
+    </div>
+
+    <button @click="onSearch">Search</button>
+  </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import Autocomplete from './autocomplete/Autocomplete.vue';
-import FilterService from '../services/filterService.js'
-const devices = [
-  "Ana",
-  "Ana B",
-  "Luis",
-  "Maria"
-]
+<script setup lang="ts">
+  import { ref, onMounted } from 'vue';
+  import Autocomplete from './autocomplete/Autocomplete.vue';
+  import DevicesService from '../services/devices';
 
-const device = ref('')
+  interface Device {
+    fullName: string;
+    codeDevice: string;
+  }
 
-const showNameFilter = ref(false);
-const showDateFilter = ref(false);
+  const devices = ref<Device[]>([]);
+  const fullName = ref<string>('');
+  const codeDevice = ref<string>('');
+  const showAutocompleteFilter = ref<boolean>(true);
+  const showDateFilter = ref<boolean>(false);
+  const startDate = ref<string>('');
+  const endDate = ref<string>('');
 
-const onSearch = async () => {
-  const filterData = {
-    page: 0
+  const fetchDevices = async () => {
+    try {
+      devices.value = await DevicesService.getDevices();
+    } catch (error) {
+      console.error('Erro ao buscar dispositivos:', error);
+    }
   };
-  const dados = await FilterService.postFilter(filterData);
-  console.log (dados);
-}; 
 
+  onMounted(() => {
+    fetchDevices();
+  });
 </script>
 
 <style scoped>

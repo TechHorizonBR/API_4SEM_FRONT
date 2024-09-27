@@ -5,6 +5,10 @@
         <LightDarkToggle />
         <button @click="adicionarGeoJson" class="buttonConfig">Add rota</button>
       </div>
+
+      <div class="filter-container">
+        <Filter v-if="showFilter" :isDarkMode="mapModeStore.isDarkMode" />
+      </div>
     </div>
   </div>
 </template>
@@ -13,12 +17,14 @@ import { Map, MapStyle, config } from '@maptiler/sdk';
 import { shallowRef, onMounted, onUnmounted, markRaw, watch } from 'vue';
 import '@maptiler/sdk/dist/maptiler-sdk.css';
 import LightDarkToggle from './LightDarkToggle.vue';
+import Filter from './Filter.vue';
 import axios from 'axios';
 import { useMapModeStore } from '@/stores/useMapMode';
 
 const mapContainer = shallowRef(null);
 const map = shallowRef(null);
 const mapModeStore = useMapModeStore();
+const showFilter = true;
 
 onMounted(() => {
   config.apiKey = 'tF1lf7jSig6Ou8IuaLtw';
@@ -96,7 +102,15 @@ async function adicionarGeoJson() {
 
 .map {
   width: 100%;
-  height: 100vh
+  height: 100vh;
+}
+
+.filter-container {
+  position: absolute;
+  top: 3%;
+  left: 3%;
+  z-index: 1000;
+  border-radius: 8px;
 }
 
 .maplibregl-ctrl-top-right{
@@ -114,14 +128,13 @@ async function adicionarGeoJson() {
     background: transparent !important;
 }
 
-
-#buttonConfig{
-    position: absolute;
-    z-index: 2;
-    bottom: 20px;
-    right: 10px;
-    display: inline-flex;
-    flex-direction: row-reverse;
-    align-items: center;
+#buttonConfig {
+  position: absolute;
+  z-index: 2;
+  bottom: 20px;
+  right: 10px;
+  display: inline-flex;
+  flex-direction: row-reverse;
+  align-items: center;
 }
 </style>
