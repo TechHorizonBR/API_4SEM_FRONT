@@ -33,7 +33,6 @@
   import { ref, onMounted } from 'vue';
   import Autocomplete from './autocomplete/Autocomplete.vue';
   import DevicesService from '../services/devices';
-  import RegistrosService from '../services/registros'
 
   interface Device {
     fullName: string;
@@ -82,42 +81,43 @@
   /*  box-shadow: 5px 5px 8px #929292;*/
 }
 
-.label {
-  width: 100%;
-  display: block;
-  margin-bottom: 6px;
-  margin-top: 8px;
-}
 
-.input-date {
-  width: 93%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-}
+  .label {
+    width: 100%;
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 8px;
+  }
 
-.filter-select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-}
+  .input-date {
+    width: 93%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
 
-button {
-  width: 100%;
-  background-color: #35005d;
-  color: white;
-  padding: 12px;
-  margin-top: 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
+  .filter-select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+  }
 
-button:hover {
-  background-color: #3c0564;
-}
+  button {
+    width: 100%;
+    background-color: #35005D;
+    color: white;
+    padding: 12px;
+    margin-top: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #3c0564;
+  }
 </style>
