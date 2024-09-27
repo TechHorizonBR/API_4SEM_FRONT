@@ -75,11 +75,11 @@
     top: 3vh;
     left: 3vw;
     padding: 25px 40px;
-    background-color: #f5f5f5;
+    background-color: #f5f5f5e4;
     border-radius: 20px;
     width: 250px;
     z-index: 1000;
-    box-shadow: 5px 5px 8px #929292;
+  /*  box-shadow: 5px 5px 8px #929292;*/
 }
 
 .label {
