@@ -64,7 +64,6 @@ const getPoints = async (id) => {
 function transformData(data) {
     if (data) {
         dados = data;
-        console.log(dados);
         plotPontos(dados);
     }
 }
