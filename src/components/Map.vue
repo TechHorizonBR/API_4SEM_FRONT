@@ -8,6 +8,7 @@
                     Add pontos
                 </button>-->
             </div>
+            <img v-if="loading" src="/loading.gif" id="loading" alt="Loading...">
 
             <Nav @toggleFilter="toggleFilter" />
 
@@ -36,7 +37,7 @@ const map = shallowRef(null);
 const mapModeStore = useMapModeStore();
 let dados;
 const all_markers = shallowRef([]);
-
+const loading = shallowRef(false);
 const showFilter = shallowRef(true);
 
 onMounted(() => {
@@ -48,15 +49,21 @@ const toggleFilter = () => {
     showFilter.value = !showFilter.value;
 };
 
+const changeLoading = () =>{
+    loading.value = !loading.value;
+}
+
 const handleSearch = (searchParams) => {
     all_markers.value.forEach(marker => marker.remove());
     all_markers.value = [];
+    changeLoading();
     getPoints(searchParams.userCode);
 };
 
 const getPoints = async (id) => {
     try {
         const req = await RegistrosService.getRegistros(id);
+        changeLoading();
         if (req) {
             transformData(req);
         }
@@ -241,5 +248,13 @@ function adicionarMarcadores() {
     display: inline-flex;
     flex-direction: row-reverse;
     align-items: center;
+}
+
+#loading{
+    position: absolute;
+    z-index: 1600;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>
