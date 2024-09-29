@@ -1,6 +1,7 @@
 <template>
     <div class="map-wrap">
         <div class="map" ref="mapContainer">
+            
             <div id="buttonConfig">
                 <LightDarkToggle />
                 <!--<button @click="adicionarMarcadores" class="buttonConfig">
@@ -34,6 +35,7 @@ const mapContainer = shallowRef(null);
 const map = shallowRef(null);
 const mapModeStore = useMapModeStore();
 let dados;
+const all_markers = shallowRef([]);
 
 const showFilter = shallowRef(true);
 
@@ -47,6 +49,8 @@ const toggleFilter = () => {
 };
 
 const handleSearch = (searchParams) => {
+    all_markers.value.forEach(marker => marker.remove());
+    all_markers.value = [];
     getPoints(searchParams.userCode);
 };
 
@@ -105,15 +109,16 @@ async function plotPontos(allPoints) {
         "finish.png"
     );
 
-    new Marker({ element: el_start })
+    let startMark = new Marker({ element: el_start })
         .setLngLat([allPoints[0].longitude, allPoints[0].latitude])
         .addTo(map.value);
+    all_markers.value.push(startMark);
 
-    new Marker({ element: el_finish })
+    let finishMark = new Marker({ element: el_finish })
         .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
         .addTo(map.value);
+    all_markers.value.push(finishMark);
 
-    // Adicionar marcadores para todos os outros pontos
     allPoints.forEach((point, index) => {
         if (index !== 0 && index !== fin) {
             let el_point = createMarkerElement(
@@ -121,9 +126,10 @@ async function plotPontos(allPoints) {
                 point.latitude,
                 "pin.png"
             );
-            new Marker({ element: el_point })
+            let defaultMark = new Marker({ element: el_point })
                 .setLngLat([point.longitude, point.latitude])
                 .addTo(map.value);
+            all_markers.value.push(defaultMark);
         }
     });
 }
