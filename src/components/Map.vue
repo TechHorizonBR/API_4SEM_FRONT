@@ -1,22 +1,34 @@
+Map.vue
+
 <template>
     <div class="map-wrap">
         <div class="map" ref="mapContainer">
-            
             <div id="buttonConfig">
                 <LightDarkToggle />
                 <!--<button @click="adicionarMarcadores" class="buttonConfig">
                     Add pontos
                 </button>-->
             </div>
-            <img v-if="loading" src="/loading.gif" id="loading" alt="Loading...">
+            <img
+                v-if="loading"
+                src="/loading.gif"
+                id="loading"
+                alt="Loading..."
+            />
 
             <Nav @toggleFilter="toggleFilter" />
 
-            <Filter
-                @search="handleSearch"
-                v-if="showFilter"
-                :isDarkMode="mapModeStore.isDarkMode"
-            />
+            <transition
+                name="fade"
+                @before-enter="beforeEnter"
+                @before-leave="beforeLeave"
+            >
+                <Filter
+                    v-if="showFilter"
+                    @search="handleSearch"
+                    :isDarkMode="mapModeStore.isDarkMode"
+                />
+            </transition>
         </div>
     </div>
 </template>
@@ -49,12 +61,12 @@ const toggleFilter = () => {
     showFilter.value = !showFilter.value;
 };
 
-const changeLoading = () =>{
+const changeLoading = () => {
     loading.value = !loading.value;
-}
+};
 
 const handleSearch = (searchParams) => {
-    all_markers.value.forEach(marker => marker.remove());
+    all_markers.value.forEach((marker) => marker.remove());
     all_markers.value = [];
     changeLoading();
     getPoints(searchParams.userCode);
@@ -86,7 +98,7 @@ onUnmounted(() => {
 });
 
 function inicializarMapa() {
-    const initialState = { lng: -60.6714, lat: 2.81954, zoom: 18 };
+    const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
 
     map.value = markRaw(
         new Map({
@@ -183,8 +195,6 @@ watch(
             map.value.setStyle(
                 isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS
             );
-
-        
         }
     }
 );
@@ -250,7 +260,7 @@ function adicionarMarcadores() {
     align-items: center;
 }
 
-#loading{
+#loading {
     position: absolute;
     z-index: 1600;
     top: 50%;
