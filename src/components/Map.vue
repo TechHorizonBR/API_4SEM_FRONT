@@ -30,6 +30,8 @@ import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
 
+import { faUser } from '@fortawesome/free-solid-svg-icons';
+
 import { useMapModeStore } from "@/stores/useMapMode";
 
 const mapContainer = shallowRef(null);
