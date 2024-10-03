@@ -48,31 +48,30 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 export default defineComponent({
-  name: 'Navbar',
+  name: "Navbar",
   components: {
-    FontAwesomeIcon
+    FontAwesomeIcon,
   },
   methods: {
     toggleFilter() {
-      this.$emit('toggleFilter');
+      this.$emit("toggleFilter");
     },
     triggerAlert() {
-      console.log('Alerts clicked');
+      console.log("Alerts clicked");
     },
     goToMapMarker() {
-      console.log('Map Marker clicked');
+      console.log("Map Marker clicked");
     },
     addUser() {
-      console.log('Add User clicked');
+      console.log("Add User clicked");
     },
     signInOut() {
-      console.log('Sign In/Out clicked');
-    }
-  }
+      console.log("Sign In/Out clicked");
+    },
+  },
 });
 </script>
 
