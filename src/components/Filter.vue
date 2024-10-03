@@ -1,10 +1,11 @@
 <template>
-  <div class="filter">
+  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012ad' : '#ffffffad'}">
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
       <Autocomplete :source="devices"
         v-model:modelValueFullName="fullName"
         v-model:modelValueCodeDevice="codeDevice"
         v-model:modelValueUserCode="userCode"
+        :isDark="isDark"
       />
     </div>
 
@@ -49,6 +50,7 @@
   const startDate = ref<string>('');
   const endDate = ref<string>('');
   const emit = defineEmits(['search']);
+  const props = defineProps<{isDark : boolean}>();
 
   const fetchDevices = async () => {
     try {
@@ -74,7 +76,7 @@
     top: 3vh;
     left: 3vw;
     padding: 25px 40px;
-    background-color: #f5f5f5e4;
+    background-color: #ffffffad;
     border-radius: 20px;
     width: 250px;
     z-index: 1000;

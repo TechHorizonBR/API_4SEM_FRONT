@@ -1,13 +1,19 @@
 <template>
   <div class="autocomplete">
     <div class="autocomplete-fullName">
-      <label class="label" for="name">Name:</label>
+      <label class="label" for="name" 
+        :style="{color: isDark ? '#fff' : '#000'}">Name:</label>
       <input
         type="text"
         v-model="searchName"
         @input="handleNameInput"
         class="dropdown-input"
+
+        :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
+                color: isDark ? '#FFF' : '#000', 
+                border: isDark ? '1px solid #292929' : '1px solid gray' }"
       />
+
       <ul v-if="showNameResults" class="dropdown-menu">
         <li
           v-for="result in nameResults"
@@ -20,12 +26,18 @@
     </div>
 
     <div class="autocomplete-codeDevice">
-      <label class="label" for="deviceInfo">Device:</label>
+      <label class="label" for="deviceInfo"
+      :style="{color: isDark ? '#fff' : '#000'}"
+      >Device:</label>
       <input
         type="text"
         v-model="searchCode"
         @input="handleCodeInput"
         class="dropdown-input"
+
+        :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
+                color: isDark ? '#FFF' : '#000', 
+                border: isDark ? '1px solid #292929' : '1px solid gray' }"
       />
       <ul v-if="showCodeResults" class="dropdown-menu">
         <li
@@ -54,6 +66,7 @@ const props = defineProps<{
   modelValueFullName: string;
   modelValueCodeDevice: string;
   modelValueUserCode: string;
+  isDark: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -118,6 +131,9 @@ const handleCodeInput = (event: Event) => {
 </script>
 
 <style scoped>
+  input{
+    border: none;
+  }
   .autocomplete {
     position: relative;
     display: inline-block;
@@ -127,7 +143,6 @@ const handleCodeInput = (event: Event) => {
   .dropdown-input {
     width: 93%;
     padding: 10px;
-    border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 16px;
   }

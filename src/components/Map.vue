@@ -15,7 +15,7 @@
             <Filter
                 @search="handleSearch"
                 v-if="showFilter"
-                :isDarkMode="mapModeStore.isDarkMode"
+                :isDark="mapModeStore.isDarkMode"
             />
         </div>
     </div>
