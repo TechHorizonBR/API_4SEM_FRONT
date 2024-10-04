@@ -49,11 +49,11 @@ const mapModeStore = useMapModeStore();
 }
 
 input:checked + .slider {
-  background-color: #35005D;
+  background-color: #0a0012e3;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #35005D;
+  box-shadow: 0 0 1px #0a0012e3;
 }
 
 input:checked + .slider:before {

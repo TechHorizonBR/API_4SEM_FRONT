@@ -1,6 +1,6 @@
 <template>
   <div class="autocomplete">
-    <div class="autocomplete-fullName">
+    <div class="autocomplete-fullName div-inputs">
       <label class="label" for="name" 
         :style="{color: isDark ? '#fff' : '#000'}">Name:</label>
       <input
@@ -11,21 +11,26 @@
 
         :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
                 color: isDark ? '#FFF' : '#000', 
-                border: isDark ? '1px solid #292929' : '1px solid gray' }"
+                border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)' }"
       />
 
-      <ul v-if="showNameResults" class="dropdown-menu">
+      <ul v-if="showNameResults" class="dropdown-menu" >
         <li
           v-for="result in nameResults"
           :key="result.nome"
           @click="setSelected(result, 'name')"
-          class="dropdown-item">
+          class="dropdown-item"
+
+          :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
+                color: isDark ? '#FFF' : '#000'}"
+          
+          >
           {{ result.nome }}
         </li>
       </ul>
     </div>
 
-    <div class="autocomplete-codeDevice">
+    <div class="autocomplete-codeDevice div-inputs">
       <label class="label" for="deviceInfo"
       :style="{color: isDark ? '#fff' : '#000'}"
       >Device:</label>
@@ -37,14 +42,19 @@
 
         :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
                 color: isDark ? '#FFF' : '#000', 
-                border: isDark ? '1px solid #292929' : '1px solid gray' }"
+                border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)' }"
       />
       <ul v-if="showCodeResults" class="dropdown-menu">
         <li
           v-for="result in codeResults"
           :key="result.codigoDevice"
           @click="setSelected(result, 'code')"
-          class="dropdown-item">
+          class="dropdown-item"
+          :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
+                color: isDark ? '#FFF' : '#000'}"
+          
+          
+          >
           {{ result.codigoDevice }}
         </li>
       </ul>
@@ -131,6 +141,15 @@ const handleCodeInput = (event: Event) => {
 </script>
 
 <style scoped>
+.div-inputs{
+  margin: 0 0 2vh 0;
+}
+input{
+  outline: none;
+}
+  .label{
+    font-size: 1.2em;
+  }
   input{
     border: none;
   }

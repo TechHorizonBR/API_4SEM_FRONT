@@ -1,5 +1,5 @@
 <template>
-  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012ad' : '#ffffffad'}">
+  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
       <Autocomplete :source="devices"
         v-model:modelValueFullName="fullName"
@@ -76,10 +76,11 @@
     top: 3vh;
     left: 3vw;
     padding: 25px 40px;
-    background-color: #ffffffad;
+    background-color: #f7f7f7;
     border-radius: 20px;
     width: 250px;
     z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   /*  box-shadow: 5px 5px 8px #929292;*/
 }
 
@@ -89,6 +90,7 @@
     display: block;
     margin-bottom: 6px;
     margin-top: 8px;
+    font-size: 20px;
   }
 
   .input-date {
