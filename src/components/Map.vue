@@ -191,8 +191,7 @@ watch(
                 isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS
             );
             map.value.on('load', () => {
-        // Oculta a marca d'água
-                const attributionControl = document.querySelector('.maplibregl-ctrl-attrib');
+                const attributionControl = document.querySelector('.maplibregl-ctrl-attrib a');
                 if (attributionControl) {
                     attributionControl.style.display = 'none';
                 }
@@ -232,6 +231,9 @@ function adicionarMarcadores() {
 </script>
 
 <style scoped>
+.maplibregl-ctrl-attrib a {
+    display: none;
+}
 .map-wrap {
     position: relative;
 }

@@ -4,35 +4,35 @@
     <ul class="navbar-list">
       <li class="navbar-item">
         <button @click="toggleFilter"
-          :style="{color: isDark ? '#fff' : '#4b0076'}">
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }">
           <font-awesome-icon :icon="['fas', 'filter']" />
           Filter
         </button>
       </li>
       <li class="navbar-item">
         <button @click="goToMapMarker"
-        :style="{color: isDark ? '#fff' : '#4b0076'}">
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
           Map Marker
         </button>
       </li>
       <li class="navbar-item">
         <button @click="triggerAlert"
-        :style="{color: isDark ? '#fff' : '#4b0076'}">
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'bell']"/>
           Alerts
         </button>
       </li>
       <li class="navbar-item">
         <button @click="addUser"
-        :style="{color: isDark ? '#fff' : '#4b0076'}">
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'user-plus']" />
           Add User
         </button>
       </li>
       <li class="navbar-item">
         <button @click="signInOut"
-        :style="{color: isDark ? '#fff' : '#4b0076'}">
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
         </button>
@@ -110,17 +110,6 @@ const signInOut = () => {
   display: flex;
   align-items: center;
 }
-.navbar-item-img{
-  background: none;
-  border: none;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  cursor: pointer;
-  justify-content: center;
-  margin-right: -25em;
-}
-
 .navbar-item button {
   background: none;
   border: none;
@@ -128,7 +117,6 @@ const signInOut = () => {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  color: #4b0076;
   font-size: 17px;
   font-weight: bold;
 }
@@ -136,7 +124,6 @@ const signInOut = () => {
 .navbar-item button:hover {
   color: #7d009b;
 }
-
 .icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
   font-size: 18px;
   margin-bottom: 5px;
@@ -147,5 +134,11 @@ const signInOut = () => {
     flex-direction: column;
     gap: 10px;
   }
+}
+.dark-button{
+  color: #fff
+}
+.light-button{
+  color: #4b0076
 }
 </style>
