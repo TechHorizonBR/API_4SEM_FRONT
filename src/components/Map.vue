@@ -190,6 +190,13 @@ watch(
             map.value.setStyle(
                 isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS
             );
+            map.value.on('load', () => {
+        // Oculta a marca d'água
+                const attributionControl = document.querySelector('.maplibregl-ctrl-attrib');
+                if (attributionControl) {
+                    attributionControl.style.display = 'none';
+                }
+            });
 
             const controlElements = document.getElementsByClassName('maplibregl-ctrl');
             for (let element of controlElements) {
@@ -210,6 +217,7 @@ watch(
                     icon.style.filter = 'none'
                 }
             }
+            
 
         
         }
@@ -257,6 +265,9 @@ function adicionarMarcadores() {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+.maplibregl-ctrl-attrib a {
+    display: none;
 }
 
 
