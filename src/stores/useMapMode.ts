@@ -1,6 +1,6 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useMapModeStore = defineStore('mapMode', {
+export const useMapModeStore = defineStore("mapMode", {
   state: () => ({
     isDarkMode: false,
   }),

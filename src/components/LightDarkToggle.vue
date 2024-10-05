@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { useMapModeStore } from '@/stores/useMapMode';
+import { useMapModeStore } from "@/stores/useMapMode";
 
 const mapModeStore = useMapModeStore();
-
 </script>
 
 <template>
   <label class="switch">
-    <input type="checkbox" v-model="mapModeStore.isDarkMode">
+    <input type="checkbox" v-model="mapModeStore.isDarkMode" />
     <span class="slider round"></span>
   </label>
 </template>
@@ -34,7 +33,7 @@ const mapModeStore = useMapModeStore();
   right: 0;
   bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -45,15 +44,15 @@ const mapModeStore = useMapModeStore();
   left: 4px;
   bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: #35005D;
+  background-color: #35005d;
 }
 
 input:focus + .slider {
-  box-shadow: 0 0 1px #35005D;
+  box-shadow: 0 0 1px #35005d;
 }
 
 input:checked + .slider:before {
