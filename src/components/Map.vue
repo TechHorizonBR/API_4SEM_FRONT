@@ -1,7 +1,8 @@
+Map.vue
+
 <template>
     <div :class="{'dark-controls': mapModeStore.isDarkMode, 'light-controls': !mapModeStore.isDarkMode}" class="map-wrap">
         <div class="map" ref="mapContainer" >
-
             <div id="buttonConfig">
                 <LightDarkToggle />
                 <!--<button @click="adicionarMarcadores" class="buttonConfig">
@@ -22,7 +23,6 @@
                 v-if="showFilter"
                 :isDark="mapModeStore.isDarkMode"
             />
-
         </div>
     </div>
 </template>
@@ -35,6 +35,8 @@ import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
+
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 import { useMapModeStore } from "@/stores/useMapMode";
 
@@ -231,7 +233,6 @@ watch(
                     icon.style.filter = 'none'
                 }
             }
-
         }
     }
 );
