@@ -76,6 +76,7 @@ const addUser = () => {
 const signInOut = () => {
   console.log('Sign In/Out clicked');
 };
+
 </script>
 
 <style scoped>
@@ -124,7 +125,9 @@ const signInOut = () => {
 .navbar-item button:hover {
   color: #7d009b;
 }
+
 .icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
+
   font-size: 18px;
   margin-bottom: 5px;
 }
