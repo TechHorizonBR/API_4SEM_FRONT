@@ -1,6 +1,7 @@
 <template>
-    <div class="map-wrap">
-        <div class="map" ref="mapContainer">
+    <div :class="{'dark-controls': mapModeStore.isDarkMode, 'light-controls': !mapModeStore.isDarkMode}" class="map-wrap">
+        <div class="map" ref="mapContainer" >
+
             <div id="buttonConfig">
                 <LightDarkToggle />
                 <!--<button @click="adicionarMarcadores" class="buttonConfig">
@@ -14,19 +15,14 @@
                 alt="Loading..."
             />
 
-            <Nav @toggleFilter="toggleFilter" />
+            <Nav @toggleFilter="toggleFilter" :isDark="mapModeStore.isDarkMode" />
 
-            <transition
-                name="fade"
-                @before-enter="beforeEnter"
-                @before-leave="beforeLeave"
-            >
-                <Filter
-                    v-if="showFilter"
-                    @search="handleSearch"
-                    :isDarkMode="mapModeStore.isDarkMode"
-                />
-            </transition>
+            <Filter
+                @search="handleSearch"
+                v-if="showFilter"
+                :isDark="mapModeStore.isDarkMode"
+            />
+
         </div>
     </div>
 </template>
@@ -53,6 +49,13 @@ const showFilter = shallowRef(true);
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
     inicializarMapa();
+
+    const controlElements = document.getElementsByClassName('maplibregl-ctrl-top-right');
+    for (let element of controlElements) {
+        element.style.top = 'auto';
+        element.style.bottom = '80px';
+        element.style.right = '10px';
+    }
 });
 
 const toggleFilter = () => {
@@ -202,6 +205,33 @@ watch(
             map.value.setStyle(
                 isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS
             );
+            map.value.on('load', () => {
+                const attributionControl = document.querySelector('.maplibregl-ctrl-attrib a');
+                if (attributionControl) {
+                    attributionControl.style.display = 'none';
+                }
+            });
+
+            const controlElements = document.getElementsByClassName('maplibregl-ctrl');
+            for (let element of controlElements) {
+                if (isDarkMode) {
+                    element.style.backgroundColor = '#0a0012e3';
+                    element.style.color = '#fff'
+                } else {
+                    element.style.backgroundColor = '#fff';
+                    element.style.color = '#000'
+                }
+            }
+
+            const controlIcons = document.getElementsByClassName('maplibregl-ctrl-icon');
+            for (let icon of controlIcons){
+                if(isDarkMode){
+                    icon.style.filter = 'invert(100%)'
+                }else{
+                    icon.style.filter = 'none'
+                }
+            }
+
         }
     }
 );
@@ -214,6 +244,9 @@ function adicionarMarcadores() {
 </script>
 
 <style scoped>
+.maplibregl-ctrl-attrib a {
+    display: none;
+}
 .map-wrap {
     position: relative;
 }
@@ -229,32 +262,6 @@ function adicionarMarcadores() {
     left: 50%;
     transform: translateX(-50%);
     z-index: 1500;
-}
-
-.maplibregl-ctrl-top-right {
-    right: 0;
-    bottom: 6em !important;
-    top: auto !important;
-}
-
-.maplibregl-ctrl button .maplibregl-ctrl-icon {
-    background-color: #9e73bfd4;
-    border-radius: 5px;
-}
-
-.mapboxgl-ctrl .mapboxgl-ctrl-icon,
-.maplibregl-ctrl .maplibregl-ctrl-icon {
-    transition: transform 0.5s ease;
-}
-
-.mapboxgl-ctrl .mapboxgl-ctrl-icon:hover,
-.maplibregl-ctrl .maplibregl-ctrl-icon:hover {
-    filter: none !important;
-    transform: scale(1.1);
-}
-
-.maplibregl-ctrl-group {
-    background: transparent !important;
 }
 
 #buttonConfig {
@@ -274,4 +281,10 @@ function adicionarMarcadores() {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+.maplibregl-ctrl-attrib a {
+    display: none;
+}
+
+
+
 </style>

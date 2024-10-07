@@ -1,32 +1,38 @@
 <template>
-  <nav class="navbar">
+  <nav class="navbar"
+    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
     <ul class="navbar-list">
       <li class="navbar-item">
-        <button @click="toggleFilter">
+        <button @click="toggleFilter"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }">
           <font-awesome-icon :icon="['fas', 'filter']" />
           Filter
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="goToMapMarker">
+        <button @click="goToMapMarker"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
           Map Marker
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="triggerAlert">
-          <font-awesome-icon :icon="['fas', 'bell']" />
+        <button @click="triggerAlert"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
+          <font-awesome-icon :icon="['fas', 'bell']"/>
           Alerts
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="addUser">
+        <button @click="addUser"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'user-plus']" />
           Add User
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="signInOut">
+        <button @click="signInOut"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
         </button>
@@ -35,43 +41,49 @@
   </nav>
 </template>
 
-<script lang="ts">
-import { defineComponent } from "vue";
-import {
-  faBell,
-  faMapMarkerAlt,
-  faFilter,
-  faUserPlus,
-  faSignInAlt,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+<script setup lang="ts">
+import { ref } from 'vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
-export default defineComponent({
-  name: "Navbar",
-  components: {
-    FontAwesomeIcon,
-  },
-  methods: {
-    toggleFilter() {
-      this.$emit("toggleFilter");
-    },
-    triggerAlert() {
-      console.log("Alerts clicked");
-    },
-    goToMapMarker() {
-      console.log("Map Marker clicked");
-    },
-    addUser() {
-      console.log("Add User clicked");
-    },
-    signInOut() {
-      console.log("Sign In/Out clicked");
-    },
-  },
-});
+// Define props
+const props = defineProps<{
+  isDark: boolean;
+}>();
+
+// Define emits
+const emit = defineEmits<{
+  (e: 'toggleFilter'): void;
+}>();
+
+// Methods
+const toggleFilter = () => {
+  emit('toggleFilter');
+};
+
+const triggerAlert = () => {
+  console.log('Alerts clicked');
+};
+
+const goToMapMarker = () => {
+  console.log('Map Marker clicked');
+};
+
+const addUser = () => {
+  console.log('Add User clicked');
+};
+
+const signInOut = () => {
+  console.log('Sign In/Out clicked');
+};
+
 </script>
 
 <style scoped>
+.ico-logo{
+  width: 15%;
+
+}
 .navbar {
   position: fixed;
   margin-bottom: 20px;
@@ -81,9 +93,9 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   background-color: #f7f7f7;
-  padding: 10px 30px;
+  padding: 15px 120px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px 8px 8px 8px;
+  border-radius: 30px;
   z-index: 1000;
 }
 
@@ -99,7 +111,6 @@ export default defineComponent({
   display: flex;
   align-items: center;
 }
-
 .navbar-item button {
   background: none;
   border: none;
@@ -107,8 +118,7 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  color: #4b0076;
-  font-size: 12px;
+  font-size: 17px;
   font-weight: bold;
 }
 
@@ -116,11 +126,8 @@ export default defineComponent({
   color: #7d009b;
 }
 
-.icon-alert,
-.icon-map-marker,
-.icon-filter,
-.icon-add-user,
-.icon-sign-in-out {
+.icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
+
   font-size: 18px;
   margin-bottom: 5px;
 }
@@ -130,5 +137,11 @@ export default defineComponent({
     flex-direction: column;
     gap: 10px;
   }
+}
+.dark-button{
+  color: #fff
+}
+.light-button{
+  color: #4b0076
 }
 </style>
