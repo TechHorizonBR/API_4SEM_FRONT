@@ -31,11 +31,9 @@
   const codeDevice = ref<string>('');
   const userCode = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
-  const showDateFilter = ref<boolean>(true);
-  const startDate = ref<string>('');
-  const endDate = ref<string>('');
   const emit = defineEmits(['search']);
   const props = defineProps<{isDark : boolean}>();
+  const periods = ref<{dataInicio: string | null, dataFim: string | null}>();
 
   const fetchDevices = async () => {
     try {

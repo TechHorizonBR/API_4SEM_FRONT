@@ -7,26 +7,51 @@
         <label class="label" for="endDate">End Date:</label>
         <input class="input-date" type="date" id="endDate" v-model="endDate"/>-->
 
-        <select class="filter-select" id="deviceInfo" :class="{'dark-mode-select' : isDark, 'light-mode-select' : !isDark}">
+        <select class="filter-select" id="deviceInfo" :class="{'dark-mode-select' : isDark, 'light-mode-select' : !isDark}" v-model="value" @change="updatePeriod">
             <option value="" selected disabled>
             Select an option
             </option>
-            <option value="1">Last 24 hours</option>
+            <option value="1">Last day</option>
             <option value="7">Last week</option>
             <option value="30">Last month</option>
         </select>
     </div>
+    <p>{{ dataInicio }}</p>
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
 
 const props = defineProps<{
   isDark: boolean;
 }>();
+const emit = defineEmits(['updatePeriod']);
+const value = ref<string>();
+const dataInicio = ref<string | null>(null);
+const dataFim = ref<string | null>(null);
+const today = ref<string | null>(null);
+
+const updatePeriod = () => {
+  today.value = new Date().toISOString().split('T')[0];
+  const dateObject = new Date(today.value);
+  if(value.value == '1'){
+    dateObject.setDate(dateObject.getDate() - 1);
+  }else if(value.value == '7'){
+    dateObject.setDate(dateObject.getDate() - 7);
+  }else if(value.value == '30'){
+    dateObject.setDate(dateObject.getDate() - 30);
+  }
+  dataInicio.value = dateObject.toISOString().split('T')[0];
+  dataFim.value = today.value;
+  emit('updatePeriod', {dataInicio: dataInicio.value, dataFim: dataFim.value});
+}
 
 </script>
 
 <style scoped>
+p{
+  color: white
+}
   .filter-select {
     width: 100%;
     padding: 10px;

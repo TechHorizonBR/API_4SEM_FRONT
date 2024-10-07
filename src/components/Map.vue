@@ -216,9 +216,6 @@ watch(
                     icon.style.filter = 'none'
                 }
             }
-            
-
-        
         }
     }
 );
