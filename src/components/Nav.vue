@@ -1,33 +1,39 @@
 <template>
-  <!-- Navbar na parte inferior da tela -->
-  <nav class="navbar">
+
+  <nav class="navbar"
+    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
     <ul class="navbar-list">
       <li class="navbar-item">
-        <button @click="toggleFilter">
+        <button @click="toggleFilter"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }">
           <font-awesome-icon :icon="['fas', 'filter']" />
           Filter
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="goToMapMarker">
+        <button @click="goToMapMarker"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
           Map Marker
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="triggerAlert">
-          <font-awesome-icon :icon="['fas', 'bell']" />
+        <button @click="triggerAlert"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
+          <font-awesome-icon :icon="['fas', 'bell']"/>
           Alerts
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="addUser">
+        <button @click="addUser"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'user-plus']" />
           Add User
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="signInOut">
+        <button @click="signInOut"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
         </button>
@@ -46,37 +52,51 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-export default defineComponent({
-  name: "Navbar",
-  components: {
-    FontAwesomeIcon,
-  },
-  methods: {
-    toggleFilter() {
-      this.$emit("toggleFilter");
-    },
-    triggerAlert() {
-      console.log("Alerts clicked");
-    },
-    goToMapMarker() {
-      console.log("Map Marker clicked");
-    },
-    addUser() {
-      console.log("Add User clicked");
-    },
-    signInOut() {
-      console.log("Sign In/Out clicked");
-    },
-  },
-});
+<script setup lang="ts">
+import { ref } from 'vue';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+
+// Define props
+const props = defineProps<{
+  isDark: boolean;
+}>();
+
+// Define emits
+const emit = defineEmits<{
+  (e: 'toggleFilter'): void;
+}>();
+
+// Methods
+const toggleFilter = () => {
+  emit('toggleFilter');
+};
+
+const triggerAlert = () => {
+  console.log('Alerts clicked');
+};
+
+const goToMapMarker = () => {
+  console.log('Map Marker clicked');
+};
+
+const addUser = () => {
+  console.log('Add User clicked');
+};
+
+const signInOut = () => {
+  console.log('Sign In/Out clicked');
+};
+
+
 </script>
 
 <style scoped>
-/* Navbar na parte inferior */
+.ico-logo{
+  width: 15%;
+
+}
 .navbar {
   position: fixed;
   margin-bottom: 20px;
@@ -104,7 +124,6 @@ export default defineComponent({
   display: flex;
   align-items: center;
 }
-
 .navbar-item button {
   background: none;
   border: none;
@@ -112,8 +131,7 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  color: #4b0076;
-  font-size: 12px;
+  font-size: 17px;
   font-weight: bold;
 }
 
@@ -141,6 +159,10 @@ export default defineComponent({
     align-items: center;
     border-radius: 25px;
     margin-top: -15px;
+
+.icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
+  font-size: 18px;
+  margin-bottom: 5px;
 }
 
 .user-icon-container {
@@ -170,5 +192,11 @@ export default defineComponent({
   color: white;
   font-size: 14px;
   font-weight: bold;
+}
+.dark-button{
+  color: #fff
+}
+.light-button{
+  color: #4b0076
 }
 </style>
