@@ -1,3 +1,5 @@
+Map.vue
+
 <template>
     <div :class="{'dark-controls': mapModeStore.isDarkMode, 'light-controls': !mapModeStore.isDarkMode}" class="map-wrap">
         <div class="map" ref="mapContainer" >
@@ -17,12 +19,17 @@
 
             <Nav @toggleFilter="toggleFilter" :isDark="mapModeStore.isDarkMode" />
 
-            <Filter
-                @search="handleSearch"
-                v-if="showFilter"
-                :isDark="mapModeStore.isDarkMode"
-            />
-
+            <transition
+                name="fade"
+                @before-enter="beforeEnter"
+                @before-leave="beforeLeave"
+            >
+                <Filter
+                    v-if="showFilter"
+                    @search="handleSearch"
+                    :isDark="mapModeStore.isDarkMode"
+                />
+            </transition>
         </div>
     </div>
 </template>
@@ -35,6 +42,8 @@ import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
+
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 import { useMapModeStore } from "@/stores/useMapMode";
 
