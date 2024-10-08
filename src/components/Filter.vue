@@ -49,6 +49,14 @@ interface Device {
     fetchDevices();
   });
 
+  const triggerSearch = () => {
+  emit("search", {
+    fullName: fullName.value,
+    codeDevice: codeDevice.value,
+    userCode: userCode.value,
+  });
+};
+
 </script>
 
 <style scoped>

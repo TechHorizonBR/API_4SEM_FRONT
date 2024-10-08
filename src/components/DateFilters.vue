@@ -1,11 +1,6 @@
 <template>
     <div class="filter-date" >
         <label for="" class="labels" :class="{ 'dark-mode-label' : isDark, 'light-mode-label' : !isDark }" >Information Date: </label>
-        <!--<label class="label" for="startDate">Start Date:</label>
-        <input class="input-date" type="date" id="startDate" v-model="startDate"/>
-
-        <label class="label" for="endDate">End Date:</label>
-        <input class="input-date" type="date" id="endDate" v-model="endDate"/>-->
 
         <select class="filter-select" id="deviceInfo" :class="{'dark-mode-select' : isDark, 'light-mode-select' : !isDark}" v-model="value" @change="updatePeriod">
             <option value="" selected disabled>

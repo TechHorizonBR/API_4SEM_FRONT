@@ -85,7 +85,7 @@ const handleSearch = (searchParams) => {
 const getPoints = async (id) => {
     try {
         const firstReq = await RegistrosService.getRegistros(id, 1);
-        changeLoading();
+        
         if (firstReq) {
             const allPages = firstReq.totalPages;
             transformData(firstReq.registers, 1, allPages);
@@ -157,6 +157,7 @@ async function plotPontos(allPoints, page, totalpages) {
             .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
             .addTo(map.value);
         all_markers.value.push(finishMark);
+        changeLoading();
     }
 
     allPoints.forEach((point, index) => {
