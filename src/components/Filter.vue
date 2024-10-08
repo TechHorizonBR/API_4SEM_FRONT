@@ -1,7 +1,8 @@
 <template>
   <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
-      <Autocomplete :source="devices"
+      <Autocomplete
+        :source="devices"
         v-model:modelValueFullName="fullName"
         v-model:modelValueCodeDevice="codeDevice"
         v-model:modelValueUserCode="userCode"
@@ -20,11 +21,12 @@
   import DevicesService from '../services/devices';
   import DateFilters from '../components/DateFilters.vue';
 
-  interface Device {
-    fullName: string;
-    codeDevice: string;
-    userCode: string;
-  }
+interface Device {
+  fullName: string;
+  codeDevice: string;
+  userCode: string;
+}
+
 
   const devices = ref<Device[]>([]);
   const fullName = ref<string>('');
@@ -47,10 +49,6 @@
     fetchDevices();
   });
 
-  const triggerSearch = () => {
-    emit('search', { fullName: fullName.value, codeDevice: codeDevice.value, userCode: userCode.value});
-  };
-
 </script>
 
 <style scoped>
@@ -67,6 +65,12 @@
   /*  box-shadow: 5px 5px 8px #929292;*/
 }
 
+.label {
+  width: 100%;
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 8px;
+}
 
   .label {
     width: 100%;
@@ -76,35 +80,58 @@
     font-size: 20px;
   }
 
-  .input-date {
-    width: 93%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-  }
+.filter-select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 16px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
 
-  .filter-select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 16px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-  }
+button {
+  width: 100%;
+  background-color: #35005d;
+  color: white;
+  padding: 12px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-  button {
-    width: 100%;
-    background-color: #35005D;
-    color: white;
-    padding: 12px;
-    margin-top: 16px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
+button:hover {
+  background-color: #3c0564;
+}
 
-  button:hover {
-    background-color: #3c0564;
+.fade-enter-active {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.fade-leave-active {
+  animation: fadeOutDown 0.3s ease-in forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
 </style>

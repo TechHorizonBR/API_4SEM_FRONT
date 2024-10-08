@@ -1,3 +1,5 @@
+Map.vue
+
 <template>
     <div :class="{'dark-controls': mapModeStore.isDarkMode, 'light-controls': !mapModeStore.isDarkMode}" class="map-wrap">
         <div class="map" ref="mapContainer" >
@@ -8,15 +10,26 @@
                     Add pontos
                 </button>-->
             </div>
-            <img v-if="loading" src="/loading.gif" id="loading" alt="Loading...">
+            <img
+                v-if="loading"
+                src="/loading.gif"
+                id="loading"
+                alt="Loading..."
+            />
 
             <Nav @toggleFilter="toggleFilter" :isDark="mapModeStore.isDarkMode" />
 
-            <Filter
-                @search="handleSearch"
-                v-if="showFilter"
-                :isDark="mapModeStore.isDarkMode"
-            />
+            <transition
+                name="fade"
+                @before-enter="beforeEnter"
+                @before-leave="beforeLeave"
+            >
+                <Filter
+                    v-if="showFilter"
+                    @search="handleSearch"
+                    :isDark="mapModeStore.isDarkMode"
+                />
+            </transition>
         </div>
     </div>
 </template>
@@ -29,6 +42,8 @@ import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
+
+import { faUser } from '@fortawesome/free-solid-svg-icons';
 
 import { useMapModeStore } from "@/stores/useMapMode";
 
@@ -56,12 +71,12 @@ const toggleFilter = () => {
     showFilter.value = !showFilter.value;
 };
 
-const changeLoading = () =>{
+const changeLoading = () => {
     loading.value = !loading.value;
-}
+};
 
 const handleSearch = (searchParams) => {
-    all_markers.value.forEach(marker => marker.remove());
+    all_markers.value.forEach((marker) => marker.remove());
     all_markers.value = [];
     changeLoading();
     getPoints(searchParams.userCode);
@@ -69,20 +84,27 @@ const handleSearch = (searchParams) => {
 
 const getPoints = async (id) => {
     try {
-        const req = await RegistrosService.getRegistros(id);
+        const firstReq = await RegistrosService.getRegistros(id, 1);
         changeLoading();
-        if (req) {
-            transformData(req);
+        if (firstReq) {
+            const allPages = firstReq.totalPages;
+            transformData(firstReq.registers, 1, allPages);
+            for(let page = 2; page <= allPages; page++){
+                const req = await RegistrosService.getRegistros(id, page);
+                if(req){
+                    transformData(req.registers, page, allPages);
+                }
+            }
         }
     } catch (error) {
         console.error("Error:", error);
     }
 };
 
-function transformData(data) {
+function transformData(data, page, totalpages) {
     if (data) {
         dados = data;
-        plotPontos(dados);
+        plotPontos(dados, page, totalpages);
     }
 }
 
@@ -107,7 +129,7 @@ function inicializarMapa() {
     );
 }
 
-async function plotPontos(allPoints) {
+async function plotPontos(allPoints, page, totalpages) {
     const fin = allPoints.length - 1;
 
     // Criar e adicionar marcadores para o ponto inicial e final
@@ -123,18 +145,21 @@ async function plotPontos(allPoints) {
         "finish.png"
     );
 
-    let startMark = new Marker({ element: el_start })
-        .setLngLat([allPoints[0].longitude, allPoints[0].latitude])
-        .addTo(map.value);
-    all_markers.value.push(startMark);
+    if(page === 1){
+        let startMark = new Marker({ element: el_start })
+            .setLngLat([allPoints[0].longitude, allPoints[0].latitude])
+            .addTo(map.value);
+        all_markers.value.push(startMark);
+    }
 
-    let finishMark = new Marker({ element: el_finish })
-        .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
-        .addTo(map.value);
-    all_markers.value.push(finishMark);
+    if(page === totalpages - 1){
+        let finishMark = new Marker({ element: el_finish })
+            .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
+            .addTo(map.value);
+        all_markers.value.push(finishMark);
+    }
 
     allPoints.forEach((point, index) => {
-        if (index !== 0 && index !== fin) {
             let el_point = createMarkerElement(
                 point.longitude,
                 point.latitude,
@@ -144,7 +169,6 @@ async function plotPontos(allPoints) {
                 .setLngLat([point.longitude, point.latitude])
                 .addTo(map.value);
             all_markers.value.push(defaultMark);
-        }
     });
 }
 
@@ -258,7 +282,7 @@ function adicionarMarcadores() {
     align-items: center;
 }
 
-#loading{
+#loading {
     position: absolute;
     z-index: 1600;
     top: 50%;
