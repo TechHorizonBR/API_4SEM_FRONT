@@ -121,7 +121,7 @@ export default {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  font-size: 17px;
+  font-size: 13px;
   font-weight: bold;
 }
 
