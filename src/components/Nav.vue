@@ -1,33 +1,38 @@
 <template>
-  <!-- Navbar na parte inferior da tela -->
-  <nav class="navbar">
+  <nav class="navbar"
+    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
     <ul class="navbar-list">
       <li class="navbar-item">
-        <button @click="toggleFilter">
+        <button @click="toggleFilter"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }">
           <font-awesome-icon :icon="['fas', 'filter']" />
           Filter
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="goToMapMarker">
+        <button @click="goToMapMarker"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
           Map Marker
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="triggerAlert">
-          <font-awesome-icon :icon="['fas', 'bell']" />
+        <button @click="triggerAlert"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
+          <font-awesome-icon :icon="['fas', 'bell']"/>
           Alerts
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="addUser">
+        <button @click="addUser"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'user-plus']" />
           Add User
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="signInOut">
+        <button @click="signInOut"
+        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
         </button>
@@ -47,11 +52,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-export default defineComponent({
+export default {
   name: "Navbar",
+  props: {
+    isDark: {
+      type: Boolean,
+      required: true,
+    },
+  },
   components: {
     FontAwesomeIcon,
   },
@@ -72,7 +82,7 @@ export default defineComponent({
       console.log("Sign In/Out clicked");
     },
   },
-});
+};
 </script>
 
 <style scoped>
@@ -104,7 +114,6 @@ export default defineComponent({
   display: flex;
   align-items: center;
 }
-
 .navbar-item button {
   background: none;
   border: none;
@@ -112,8 +121,7 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  color: #4b0076;
-  font-size: 12px;
+  font-size: 17px;
   font-weight: bold;
 }
 
@@ -142,13 +150,16 @@ export default defineComponent({
     border-radius: 25px;
     margin-top: -15px;
 }
+.icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
 
 .user-icon-container {
   display: flex;
   align-items: center;
   background-color: #4b0076;
   color: white;
-  /* padding: 5px 10px; */
   border-radius: 25px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   justify-content: center;
@@ -170,5 +181,11 @@ export default defineComponent({
   color: white;
   font-size: 14px;
   font-weight: bold;
+}
+.dark-button{
+  color: #fff
+}
+.light-button{
+  color: #4b0076
 }
 </style>

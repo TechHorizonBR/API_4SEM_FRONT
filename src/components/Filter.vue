@@ -1,11 +1,12 @@
 <template>
-  <div class="filter">
+  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
       <Autocomplete
         :source="devices"
         v-model:modelValueFullName="fullName"
         v-model:modelValueCodeDevice="codeDevice"
         v-model:modelValueUserCode="userCode"
+        :isDark="isDark"
       />
     </div>
 
@@ -53,6 +54,7 @@ const showDateFilter = ref<boolean>(false);
 const startDate = ref<string>("");
 const endDate = ref<string>("");
 const emit = defineEmits(["search"]);
+const props = defineProps<{isDark : boolean}>();
 
 const fetchDevices = async () => {
   try {
@@ -65,7 +67,7 @@ const fetchDevices = async () => {
 onMounted(() => {
   fetchDevices();
 });
-
+ 
 const triggerSearch = () => {
   emit("search", {
     fullName: fullName.value,
@@ -81,11 +83,11 @@ const triggerSearch = () => {
   top: 3vh;
   left: 3vw;
   padding: 25px 40px;
-  background-color: #f5f5f5e4;
+  background-color: #f7f7f7;
   border-radius: 20px;
   width: 250px;
   z-index: 1000;
-  /*  box-shadow: 5px 5px 8px #929292;*/
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .label {
@@ -101,6 +103,13 @@ const triggerSearch = () => {
   border: 1px solid #ccc;
   border-radius: 8px;
   font-size: 16px;
+}
+.label {
+  width: 100%;
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 8px;
+  font-size: 20px;
 }
 
 .filter-select {
