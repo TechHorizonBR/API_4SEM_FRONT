@@ -9,7 +9,9 @@
         :isDark="isDark"
       />
     </div>
-    <DateFilters :isDark="isDark"/>
+    <DateFilters 
+      :isDark="isDark"
+      @updatePeriod="handleUpdatePeriod" />
 
     <button @click="triggerSearch">Search</button>
   </div>
@@ -35,7 +37,15 @@ interface Device {
   const showAutocompleteFilter = ref<boolean>(true);
   const emit = defineEmits(['search']);
   const props = defineProps<{isDark : boolean}>();
-  const periods = ref<{dataInicio: string | null, dataFim: string | null}>();
+  const periods = ref<{ dataInicio: string | null, dataFim: string | null }>({
+    dataInicio: null,
+    dataFim: null
+  });
+
+  const handleUpdatePeriod = (period: { dataInicio: string | null; dataFim: string | null }) => {
+    periods.value.dataInicio = period.dataInicio;
+    periods.value.dataFim = period.dataFim;
+  };
 
   const fetchDevices = async () => {
     try {
@@ -54,6 +64,8 @@ interface Device {
     fullName: fullName.value,
     codeDevice: codeDevice.value,
     userCode: userCode.value,
+    dataInicio: periods.value.dataInicio,
+    dataFim: periods.value.dataFim
   });
 };
 
