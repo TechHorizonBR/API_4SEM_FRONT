@@ -49,8 +49,7 @@ p{
 }
   .filter-select {
     width: 100%;
-    padding: 10px;
-    margin-top: 16px;
+    padding: 9px;
     border: 1px solid rgb(156, 156, 156);
     border-radius: 8px;
     font-size: 16px;

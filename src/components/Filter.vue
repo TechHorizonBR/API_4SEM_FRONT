@@ -79,7 +79,7 @@ interface Device {
     padding: 25px 40px;
     background-color: #f7f7f7;
     border-radius: 20px;
-    width: 250px;
+    width: 220px;
     z-index: 1000;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
   /*  box-shadow: 5px 5px 8px #929292;*/
@@ -99,15 +99,6 @@ interface Device {
     margin-top: 8px;
     font-size: 20px;
   }
-
-.filter-select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 16px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-}
 
 button {
   width: 100%;

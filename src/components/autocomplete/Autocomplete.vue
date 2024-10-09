@@ -165,7 +165,7 @@ input{
 
   .dropdown-input {
     width: 93%;
-    padding: 10px;
+    padding: 9px;
     border-radius: 8px;
     font-size: 16px;
   }
