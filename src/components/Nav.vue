@@ -1,38 +1,50 @@
 <template>
-  <nav class="navbar"
-    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
+  <nav
+    class="navbar"
+    :style="{ backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7' }"
+  >
     <ul class="navbar-list">
       <li class="navbar-item">
-        <button @click="toggleFilter"
-          :class="{ 'dark-button': isDark, 'light-button': !isDark }">
+        <button
+          @click="toggleFilter"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'filter']" />
           Filter
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="goToMapMarker"
-        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
+        <button
+          @click="goToMapMarker"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
           Map Marker
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="triggerAlert"
-        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
-          <font-awesome-icon :icon="['fas', 'bell']"/>
+        <button
+          @click="triggerAlert"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
+          <font-awesome-icon :icon="['fas', 'bell']" />
           Alerts
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="addUser"
-        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
+        <button
+          @click="addUser"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
           Add User
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="signInOut"
-        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
+        <button
+          @click="signInOut"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
         </button>
@@ -43,17 +55,23 @@
   <!-- Campo Username no topo da tela -->
   <div class="username-container">
     <div class="user-icon">
-        <font-awesome-icon :icon="['fas', 'user']" />
-      </div>
-      <div class="username-label-container">
-        <div class="username-label">Username</div>
-      </div>
+      <font-awesome-icon :icon="['fas', 'user']" />
+    </div>
+    <div class="username-label-container">
+      <div class="username-label">Username</div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import {
+  faBell,
+  faMapMarkerAlt,
+  faFilter,
+  faUserPlus,
+  faSignInAlt,
+} from "@fortawesome/free-solid-svg-icons";
 
 export default {
   name: "Navbar",
@@ -133,25 +151,29 @@ export default {
 /* Container do botão de Username no topo */
 .username-container {
   position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1001;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .username-label-container {
   background: #4b0076;
-    width: 120px;
-    height: 30px;
-    display: inline-flex;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
-    border-radius: 25px;
-    margin-top: -15px;
+  width: 120px;
+  height: 30px;
+  display: inline-flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  border-radius: 25px;
+  margin-top: -15px;
 }
-.icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
+.icon-alert,
+.icon-map-marker,
+.icon-filter,
+.icon-add-user,
+.icon-sign-in-out {
   font-size: 18px;
   margin-bottom: 5px;
 }
@@ -168,14 +190,14 @@ export default {
 
 .user-icon {
   background-color: #4b0076;
-    color: white;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    font-size: 28px;
+  color: white;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 28px;
 }
 
 .username-label {
@@ -183,16 +205,16 @@ export default {
   font-size: 14px;
   font-weight: bold;
 }
-.dark-button{
-  color: #fff
+.dark-button {
+  color: #fff;
 }
-.light-button{
-  color: #4b0076
+.light-button {
+  color: #4b0076;
 }
-.dark-button{
-  color: #fff
+.dark-button {
+  color: #fff;
 }
-.light-button{
-  color: #4b0076
+.light-button {
+  color: #4b0076;
 }
 </style>

@@ -1,48 +1,57 @@
 <template>
   <div class="autocomplete">
     <div class="autocomplete-fullName div-inputs">
-      <label class="label" for="name" 
-        :style="{color: isDark ? '#fff' : '#000'}">Name:</label>
+      <label
+        class="label"
+        for="name"
+        :style="{ color: isDark ? '#fff' : '#000' }"
+        >Name:</label
+      >
       <input
         type="text"
         v-model="searchName"
         @input="handleNameInput"
         class="dropdown-input"
-
-        :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000', 
-                border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)' }"
+        :style="{
+          backgroundColor: isDark ? '#383838' : '#FFF',
+          color: isDark ? '#FFF' : '#000',
+          border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)',
+        }"
       />
 
-      <ul v-if="showNameResults" class="dropdown-menu" >
+      <ul v-if="showNameResults" class="dropdown-menu">
         <li
           v-for="result in nameResults"
           :key="result.nome"
           @click="setSelected(result, 'name')"
           class="dropdown-item"
-
-          :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000'}"
-          
-          >
+          :style="{
+            backgroundColor: isDark ? '#383838' : '#FFF',
+            color: isDark ? '#FFF' : '#000',
+          }"
+        >
           {{ result.nome }}
         </li>
       </ul>
     </div>
 
     <div class="autocomplete-codeDevice div-inputs">
-      <label class="label" for="deviceInfo"
-      :style="{color: isDark ? '#fff' : '#000'}"
-      >Device:</label>
+      <label
+        class="label"
+        for="deviceInfo"
+        :style="{ color: isDark ? '#fff' : '#000' }"
+        >Device:</label
+      >
       <input
         type="text"
         v-model="searchCode"
         @input="handleCodeInput"
         class="dropdown-input"
-
-        :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000', 
-                border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)' }"
+        :style="{
+          backgroundColor: isDark ? '#383838' : '#FFF',
+          color: isDark ? '#FFF' : '#000',
+          border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)',
+        }"
       />
       <ul v-if="showCodeResults" class="dropdown-menu">
         <li
@@ -50,11 +59,11 @@
           :key="result.codigoDevice"
           @click="setSelected(result, 'code')"
           class="dropdown-item"
-          :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000'}"
-          
-          
-          >
+          :style="{
+            backgroundColor: isDark ? '#383838' : '#FFF',
+            color: isDark ? '#FFF' : '#000',
+          }"
+        >
           {{ result.codigoDevice }}
         </li>
       </ul>
@@ -145,30 +154,30 @@ const handleCodeInput = (event: Event) => {
 </script>
 
 <style scoped>
-.div-inputs{
+.div-inputs {
   margin: 0 0 2vh 0;
 }
-input{
+input {
   outline: none;
 }
-  .label{
-    font-size: 1.2em;
-  }
-  input{
-    border: none;
-  }
-  .autocomplete {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-  }
+.label {
+  font-size: 1.2em;
+}
+input {
+  border: none;
+}
+.autocomplete {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
 
-  .dropdown-input {
-    width: 93%;
-    padding: 9px;
-    border-radius: 8px;
-    font-size: 16px;
-  }
+.dropdown-input {
+  width: 93%;
+  padding: 9px;
+  border-radius: 8px;
+  font-size: 16px;
+}
 
 .dropdown-menu {
   position: absolute;
