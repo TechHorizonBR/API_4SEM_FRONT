@@ -6,6 +6,7 @@ import router from "./router";
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faUser, faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+
 import "./styles.css";
 
 // Adiciona os ícones à biblioteca do FontAwesome, incluindo o ícone de filtro (faFilter)

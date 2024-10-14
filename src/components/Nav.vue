@@ -52,51 +52,45 @@
   </div>
 </template>
 
+<script lang="ts">
 
-<script setup lang="ts">
-import { ref } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
-// Define props
-const props = defineProps<{
-  isDark: boolean;
-}>();
-
-// Define emits
-const emit = defineEmits<{
-  (e: 'toggleFilter'): void;
-}>();
-
-// Methods
-const toggleFilter = () => {
-  emit('toggleFilter');
+export default {
+  name: "Navbar",
+  props: {
+    isDark: {
+      type: Boolean,
+      required: true,
+    },
+  },
+  components: {
+    FontAwesomeIcon,
+  },
+  methods: {
+    toggleFilter() {
+      this.$emit("toggleFilter");
+    },
+    triggerAlert() {
+      console.log("Alerts clicked");
+    },
+    goToMapMarker() {
+      console.log("Map Marker clicked");
+    },
+    addUser() {
+      console.log("Add User clicked");
+    },
+    signInOut() {
+      console.log("Sign In/Out clicked");
+    },
+  },
 };
-
-const triggerAlert = () => {
-  console.log('Alerts clicked');
-};
-
-const goToMapMarker = () => {
-  console.log('Map Marker clicked');
-};
-
-const addUser = () => {
-  console.log('Add User clicked');
-};
-
-const signInOut = () => {
-  console.log('Sign In/Out clicked');
-};
-
 
 </script>
 
 <style scoped>
-.ico-logo{
-  width: 15%;
-
-}
+/* Navbar na parte inferior */
 .navbar {
   position: fixed;
   margin-bottom: 20px;
@@ -131,7 +125,7 @@ const signInOut = () => {
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  font-size: 17px;
+  font-size: 13px;
   font-weight: bold;
 }
 
@@ -159,6 +153,7 @@ const signInOut = () => {
     align-items: center;
     border-radius: 25px;
     margin-top: -15px;
+}
 
 .icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
   font-size: 18px;
@@ -170,7 +165,6 @@ const signInOut = () => {
   align-items: center;
   background-color: #4b0076;
   color: white;
-  /* padding: 5px 10px; */
   border-radius: 25px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   justify-content: center;
@@ -192,6 +186,12 @@ const signInOut = () => {
   color: white;
   font-size: 14px;
   font-weight: bold;
+}
+.dark-button{
+  color: #fff
+}
+.light-button{
+  color: #4b0076
 }
 .dark-button{
   color: #fff

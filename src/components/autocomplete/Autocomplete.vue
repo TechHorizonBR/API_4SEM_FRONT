@@ -21,7 +21,9 @@
           @click="setSelected(result, 'name')"
           class="dropdown-item"
           :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000'}">
+                color: isDark ? '#FFF' : '#000'}"
+          
+          >
           {{ result.nome }}
         </li>
       </ul>
@@ -159,7 +161,7 @@ input{
 
   .dropdown-input {
     width: 93%;
-    padding: 10px;
+    padding: 9px;
     border-radius: 8px;
     font-size: 16px;
   }

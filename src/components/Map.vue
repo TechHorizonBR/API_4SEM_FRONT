@@ -3,6 +3,7 @@ Map.vue
 <template>
     <div :class="{'dark-controls': mapModeStore.isDarkMode, 'light-controls': !mapModeStore.isDarkMode}" class="map-wrap">
         <div class="map" ref="mapContainer" >
+
             <div id="buttonConfig">
                 <LightDarkToggle />
                 <!--<button @click="adicionarMarcadores" class="buttonConfig">
@@ -18,11 +19,17 @@ Map.vue
 
             <Nav @toggleFilter="toggleFilter" :isDark="mapModeStore.isDarkMode" />
 
-            <Filter
-                @search="handleSearch"
-                v-if="showFilter"
-                :isDark="mapModeStore.isDarkMode"
-            />
+            <transition
+                name="fade"
+                @before-enter="beforeEnter"
+                @before-leave="beforeLeave"
+            >
+                <Filter
+                    v-if="showFilter"
+                    @search="handleSearch"
+                    :isDark="mapModeStore.isDarkMode"
+                />
+            </transition>
         </div>
     </div>
 </template>
@@ -72,18 +79,18 @@ const handleSearch = (searchParams) => {
     all_markers.value.forEach((marker) => marker.remove());
     all_markers.value = [];
     changeLoading();
-    getPoints(searchParams.userCode);
+    getPoints(searchParams.userCode, searchParams.dataInicio, searchParams.dataFim);
 };
 
-const getPoints = async (id) => {
+const getPoints = async (id, dataInicio, dataFim) => {
     try {
-        const firstReq = await RegistrosService.getRegistros(id, 1);
-        changeLoading();
+        const firstReq = await RegistrosService.getRegistros(id, 0, dataInicio, dataFim);
+        
         if (firstReq) {
             const allPages = firstReq.totalPages;
-            transformData(firstReq.registers, 1, allPages);
-            for(let page = 2; page <= allPages; page++){
-                const req = await RegistrosService.getRegistros(id, page);
+            transformData(firstReq.registers, 0, allPages);
+            for(let page = 1; page <= allPages; page++){
+                const req = await RegistrosService.getRegistros(id, page, dataInicio, dataFim);
                 if(req){
                     transformData(req.registers, page, allPages);
                 }
@@ -150,6 +157,7 @@ async function plotPontos(allPoints, page, totalpages) {
             .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
             .addTo(map.value);
         all_markers.value.push(finishMark);
+        changeLoading();
     }
 
     allPoints.forEach((point, index) => {
