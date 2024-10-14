@@ -3,7 +3,7 @@ Map.vue
 <template>
     <div :class="{'dark-controls': mapModeStore.isDarkMode, 'light-controls': !mapModeStore.isDarkMode}" class="map-wrap">
         <div class="map" ref="mapContainer" >
-            
+
             <div id="buttonConfig">
                 <LightDarkToggle />
                 <!--<button @click="adicionarMarcadores" class="buttonConfig">

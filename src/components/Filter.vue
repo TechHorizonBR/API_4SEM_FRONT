@@ -29,7 +29,6 @@ interface Device {
   userCode: string;
 }
 
-
   const devices = ref<Device[]>([]);
   const fullName = ref<string>('');
   const codeDevice = ref<string>('');
@@ -59,6 +58,7 @@ interface Device {
     fetchDevices();
   });
 
+
   const triggerSearch = () => {
   emit("search", {
     fullName: fullName.value,
@@ -74,15 +74,14 @@ interface Device {
 <style scoped>
 .filter {
   position: absolute;
-    top: 3vh;
-    left: 3vw;
-    padding: 25px 40px;
-    background-color: #f7f7f7;
-    border-radius: 20px;
-    width: 220px;
-    z-index: 1000;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  /*  box-shadow: 5px 5px 8px #929292;*/
+  top: 3vh;
+  left: 3vw;
+  padding: 25px 40px;
+  background-color: #f7f7f7;
+  border-radius: 20px;
+  width: 220px;
+  z-index: 1000;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .label {
