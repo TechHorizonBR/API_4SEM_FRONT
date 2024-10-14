@@ -1,34 +1,22 @@
 Map.vue
 
 <template>
-    <div :class="{'dark-controls': mapModeStore.isDarkMode, 'light-controls': !mapModeStore.isDarkMode}" class="map-wrap">
-        <div class="map" ref="mapContainer" >
-            
+    <div :class="{ 'dark-controls': mapModeStore.isDarkMode, 'light-controls': !mapModeStore.isDarkMode }"
+        class="map-wrap">
+        <div class="map" ref="mapContainer">
+
             <div id="buttonConfig">
                 <LightDarkToggle />
                 <!--<button @click="adicionarMarcadores" class="buttonConfig">
                     Add pontos
                 </button>-->
             </div>
-            <img
-                v-if="loading"
-                src="/loading.gif"
-                id="loading"
-                alt="Loading..."
-            />
+            <img v-if="loading" src="/loading.gif" id="loading" alt="Loading..." />
 
             <Nav @toggleFilter="toggleFilter" :isDark="mapModeStore.isDarkMode" />
 
-            <transition
-                name="fade"
-                @before-enter="beforeEnter"
-                @before-leave="beforeLeave"
-            >
-                <Filter
-                    v-if="showFilter"
-                    @search="handleSearch"
-                    :isDark="mapModeStore.isDarkMode"
-                />
+            <transition name="fade" @before-enter="beforeEnter" @before-leave="beforeLeave">
+                <Filter v-if="showFilter" @search="handleSearch" :isDark="mapModeStore.isDarkMode" />
             </transition>
         </div>
     </div>
@@ -85,13 +73,13 @@ const handleSearch = (searchParams) => {
 const getPoints = async (id, dataInicio, dataFim) => {
     try {
         const firstReq = await RegistrosService.getRegistros(id, 0, dataInicio, dataFim);
-        
+
         if (firstReq) {
             const allPages = firstReq.totalPages;
             transformData(firstReq.registers, 0, allPages);
-            for(let page = 1; page <= allPages; page++){
+            for (let page = 1; page <= allPages; page++) {
                 const req = await RegistrosService.getRegistros(id, page, dataInicio, dataFim);
-                if(req){
+                if (req) {
                     transformData(req.registers, page, allPages);
                 }
             }
@@ -132,11 +120,13 @@ function inicializarMapa() {
 async function plotPontos(allPoints, page, totalpages) {
     const fin = allPoints.length - 1;
 
+
     // Criar e adicionar marcadores para o ponto inicial e final
     let el_start = createMarkerElement(
         allPoints[0].longitude,
         allPoints[0].latitude,
-        "start.png"
+        "start.png",
+
     );
 
     let el_finish = createMarkerElement(
@@ -145,14 +135,14 @@ async function plotPontos(allPoints, page, totalpages) {
         "finish.png"
     );
 
-    if(page === 1){
+    if (page === 1) {
         let startMark = new Marker({ element: el_start })
             .setLngLat([allPoints[0].longitude, allPoints[0].latitude])
             .addTo(map.value);
         all_markers.value.push(startMark);
     }
 
-    if(page === totalpages - 1){
+    if (page === totalpages - 1) {
         let finishMark = new Marker({ element: el_finish })
             .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
             .addTo(map.value);
@@ -160,26 +150,59 @@ async function plotPontos(allPoints, page, totalpages) {
         changeLoading();
     }
 
+    const primeiroTempo = { horario, controle: false };
+
     allPoints.forEach((point, index) => {
+        if (!point.isStopped && primeiroTempo.controle === false) {
+            primeiroTempo.controle = false;
+
             let el_point = createMarkerElement(
                 point.longitude,
                 point.latitude,
                 "pin.png"
             );
-            let defaultMark = new Marker({ element: el_point })
-                .setLngLat([point.longitude, point.latitude])
-                .addTo(map.value);
-            all_markers.value.push(defaultMark);
+        }
+        else {
+            if (primeiroTempo.controle === false) {
+                primeiroTempo.horario = new Date(point.dataHora);
+                primeiroTempo.controle = true;
+            }
+            if (primeiroTempo.controle === true && point.isStopped === false){
+                const tempoTotal = new Date(point.dataHora) - primeiroTempo.horario;
+                primeiroTempo.controle = false;
+                
+                let el_point = createMarkerElement(
+                    point.longitude,
+                    point.latitude,
+                    "pin.png",
+                    tempoTotal
+                );
+
+            }
+
+        }
+
+
+
+
+
+
+
+
+        let defaultMark = new Marker({ element: el_point })
+            .setLngLat([point.longitude, point.latitude])
+            .addTo(map.value);
+        all_markers.value.push(defaultMark);
     });
 }
 
 // Função para criar um elemento de marcador personalizado
-function createMarkerElement(lng, lat, imgSrc) {
+function createMarkerElement(lng, lat, imgSrc, stopped_time) {
     let el = document.createElement("div");
     let img = document.createElement("img");
     let son = document.createElement("div");
 
-    son.textContent = `Long: ${lng}, Lat: ${lat}`;
+    son.textContent = `Parado por ${stopped_time} minutos.`;
     son.style.backgroundColor = "#FFF";
     son.style.display = "block";
     son.style.opacity = "0";
@@ -234,10 +257,10 @@ watch(
             }
 
             const controlIcons = document.getElementsByClassName('maplibregl-ctrl-icon');
-            for (let icon of controlIcons){
-                if(isDarkMode){
+            for (let icon of controlIcons) {
+                if (isDarkMode) {
                     icon.style.filter = 'invert(100%)'
-                }else{
+                } else {
                     icon.style.filter = 'none'
                 }
             }
@@ -256,6 +279,7 @@ function adicionarMarcadores() {
 .maplibregl-ctrl-attrib a {
     display: none;
 }
+
 .map-wrap {
     position: relative;
 }
@@ -290,10 +314,8 @@ function adicionarMarcadores() {
     left: 50%;
     transform: translate(-50%, -50%);
 }
+
 .maplibregl-ctrl-attrib a {
     display: none;
 }
-
-
-
 </style>
