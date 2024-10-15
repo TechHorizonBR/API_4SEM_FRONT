@@ -11,7 +11,6 @@
             <option value="30">Last month</option>
         </select>
     </div>
-    <p>{{ dataInicio }}</p>
 </template>
 
 <script lang="ts" setup>
