@@ -14,6 +14,21 @@
       @updatePeriod="handleUpdatePeriod" />
 
     <button @click="triggerSearch">Search</button>
+
+
+    <div class="selected-users">
+      <h3 v-if="selectedUsers.length !== 0" :class=" isDark ? 'labelDark' : 'labelLight'">
+        Selected Users
+      </h3>
+      <SelectedUser v-for="user in selectedUsers" 
+        :nameUser="user"
+        :isDark="isDark" 
+        @removeUser="handleRemoveUser" />
+    </div>
+
+    <p v-if="showMessage">
+      Usuário já selecionado
+    </p>
   </div>
 </template>
 
@@ -22,24 +37,27 @@
   import Autocomplete from './autocomplete/Autocomplete.vue';
   import DevicesService from '../services/devices';
   import DateFilters from '../components/DateFilters.vue';
+  import SelectedUser from './SelectedUser.vue';
 
-interface Device {
-  fullName: string;
-  codeDevice: string;
-  userCode: string;
-}
+  interface Device {
+    fullName: string;
+    codeDevice: string;
+    userCode: string;
+  }
 
   const devices = ref<Device[]>([]);
   const fullName = ref<string>('');
   const codeDevice = ref<string>('');
   const userCode = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
-  const emit = defineEmits(['search']);
+  const emit = defineEmits(['search', 'removeUser']);
   const props = defineProps<{isDark : boolean}>();
   const periods = ref<{ dataInicio: string | null, dataFim: string | null }>({
     dataInicio: null,
     dataFim: null
   });
+  const selectedUsers = ref<string[]>([]);
+  const showMessage = ref<boolean>();
 
   const handleUpdatePeriod = (period: { dataInicio: string | null; dataFim: string | null }) => {
     periods.value.dataInicio = period.dataInicio;
@@ -60,6 +78,16 @@ interface Device {
 
 
   const triggerSearch = () => {
+
+  if(selectedUsers.value.includes(fullName.value)){
+      showMessage.value = true;
+      setTimeout(() => {
+          showMessage.value = false;
+      }, 3000);
+  }else{
+    selectedUsers.value.push(fullName.value);
+  }
+
   emit("search", {
     fullName: fullName.value,
     codeDevice: codeDevice.value,
@@ -68,6 +96,14 @@ interface Device {
     dataFim: periods.value.dataFim
   });
 };
+
+  const handleRemoveUser = (username: string) => {
+    const index = selectedUsers.value.indexOf(username);
+
+    if(index !== -1){
+      selectedUsers.value.splice(index, 1);
+    }
+  }
 
 </script>
 
@@ -143,5 +179,16 @@ button:hover {
     transform: translateY(20px);
   }
 }
-
+.labelDark{
+  color: white;
+}
+.labelLight{
+  color: black;
+}
+h3{
+  font-weight: normal;
+}
+.selected-users{
+  margin: 15% 0 0 0;
+}
 </style>
