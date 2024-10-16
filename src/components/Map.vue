@@ -182,13 +182,6 @@ async function plotPontos(allPoints, page, totalpages) {
 
         }
 
-
-
-
-
-
-
-
         let defaultMark = new Marker({ element: el_point })
             .setLngLat([point.longitude, point.latitude])
             .addTo(map.value);
@@ -201,8 +194,13 @@ function createMarkerElement(lng, lat, imgSrc, stopped_time) {
     let el = document.createElement("div");
     let img = document.createElement("img");
     let son = document.createElement("div");
-
-    son.textContent = `Parado por ${stopped_time} minutos.`;
+    if(stopped_time) {
+        
+    }
+    else{
+        son.textContent = `Lat: ${lat} Lon: ${lng}`;
+    }
+    
     son.style.backgroundColor = "#FFF";
     son.style.display = "block";
     son.style.opacity = "0";
