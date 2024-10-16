@@ -25,7 +25,7 @@ Map.vue
                 @before-leave="beforeLeave"
             >
                 <Filter
-                    v-if="showFilter"
+                    v-show="showFilter"
                     @search="handleSearch"
                     :isDark="mapModeStore.isDarkMode"
                 />
