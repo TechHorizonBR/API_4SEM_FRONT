@@ -8,26 +8,22 @@
     </label>
 
         <div class="periods" :class="{ 'dark-mode-radios' : isDark, 'light-mode-radios' : !isDark }">
+          
             <div class="radios">
-              <input type="radio" name="today-radio" id="today-radio" value="1" v-model="value">
+              <input type="radio" name="today-radio" id="today-radio" value="1" v-model="value" @change="updatePeriod">
               <label for="today-radio">Last day</label>
             </div>
             
             <div class="radios">
-              <input type="radio" name="week-radio" id="week-radio" value="7" v-model="value">
+              <input type="radio" name="week-radio" id="week-radio" value="7" v-model="value" @change="updatePeriod">
               <label for="week-radio">Last Week</label>
             </div>
             
             <div class="radios">
-              <input type="radio" name="month-radio" id="month-radio" value="30" v-model="value">
+              <input type="radio" name="month-radio" id="month-radio" value="30" v-model="value" @change="updatePeriod">
               <label for="month-radio">Last Month</label>
             </div>
-            
-            <div class="radios">
-              <input type="radio" name="year-radio" id="year-radio" value="365" v-model="value">
-              <label for="year-radio">Last Year</label>
-            </div>
-            
+
             
         </div>
 
@@ -59,9 +55,6 @@ const updatePeriod = () => {
     dateObject.setDate(dateObject.getDate() - 30);
   }
 
-  if(value.value == '365'){
-    dateObject.setDate(dateObject.getDate() - 365);
-  }
   dataInicio.value = dateObject.toISOString().split('T')[0];
   dataFim.value = today.value;
   emit("updatePeriod", {

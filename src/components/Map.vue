@@ -48,7 +48,7 @@ const mapModeStore = useMapModeStore();
 let dados;
 const all_markers = shallowRef([]);
 const loading = shallowRef(false);
-const showFilter = shallowRef(true);
+const showFilter = shallowRef(false);
 
 onMounted(() => {
   config.apiKey = "tF1lf7jSig6Ou8IuaLtw";

@@ -1,8 +1,8 @@
 <template>
-  <div
-    class="filter"
-    :style="{ backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7' }"
-  >
+
+  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
+    <!--<h2 :class="isDark ? 'title-filter-dark' : 'title-filter-light'" class="title-filter">LocalTracker</h2>-->
+
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
       <Autocomplete
         :source="devices"
@@ -17,15 +17,17 @@
     <button @click="triggerSearch">Search</button>
 
 
-    <div class="selected-users">
+    <div :class="{'selected-users' : selectedUsers.length !== 0}">
       <h3 v-if="selectedUsers.length !== 0" :class=" isDark ? 'labelDark' : 'labelLight'">
         Selected Users
       </h3>
-      <SelectedUser v-for="user in selectedUsers" 
+      <div class="users-scrool">
+        <SelectedUser v-for="user in selectedUsers" 
         :nameUser="user.nameUser"
         :isDark="isDark" 
         :cicle-color="user.cicleColor"
         @removeUser="handleRemoveUser" />
+      </div>
     </div>
 
     <p v-if="showMessage">
@@ -113,12 +115,11 @@ onMounted(() => {
     }
   }
   const generateRandomColor = () => {
-      const letters = '0123456789ABCDEF';
-      let color = '#';
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
+    const red = Math.floor(Math.random() * 56 + 200).toString(16);  // Valores altos para vermelho
+  const green = Math.floor(Math.random() * 56 + 200).toString(16); // Valores altos para verde
+  const blue = Math.floor(Math.random() * 56 + 200).toString(16);  // Valores altos para azul
+
+  return `#${red.padStart(2, '0')}${green.padStart(2, '0')}${blue.padStart(2, '0')}`;
  }
 
 </script>
@@ -129,11 +130,10 @@ onMounted(() => {
   top: 3vh;
   left: 3vw;
   padding: 25px 40px;
-  background-color: #f7f7f7;
+  background-color: white;
   border-radius: 20px;
-  width: 220px;
   z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
 }
 
 .label {
@@ -206,5 +206,39 @@ h3{
 }
 .selected-users{
   margin: 15% 0 0 0;
+}
+.users-scrool{
+  overflow-y: auto;
+  max-height: 25vh;
+}
+
+.users-scrool::-webkit-scrollbar {
+  width: 10px; /* Define a largura da barra de rolagem */
+}
+
+/* Estilo da parte "ativa" da barra de rolagem (thumb) */
+.users-scrool::-webkit-scrollbar-thumb {
+  background-color: #35005d; /* Cor escura */
+  border-radius: 10px; /* Bordas arredondadas para um visual mais suave */
+}
+
+.users-scrool::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+.title-filter-dark{
+  color: white;
+}
+.title-filter-light{
+  color: #35005d
+}
+.title-filter{
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 2.3em;
+}
+h1{
+  text-align: center;
 }
 </style>
