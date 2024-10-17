@@ -22,14 +22,8 @@
           Map Marker
         </button>
       </li>
-      <li class="navbar-item">
-        <button
-          @click="triggerAlert"
-          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
-        >
-          <font-awesome-icon :icon="['fas', 'bell']" />
-          Alerts
-        </button>
+      <li class="navbar-item logo">
+        <img src="..\assets\localTracker.ico" alt="Logo" class="logo-image" />
       </li>
       <li class="navbar-item">
         <button
@@ -198,6 +192,15 @@ export default {
   align-items: center;
   border-radius: 50%;
   font-size: 28px;
+}
+
+.navbar-item logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  height: 40px;
 }
 
 .username-label {
