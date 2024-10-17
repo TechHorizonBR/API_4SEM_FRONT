@@ -1,6 +1,6 @@
 <template>
     <div :class="isDark ? 'selected-user-dark' : 'selected-user-light'" class="selected-user">
-        <p id="iniciais">{{ workingOnName.iniciais }}</p>
+        <p id="iniciais" :style="{backgroundColor: props.cicleColor}">{{ workingOnName.iniciais }}</p>
         <p class="name">{{ workingOnName.name }}</p>
         <button @click="removeUser">X</button>
     </div>
@@ -13,7 +13,8 @@ import { computed } from 'vue';
 
  const props = defineProps<{
     nameUser: string,
-    isDark: boolean
+    isDark: boolean,
+    cicleColor: string
  }>();
 
  const emit = defineEmits(['removeUser']);
@@ -21,14 +22,16 @@ import { computed } from 'vue';
  const removeUser = () => {
     emit('removeUser', props.nameUser)
  }
-
+ 
  const workingOnName = computed(() => {
     const nameParts = props.nameUser.split(' ');
     const names = props.nameUser.split(' ');
     const firstName = names[0];
     const secondName = names[1];
+   
     return {name: nameParts.slice(0, 2).join(' '), iniciais: firstName[0]+secondName[0]};
 });
+
 
  </script>
 
@@ -67,6 +70,13 @@ import { computed } from 'vue';
     white-space: nowrap;       /* Evita que o texto quebre a linha */
   overflow: hidden;          /* Esconde o texto que ultrapassar o limite */
   text-overflow: ellipsis;
-    
+ }
+ #iniciais{
+   background: blue;
+   padding: 0.1em;
+   border-radius: 50%;
+   width: 20px;
+   text-align: center;
+   height: 20px;
  }
 </style>

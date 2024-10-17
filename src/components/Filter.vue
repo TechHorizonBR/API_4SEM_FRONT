@@ -21,8 +21,9 @@
         Selected Users
       </h3>
       <SelectedUser v-for="user in selectedUsers" 
-        :nameUser="user"
+        :nameUser="user.nameUser"
         :isDark="isDark" 
+        :cicle-color="user.cicleColor"
         @removeUser="handleRemoveUser" />
     </div>
 
@@ -56,7 +57,10 @@
     dataInicio: null,
     dataFim: null
   });
-  const selectedUsers = ref<string[]>([]);
+  const selectedUsers = ref<Array<{
+    nameUser: string,
+    cicleColor: string
+  }>>([]);
   const showMessage = ref<boolean>();
 
   const handleUpdatePeriod = (period: { dataInicio: string | null; dataFim: string | null }) => {
@@ -79,31 +83,43 @@
 
   const triggerSearch = () => {
 
-  if(selectedUsers.value.includes(fullName.value)){
+  if(selectedUsers.value.some(user => user.nameUser === fullName.value)){
       showMessage.value = true;
       setTimeout(() => {
           showMessage.value = false;
       }, 3000);
   }else{
-    selectedUsers.value.push(fullName.value);
-  }
-
-  emit("search", {
-    fullName: fullName.value,
-    codeDevice: codeDevice.value,
-    userCode: userCode.value,
-    dataInicio: periods.value.dataInicio,
-    dataFim: periods.value.dataFim
-  });
+    const color = generateRandomColor()
+    selectedUsers.value.push({
+      nameUser: fullName.value,
+      cicleColor: color
+    });
+    emit("search", {
+      fullName: fullName.value,
+      codeDevice: codeDevice.value,
+      userCode: userCode.value,
+      dataInicio: periods.value.dataInicio,
+      dataFim: periods.value.dataFim,
+      cicleColor: color
+    });
+  }  
 };
 
   const handleRemoveUser = (username: string) => {
-    const index = selectedUsers.value.indexOf(username);
+    const index = selectedUsers.value.findIndex(user => user.nameUser === username);
 
     if(index !== -1){
       selectedUsers.value.splice(index, 1);
     }
   }
+  const generateRandomColor = () => {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+ }
 
 </script>
 
