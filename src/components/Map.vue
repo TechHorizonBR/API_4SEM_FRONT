@@ -1,5 +1,3 @@
-Map.vue
-
 <template>
   <div
     :class="{
@@ -19,19 +17,19 @@ Map.vue
 
       <Nav @toggleFilter="toggleFilter" :isDark="mapModeStore.isDarkMode" />
 
-      <transition
-        name="fade"
-        @before-enter="beforeEnter"
-        @before-leave="beforeLeave"
-      >
-        <Filter
-          v-if="showFilter"
-          @search="handleSearch"
-          :isDark="mapModeStore.isDarkMode"
-        />
-      </transition>
+            <transition
+                name="fade"
+                @before-enter="beforeEnter"
+                @before-leave="beforeLeave"
+            >
+                <Filter
+                    v-show="showFilter"
+                    @search="handleSearch"
+                    :isDark="mapModeStore.isDarkMode"
+                />
+            </transition>
+        </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -42,9 +40,6 @@ import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
-
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-
 import { useMapModeStore } from "@/stores/useMapMode";
 
 const mapContainer = shallowRef(null);
@@ -89,29 +84,29 @@ const handleSearch = (searchParams) => {
 };
 
 const getPoints = async (id, dataInicio, dataFim) => {
-  try {
-    const firstReq = await RegistrosService.getRegistros(
-      id,
-      0,
-      dataInicio,
-      dataFim,
-    );
+    try {
+        const firstReq = await RegistrosService.getRegistros(id, 0, dataInicio, dataFim);
+        
+        if (firstReq) {
+            const allPages = firstReq.totalPages;
+            transformData(firstReq.registers, 0, allPages);
+            map.value.fitBounds([
+            [firstReq.maxMinCoordinates.minLongitude - 1, firstReq.maxMinCoordinates.minLatitude - 1],
+            [firstReq.maxMinCoordinates.maxLongitude + 1, firstReq.maxMinCoordinates.maxLatitude + 1]
+        ]);
 
-    if (firstReq) {
-      const allPages = firstReq.totalPages;
-      transformData(firstReq.registers, 0, allPages);
-      for (let page = 1; page <= allPages; page++) {
-        const req = await RegistrosService.getRegistros(
-          id,
-          page,
-          dataInicio,
-          dataFim,
-        );
-        if (req) {
-          transformData(req.registers, page, allPages);
+            for(let page = 1; page <= allPages; page++){
+                const req = await RegistrosService.getRegistros(id, page, dataInicio, dataFim);
+                
+                if(req){
+                    transformData(req.registers, page, allPages);
+                }
+
+            }
+
         }
-      }
-    }
+      
+    
   } catch (error) {
     console.error("Error:", error);
   }
