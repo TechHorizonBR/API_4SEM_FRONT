@@ -53,6 +53,7 @@
 
 <script lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
 export default {
   name: "Navbar",
@@ -181,6 +182,12 @@ export default {
   color: white;
   font-size: 14px;
   font-weight: bold;
+}
+.dark-button{
+  color: #fff
+}
+.light-button{
+  color: #4b0076
 }
 .dark-button{
   color: #fff
