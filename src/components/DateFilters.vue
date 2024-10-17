@@ -2,16 +2,31 @@
     <div class="filter-date" >
         <label for="" class="labels" :class="{ 'dark-mode-label' : isDark, 'light-mode-label' : !isDark }" >Information Date: </label>
 
-        <select class="filter-select" id="deviceInfo" :class="{'dark-mode-select' : isDark, 'light-mode-select' : !isDark}" v-model="value" @change="updatePeriod">
-            <option value="" selected disabled>
-            Select an option
-            </option>
-            <option value="1">Last day</option>
-            <option value="7">Last week</option>
-            <option value="30">Last month</option>
-        </select>
+        <div class="periods" :class="{ 'dark-mode-radios' : isDark, 'light-mode-radios' : !isDark }">
+            <div class="radios">
+              <input type="radio" name="today-radio" id="today-radio" value="1" v-model="value">
+              <label for="today-radio">Last day</label>
+            </div>
+            
+            <div class="radios">
+              <input type="radio" name="week-radio" id="week-radio" value="7" v-model="value">
+              <label for="week-radio">Last Week</label>
+            </div>
+            
+            <div class="radios">
+              <input type="radio" name="month-radio" id="month-radio" value="30" v-model="value">
+              <label for="month-radio">Last Month</label>
+            </div>
+            
+            <div class="radios">
+              <input type="radio" name="year-radio" id="year-radio" value="365" v-model="value">
+              <label for="year-radio">Last Year</label>
+            </div>
+            
+            
+        </div>
+
     </div>
-    <p>{{ dataInicio }}</p>
 </template>
 
 <script lang="ts" setup>
@@ -31,10 +46,16 @@ const updatePeriod = () => {
   const dateObject = new Date(today.value);
   if(value.value == '1'){
     dateObject.setDate(dateObject.getDate() - 1);
-  }else if(value.value == '7'){
+  }
+  if(value.value == '7'){
     dateObject.setDate(dateObject.getDate() - 7);
-  }else if(value.value == '30'){
+  }
+  if(value.value == '30'){
     dateObject.setDate(dateObject.getDate() - 30);
+  }
+
+  if(value.value == '365'){
+    dateObject.setDate(dateObject.getDate() - 365);
   }
   dataInicio.value = dateObject.toISOString().split('T')[0];
   dataFim.value = today.value;
@@ -77,6 +98,12 @@ p{
     color: #000;
     background-color: #fff;
     border: 1px solid rgb(156, 156, 156);
+  }
+  .dark-mode-radios > div > label{
+    color: white;
+  }
+  .light-mode-radios > div > label{
+    color: black;
   }
   
 </style>

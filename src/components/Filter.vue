@@ -14,6 +14,22 @@
       @updatePeriod="handleUpdatePeriod" />
 
     <button @click="triggerSearch">Search</button>
+
+
+    <div class="selected-users">
+      <h3 v-if="selectedUsers.length !== 0" :class=" isDark ? 'labelDark' : 'labelLight'">
+        Selected Users
+      </h3>
+      <SelectedUser v-for="user in selectedUsers" 
+        :nameUser="user.nameUser"
+        :isDark="isDark" 
+        :cicle-color="user.cicleColor"
+        @removeUser="handleRemoveUser" />
+    </div>
+
+    <p v-if="showMessage">
+      Usuário já selecionado
+    </p>
   </div>
 </template>
 
@@ -22,24 +38,30 @@
   import Autocomplete from './autocomplete/Autocomplete.vue';
   import DevicesService from '../services/devices';
   import DateFilters from '../components/DateFilters.vue';
+  import SelectedUser from './SelectedUser.vue';
 
-interface Device {
-  fullName: string;
-  codeDevice: string;
-  userCode: string;
-}
+  interface Device {
+    fullName: string;
+    codeDevice: string;
+    userCode: string;
+  }
 
   const devices = ref<Device[]>([]);
   const fullName = ref<string>('');
   const codeDevice = ref<string>('');
   const userCode = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
-  const emit = defineEmits(['search']);
+  const emit = defineEmits(['search', 'removeUser']);
   const props = defineProps<{isDark : boolean}>();
   const periods = ref<{ dataInicio: string | null, dataFim: string | null }>({
     dataInicio: null,
     dataFim: null
   });
+  const selectedUsers = ref<Array<{
+    nameUser: string,
+    cicleColor: string
+  }>>([]);
+  const showMessage = ref<boolean>();
 
   const handleUpdatePeriod = (period: { dataInicio: string | null; dataFim: string | null }) => {
     periods.value.dataInicio = period.dataInicio;
@@ -60,14 +82,44 @@ interface Device {
 
 
   const triggerSearch = () => {
-  emit("search", {
-    fullName: fullName.value,
-    codeDevice: codeDevice.value,
-    userCode: userCode.value,
-    dataInicio: periods.value.dataInicio,
-    dataFim: periods.value.dataFim
-  });
+
+  if(selectedUsers.value.some(user => user.nameUser === fullName.value)){
+      showMessage.value = true;
+      setTimeout(() => {
+          showMessage.value = false;
+      }, 3000);
+  }else{
+    const color = generateRandomColor()
+    selectedUsers.value.push({
+      nameUser: fullName.value,
+      cicleColor: color
+    });
+    emit("search", {
+      fullName: fullName.value,
+      codeDevice: codeDevice.value,
+      userCode: userCode.value,
+      dataInicio: periods.value.dataInicio,
+      dataFim: periods.value.dataFim,
+      cicleColor: color
+    });
+  }  
 };
+
+  const handleRemoveUser = (username: string) => {
+    const index = selectedUsers.value.findIndex(user => user.nameUser === username);
+
+    if(index !== -1){
+      selectedUsers.value.splice(index, 1);
+    }
+  }
+  const generateRandomColor = () => {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+ }
 
 </script>
 
@@ -143,5 +195,16 @@ button:hover {
     transform: translateY(20px);
   }
 }
-
+.labelDark{
+  color: white;
+}
+.labelLight{
+  color: black;
+}
+h3{
+  font-weight: normal;
+}
+.selected-users{
+  margin: 15% 0 0 0;
+}
 </style>
