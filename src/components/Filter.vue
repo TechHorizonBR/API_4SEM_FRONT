@@ -20,11 +20,13 @@
       <h3 v-if="selectedUsers.length !== 0" :class=" isDark ? 'labelDark' : 'labelLight'">
         Selected Users
       </h3>
-      <SelectedUser v-for="user in selectedUsers" 
+      <div class="users-scrool">
+        <SelectedUser v-for="user in selectedUsers" 
         :nameUser="user.nameUser"
         :isDark="isDark" 
         :cicle-color="user.cicleColor"
         @removeUser="handleRemoveUser" />
+      </div>
     </div>
 
     <p v-if="showMessage">
