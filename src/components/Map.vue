@@ -3,7 +3,7 @@ Map.vue
 <template>
     <div :class="{'dark-controls': mapModeStore.isDarkMode, 'light-controls': !mapModeStore.isDarkMode}" class="map-wrap">
         <div class="map" ref="mapContainer" >
-            
+
             <div id="buttonConfig">
                 <LightDarkToggle />
                 <!--<button @click="adicionarMarcadores" class="buttonConfig">
@@ -25,7 +25,7 @@ Map.vue
                 @before-leave="beforeLeave"
             >
                 <Filter
-                    v-if="showFilter"
+                    v-show="showFilter"
                     @search="handleSearch"
                     :isDark="mapModeStore.isDarkMode"
                 />
@@ -42,9 +42,6 @@ import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
-
-import { faUser } from '@fortawesome/free-solid-svg-icons';
-
 import { useMapModeStore } from "@/stores/useMapMode";
 
 const mapContainer = shallowRef(null);
@@ -89,12 +86,20 @@ const getPoints = async (id, dataInicio, dataFim) => {
         if (firstReq) {
             const allPages = firstReq.totalPages;
             transformData(firstReq.registers, 0, allPages);
+            map.value.fitBounds([
+            [firstReq.maxMinCoordinates.minLongitude - 1, firstReq.maxMinCoordinates.minLatitude - 1],
+            [firstReq.maxMinCoordinates.maxLongitude + 1, firstReq.maxMinCoordinates.maxLatitude + 1]
+        ]);
+
             for(let page = 1; page <= allPages; page++){
                 const req = await RegistrosService.getRegistros(id, page, dataInicio, dataFim);
+                
                 if(req){
                     transformData(req.registers, page, allPages);
                 }
+
             }
+
         }
     } catch (error) {
         console.error("Error:", error);
