@@ -1,5 +1,6 @@
 <template>
   <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
+    <h2 :class="isDark ? 'title-filter-dark' : 'title-filter-light'" class="title-filter">LocalTracker</h2>
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
       <Autocomplete
         :source="devices"
@@ -208,5 +209,32 @@ h3{
 }
 .selected-users{
   margin: 15% 0 0 0;
+}
+.users-scrool{
+  overflow-y: auto;
+  max-height: 25vh;
+}
+
+.users-scrool::-webkit-scrollbar {
+  width: 10px; /* Define a largura da barra de rolagem */
+}
+
+/* Estilo da parte "ativa" da barra de rolagem (thumb) */
+.users-scrool::-webkit-scrollbar-thumb {
+  background-color: #35005d; /* Cor escura */
+  border-radius: 10px; /* Bordas arredondadas para um visual mais suave */
+}
+
+.users-scrool::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+.title-filter-dark{
+  color: white;
+}
+.title-filter-light{
+  color: #35005d
+}
+.title-filter{
+  text-align: center;
 }
 </style>
