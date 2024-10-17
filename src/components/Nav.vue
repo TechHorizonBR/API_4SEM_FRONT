@@ -4,36 +4,40 @@
     :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
     <ul class="navbar-list">
       <li class="navbar-item">
-        <button @click="toggleFilter"
-          :class="{ 'dark-button': isDark, 'light-button': !isDark }">
+        <button
+          @click="toggleFilter"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'filter']" />
           Filter
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="goToMapMarker"
-        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
+        <button
+          @click="goToMapMarker"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
           Map Marker
         </button>
       </li>
-      <li class="navbar-item">
-        <button @click="triggerAlert"
-        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
-          <font-awesome-icon :icon="['fas', 'bell']"/>
-          Alerts
-        </button>
+      <li class="navbar-item logo">
+        <img src="..\assets\localTracker.ico" alt="Logo" class="logo-image" />
       </li>
       <li class="navbar-item">
-        <button @click="addUser"
-        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
+        <button
+          @click="addUser"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
           Add User
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="signInOut"
-        :class="{ 'dark-button' : isDark, 'light-button': !isDark}">
+        <button
+          @click="signInOut"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
         </button>
@@ -49,6 +53,7 @@
       <div class="username-label-container" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
         <div class="username-label">Username</div>
       </div>
+
   </div>
 </template>
 
@@ -135,12 +140,12 @@ export default {
 /* Container do botão de Username no topo */
 .username-container {
   position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 1001;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 .username-label-container-dark{
   background: #0a0012e3;
@@ -151,17 +156,20 @@ export default {
   color: #4b0076;
 }
 .username-label-container {
-    width: 120px;
-    height: 30px;
-    display: inline-flex;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
-    border-radius: 25px;
-    margin-top: -15px;
+  width: 120px;
+  height: 30px;
+  display: inline-flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  border-radius: 25px;
+  margin-top: -15px;
 }
-
-.icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
+.icon-alert,
+.icon-map-marker,
+.icon-filter,
+.icon-add-user,
+.icon-sign-in-out {
   font-size: 18px;
   margin-bottom: 5px;
 }
@@ -186,20 +194,29 @@ export default {
     font-size: 28px;
 }
 
+.navbar-item logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  height: 40px;
+}
+
 .username-label {
   font-size: 14px;
   font-weight: bold;
 }
-.dark-button{
-  color: #fff
+.dark-button {
+  color: #fff;
 }
-.light-button{
-  color: #4b0076
+.light-button {
+  color: #4b0076;
 }
-.dark-button{
-  color: #fff
+.dark-button {
+  color: #fff;
 }
-.light-button{
-  color: #4b0076
+.light-button {
+  color: #4b0076;
 }
 </style>
