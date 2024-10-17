@@ -1,5 +1,8 @@
 <template>
-  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
+  <div
+    class="filter"
+    :style="{ backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7' }"
+  >
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
       <Autocomplete
         :source="devices"
@@ -9,9 +12,7 @@
         :isDark="isDark"
       />
     </div>
-    <DateFilters 
-      :isDark="isDark"
-      @updatePeriod="handleUpdatePeriod" />
+    <DateFilters :isDark="isDark" @updatePeriod="handleUpdatePeriod" />
 
     <button @click="triggerSearch">Search</button>
 
@@ -63,18 +64,17 @@
   }>>([]);
   const showMessage = ref<boolean>();
 
-  const handleUpdatePeriod = (period: { dataInicio: string | null; dataFim: string | null }) => {
-    periods.value.dataInicio = period.dataInicio;
-    periods.value.dataFim = period.dataFim;
-  };
+const fetchDevices = async () => {
+  try {
+    devices.value = await DevicesService.getDevices();
+  } catch (error) {
+    console.error("Erro ao buscar dispositivos:", error);
+  }
+};
 
-  const fetchDevices = async () => {
-    try {
-      devices.value = await DevicesService.getDevices();
-    } catch (error) {
-      console.error('Erro ao buscar dispositivos:', error);
-    }
-  };
+onMounted(() => {
+  fetchDevices();
+});
 
   onMounted(() => {
     fetchDevices();
@@ -143,13 +143,13 @@
   margin-top: 8px;
 }
 
-  .label {
-    width: 100%;
-    display: block;
-    margin-bottom: 6px;
-    margin-top: 8px;
-    font-size: 20px;
-  }
+.label {
+  width: 100%;
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 8px;
+  font-size: 20px;
+}
 
 button {
   width: 100%;

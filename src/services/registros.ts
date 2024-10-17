@@ -1,7 +1,12 @@
 import axios from "axios";
 
 class RegistrosService {
-  async getRegistros(id: number, page: number, dataInicio : string, dataFim : string) {
+  async getRegistros(
+    id: number,
+    page: number,
+    dataInicio: string,
+    dataFim: string,
+  ) {
     try {
       const response = await axios.get(
         `http://localhost:8080/registros/filtros/${dataInicio}/${dataFim}/${id}/${page}`,
