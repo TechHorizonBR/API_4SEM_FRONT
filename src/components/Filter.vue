@@ -1,6 +1,5 @@
 <template>
   <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
-    <h1 :class=" isDark ? 'title-filter-dark' : 'title-filter-light'" class="title-filter">LocalTracker</h1>
     <!--<h2 :class="isDark ? 'title-filter-dark' : 'title-filter-light'" class="title-filter">LocalTracker</h2>-->
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
       <Autocomplete
@@ -18,7 +17,7 @@
     <button @click="triggerSearch">Search</button>
 
 
-    <div class="selected-users">
+    <div :class="{'selected-users' : selectedUsers.length !== 0}">
       <h3 v-if="selectedUsers.length !== 0" :class=" isDark ? 'labelDark' : 'labelLight'">
         Selected Users
       </h3>
@@ -117,12 +116,11 @@
     }
   }
   const generateRandomColor = () => {
-      const letters = '0123456789ABCDEF';
-      let color = '#';
-      for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
+    const red = Math.floor(Math.random() * 56 + 200).toString(16);  // Valores altos para vermelho
+  const green = Math.floor(Math.random() * 56 + 200).toString(16); // Valores altos para verde
+  const blue = Math.floor(Math.random() * 56 + 200).toString(16);  // Valores altos para azul
+
+  return `#${red.padStart(2, '0')}${green.padStart(2, '0')}${blue.padStart(2, '0')}`;
  }
 
 </script>
@@ -135,7 +133,6 @@
   padding: 25px 40px;
   background-color: white;
   border-radius: 20px;
-  width: 220px;
   z-index: 1000;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
 }

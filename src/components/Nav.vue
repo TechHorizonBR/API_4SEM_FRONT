@@ -43,10 +43,10 @@
 
   <!-- Campo Username no topo da tela -->
   <div class="username-container">
-    <div class="user-icon">
+    <div class="user-icon"  :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
         <font-awesome-icon :icon="['fas', 'user']" />
       </div>
-      <div class="username-label-container">
+      <div class="username-label-container" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
         <div class="username-label">Username</div>
       </div>
   </div>
@@ -142,8 +142,15 @@ export default {
     flex-direction: column;
     align-items: center;
 }
-.username-label-container {
+.username-label-container-dark{
   background: #0a0012e3;
+  color: white;
+}
+.username-label-container-light{
+  background: white;
+  color: #4b0076;
+}
+.username-label-container {
     width: 120px;
     height: 30px;
     display: inline-flex;
@@ -170,8 +177,6 @@ export default {
 }
 
 .user-icon {
-  background-color: #0a0012e3;
-    color: white;
     width: 50px;
     height: 50px;
     display: flex;
@@ -182,7 +187,6 @@ export default {
 }
 
 .username-label {
-  color: white;
   font-size: 14px;
   font-weight: bold;
 }

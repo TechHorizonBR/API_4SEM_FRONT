@@ -1,6 +1,6 @@
 <template>
     <div :class="isDark ? 'selected-user-dark' : 'selected-user-light'" class="selected-user">
-        <p id="iniciais" :style="{backgroundColor: props.cicleColor}">{{ workingOnName.iniciais }}</p>
+        <p id="iniciais" :style="{backgroundColor: props.cicleColor, color: 'black'}">{{ workingOnName.iniciais }}</p>
         <p class="name">{{ workingOnName.name }}</p>
         <button @click="removeUser">X</button>
     </div>
@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Color } from '@maptiler/sdk';
 import { computed } from 'vue';
 
 
