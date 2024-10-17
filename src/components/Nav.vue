@@ -1,8 +1,6 @@
 <template>
-  <nav
-    class="navbar"
-    :style="{ backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7' }"
-  >
+  <nav class="navbar"
+    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
     <ul class="navbar-list">
       <li class="navbar-item">
         <button
@@ -58,14 +56,8 @@
 </template>
 
 <script lang="ts">
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import {
-  faBell,
-  faMapMarkerAlt,
-  faFilter,
-  faUserPlus,
-  faSignInAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
 export default {
   name: "Navbar",
@@ -96,6 +88,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <style scoped>
@@ -168,6 +161,7 @@ export default {
 .icon-filter,
 .icon-add-user,
 .icon-sign-in-out {
+
   font-size: 18px;
   margin-bottom: 5px;
 }

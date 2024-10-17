@@ -30,6 +30,7 @@
             color: isDark ? '#FFF' : '#000',
           }"
         >
+
           {{ result.nome }}
         </li>
       </ul>
@@ -64,6 +65,7 @@
             color: isDark ? '#FFF' : '#000',
           }"
         >
+
           {{ result.codigoDevice }}
         </li>
       </ul>
