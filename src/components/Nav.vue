@@ -126,7 +126,6 @@ export default {
   align-items: center;
   cursor: pointer;
   font-size: 13px;
-  font-weight: bold;
 }
 
 .navbar-item button:hover {
@@ -144,7 +143,7 @@ export default {
     align-items: center;
 }
 .username-label-container {
-  background: #4b0076;
+  background: #0a0012e3;
     width: 120px;
     height: 30px;
     display: inline-flex;
@@ -171,7 +170,7 @@ export default {
 }
 
 .user-icon {
-  background-color: #4b0076;
+  background-color: #0a0012e3;
     color: white;
     width: 50px;
     height: 50px;

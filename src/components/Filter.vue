@@ -1,6 +1,7 @@
 <template>
   <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
-    <h2 :class="isDark ? 'title-filter-dark' : 'title-filter-light'" class="title-filter">LocalTracker</h2>
+    <h1 :class=" isDark ? 'title-filter-dark' : 'title-filter-light'" class="title-filter">LocalTracker</h1>
+    <!--<h2 :class="isDark ? 'title-filter-dark' : 'title-filter-light'" class="title-filter">LocalTracker</h2>-->
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
       <Autocomplete
         :source="devices"
@@ -132,11 +133,11 @@
   top: 3vh;
   left: 3vw;
   padding: 25px 40px;
-  background-color: #f7f7f7;
+  background-color: white;
   border-radius: 20px;
   width: 220px;
   z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
 }
 
 .label {
@@ -235,6 +236,13 @@ h3{
   color: #35005d
 }
 .title-filter{
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 2.3em;
+}
+h1{
   text-align: center;
 }
 </style>
