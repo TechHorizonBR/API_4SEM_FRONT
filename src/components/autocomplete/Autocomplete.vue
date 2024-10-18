@@ -20,7 +20,6 @@
           :key="result.nome"
           @click="setSelected(result, 'name')"
           class="dropdown-item"
-
           :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
                 color: isDark ? '#FFF' : '#000'}"
           
@@ -51,10 +50,7 @@
           @click="setSelected(result, 'code')"
           class="dropdown-item"
           :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000'}"
-          
-          
-          >
+                color: isDark ? '#FFF' : '#000'}">
           {{ result.codigoDevice }}
         </li>
       </ul>

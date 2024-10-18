@@ -1,4 +1,5 @@
 <template>
+
   <nav class="navbar"
     :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
     <ul class="navbar-list">
@@ -52,6 +53,7 @@
 </template>
 
 <script lang="ts">
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
@@ -84,6 +86,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <style scoped>
@@ -151,6 +154,7 @@ export default {
     border-radius: 25px;
     margin-top: -15px;
 }
+
 .icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
   font-size: 18px;
   margin-bottom: 5px;
