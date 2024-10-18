@@ -97,8 +97,6 @@
     if (selectedDates.length === 2) {
       periods.value.dataInicio = selectedDates[0].toISOString().split('T')[0];
       periods.value.dataFim = selectedDates[1].toISOString().split('T')[0];
-      console.log("Data de Início:", periods.value.dataInicio);
-      console.log("Data de Fim:", periods.value.dataFim);
     }
   };
 

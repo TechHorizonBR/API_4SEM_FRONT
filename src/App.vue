@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from "vue";
-import Map from "./components/Map.vue";
+import MapView from "./views/MapView.vue";
 </script>
 
 <template>
-  <Map />
+  <MapView />
 </template>
 
 <style>

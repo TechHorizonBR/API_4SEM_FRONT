@@ -73,21 +73,20 @@ export default {
   components: {
     FontAwesomeIcon,
   },
+  emits: [
+    'toggleFilter'
+  ],
   methods: {
     toggleFilter() {
       this.$emit("toggleFilter");
     },
     triggerAlert() {
-      console.log("Alerts clicked");
     },
     goToMapMarker() {
-      console.log("Map Marker clicked");
     },
     addUser() {
-      console.log("Add User clicked");
     },
     signInOut() {
-      console.log("Sign In/Out clicked");
     },
   },
 };

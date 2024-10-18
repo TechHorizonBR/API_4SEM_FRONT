@@ -19,8 +19,6 @@
 
             <transition
                 name="fade"
-                @before-enter="beforeEnter"
-                @before-leave="beforeLeave"
             >
                 <Filter
                     v-show="showFilter"
@@ -149,7 +147,6 @@ async function plotPontos(allPoints) {
 
   // Se tiver ponto desenha a linha se n tiver mantem o mapa limpo
   if (!allPoints || allPoints.length === 0) {
-    console.log("Nenhum ponto disponível para este usuário.");
     return;
   }
 
