@@ -162,9 +162,11 @@ async function plotPontos(allPoints, page, totalpages) {
         changeLoading();
     }
 
-    const primeiroTempo = { horario, controle: false };
-
+    const primeiroTempo = { horario:15, controle: false };
+    let el_point;
+    
     allPoints.forEach((point, index) => {
+
         if (!point.isStopped && primeiroTempo.controle === false) {
             primeiroTempo.controle = false;
 
@@ -176,11 +178,13 @@ async function plotPontos(allPoints, page, totalpages) {
         }
         else {
             if (primeiroTempo.controle === false) {
-                primeiroTempo.horario = new Date(point.dataHora);
+                const data = Date.now();
+                primeiroTempo.horario = 15;
                 primeiroTempo.controle = true;
             }
             if (primeiroTempo.controle === true && point.isStopped === false){
-                const tempoTotal = new Date(point.dataHora) - primeiroTempo.horario;
+                const tempoTotal = date.getMinutes - primeiroTempo.horario;
+                tempoTotal = 15;
                 primeiroTempo.controle = false;
                 
                 let el_point = createMarkerElement(
@@ -189,15 +193,14 @@ async function plotPontos(allPoints, page, totalpages) {
                     "pin.png",
                     tempoTotal
                 );
-
             }
-
         }
 
         let defaultMark = new Marker({ element: el_point })
             .setLngLat([point.longitude, point.latitude])
             .addTo(map.value);
         all_markers.value.push(defaultMark);
+
     });
 }
 
@@ -207,6 +210,8 @@ function createMarkerElement(lng, lat, imgSrc, stopped_time) {
     let img = document.createElement("img");
     let son = document.createElement("div");
     if(stopped_time) {
+        son.textContent = `Dispositivo parado por ${stopped_time} minutoos.`;
+
         
     }
     else{
