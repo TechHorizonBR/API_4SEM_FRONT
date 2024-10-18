@@ -1,6 +1,6 @@
 <template>
 
-  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
+  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd'}">
     <!--<h2 :class="isDark ? 'title-filter-dark' : 'title-filter-light'" class="title-filter">LocalTracker</h2>-->
 
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
@@ -175,12 +175,25 @@ onMounted(async () => {
   position: absolute;
   top: 3vh;
   left: 3vw;
-  padding: 25px 40px;
-  background-color: white;
+  padding: 15px 25px;
+  background-color: #f7f7f7cd;
   border-radius: 20px;
   z-index: 1000;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
 }
+
+.date-range-filter {
+  margin-bottom: 15px;
+}
+
+.date-range-filter input {
+  width: 93%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgb(156, 156, 156);
+  font-size: 14px;
+}
+
 
 .label {
   width: 100%;
