@@ -104,6 +104,20 @@ const handleDateRangeChange = (selectedDates: any) => {
   }
 };
 
+const updateFlatpickrDates = () => {
+  if (dateRangePicker.value) {
+    const picker = flatpickr(dateRangePicker.value);
+    const startDate = periods.value.dataInicio ? new Date(periods.value.dataInicio) : null;
+    const endDate = periods.value.dataFim ? new Date(periods.value.dataFim) : null;
+
+    // Definir o intervalo de datas no flatpickr
+    if (startDate && endDate) {
+      picker.setDate([startDate, endDate]);
+    }
+  }
+};
+
+
 onMounted(async () => {
   await fetchDevices();
   
@@ -119,13 +133,10 @@ onMounted(async () => {
   });
 });
 
-  const handleDateChange = () => {
-    console.log("Selected date:", selectedDate.value);
-  };
-
   const handleUpdatePeriod = (period: { dataInicio: string | null; dataFim: string | null }) => {
     periods.value.dataInicio = period.dataInicio;
     periods.value.dataFim = period.dataFim;
+    updateFlatpickrDates();
   };
 
   const triggerSearch = () => {
@@ -167,6 +178,7 @@ onMounted(async () => {
 
   return `#${red.padStart(2, '0')}${green.padStart(2, '0')}${blue.padStart(2, '0')}`;
  }
+ 
 
 </script>
 
