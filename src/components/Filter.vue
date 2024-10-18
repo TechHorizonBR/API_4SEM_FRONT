@@ -110,8 +110,10 @@
 
     if(index !== -1){
       selectedUsers.value.splice(index, 1);
+      emit('removeUser', index);
     }
   }
+
   const generateRandomColor = () => {
       const letters = '0123456789ABCDEF';
       let color = '#';

@@ -6,9 +6,6 @@ Map.vue
 
             <div id="buttonConfig">
                 <LightDarkToggle />
-                <!--<button @click="adicionarMarcadores" class="buttonConfig">
-                    Add pontos
-                </button>-->
             </div>
             <img
                 v-if="loading"
@@ -27,6 +24,7 @@ Map.vue
                 <Filter
                     v-show="showFilter"
                     @search="handleSearch"
+                    @removeUser="handleDelete"
                     :isDark="mapModeStore.isDarkMode"
                 />
             </transition>
@@ -36,7 +34,7 @@ Map.vue
 
 <script setup>
 import { Map, MapStyle, config, Marker } from "@maptiler/sdk";
-import { shallowRef, onMounted, onUnmounted, markRaw, watch } from "vue";
+import { shallowRef, onMounted, onUnmounted, markRaw, watch, ref } from "vue";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
@@ -51,6 +49,7 @@ let dados;
 const all_markers = shallowRef([]);
 const loading = shallowRef(false);
 const showFilter = shallowRef(true);
+const actualUser = ref(0);
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
@@ -73,29 +72,49 @@ const changeLoading = () => {
 };
 
 const handleSearch = (searchParams) => {
-    all_markers.value.forEach((marker) => marker.remove());
-    all_markers.value = [];
     changeLoading();
-    getPoints(searchParams.userCode, searchParams.dataInicio, searchParams.dataFim);
+    getPoints(searchParams);
 };
 
-const getPoints = async (id, dataInicio, dataFim) => {
+const handleDelete = (deleteParams) => {
+    console.log("DeleteParams:", deleteParams);
+    console.log("ActualUser:", actualUser.value);
+    if (all_markers.value[deleteParams]) {
+        all_markers.value[deleteParams].forEach((marker) => marker.remove());
+        all_markers.value.splice(deleteParams, 1);
+
+        if (actualUser.value > deleteParams) {
+            actualUser.value--;
+        } else if (actualUser.value === deleteParams) {
+            actualUser.value = Math.max(0, actualUser.value - 1);
+        }
+
+        console.log(`Usuário no índice ${deleteParams} deletado.`);
+    } else {
+        console.log(`Nenhum marcador encontrado no índice: ${deleteParams}`);
+    }
+
+    console.log("Novo valor de actualUser:", actualUser.value);
+};
+
+
+const getPoints = async (searchParams) => {
     try {
-        const firstReq = await RegistrosService.getRegistros(id, 0, dataInicio, dataFim);
+        const firstReq = await RegistrosService.getRegistros(searchParams.userCode, 0, searchParams.dataInicio, searchParams.dataFim);
         
         if (firstReq) {
             const allPages = firstReq.totalPages;
-            transformData(firstReq.registers, 0, allPages);
+            transformData(firstReq.registers, 0, allPages, searchParams);
             map.value.fitBounds([
             [firstReq.maxMinCoordinates.minLongitude - 1, firstReq.maxMinCoordinates.minLatitude - 1],
             [firstReq.maxMinCoordinates.maxLongitude + 1, firstReq.maxMinCoordinates.maxLatitude + 1]
         ]);
 
             for(let page = 1; page <= allPages; page++){
-                const req = await RegistrosService.getRegistros(id, page, dataInicio, dataFim);
+                const req = await RegistrosService.getRegistros(searchParams.userCode, page, searchParams.dataInicio, searchParams.dataFim);
                 
                 if(req){
-                    transformData(req.registers, page, allPages);
+                    transformData(req.registers, page, allPages, searchParams);
                 }
 
             }
@@ -106,10 +125,10 @@ const getPoints = async (id, dataInicio, dataFim) => {
     }
 };
 
-function transformData(data, page, totalpages) {
+function transformData(data, page, totalpages, elementData) {
     if (data) {
         dados = data;
-        plotPontos(dados, page, totalpages);
+        plotPontos(dados, page, totalpages, elementData);
     }
 }
 
@@ -134,57 +153,87 @@ function inicializarMapa() {
     );
 }
 
-async function plotPontos(allPoints, page, totalpages) {
+async function plotPontos(allPoints, page, totalpages, elementData) {
+    if (!all_markers.value[actualUser.value]) {
+        all_markers.value[actualUser.value] = [];
+    }
     const fin = allPoints.length - 1;
+    const [firstName, secondName] = elementData.fullName.split(' ');
+    const iniciais = firstName[0] + secondName[0];
 
-    // Criar e adicionar marcadores para o ponto inicial e final
     let el_start = createMarkerElement(
-        allPoints[0].longitude,
-        allPoints[0].latitude,
-        "start.png"
+        elementData.fullName,
+        createImg("start.png")
     );
 
     let el_finish = createMarkerElement(
-        allPoints[fin].longitude,
-        allPoints[fin].latitude,
-        "finish.png"
+        elementData.fullName,
+        createImg("finish.png")
     );
+
+    allPoints.forEach((point, index) => {
+            let el_point = createMarkerElement(
+                elementData.fullName,
+                createPin(elementData.cicleColor, iniciais)
+            );
+            let defaultMark = new Marker({ element: el_point })
+                .setLngLat([point.longitude, point.latitude])
+                .addTo(map.value);
+            all_markers.value[actualUser.value].push(defaultMark);
+    });
 
     if(page === 1){
         let startMark = new Marker({ element: el_start })
             .setLngLat([allPoints[0].longitude, allPoints[0].latitude])
             .addTo(map.value);
-        all_markers.value.push(startMark);
+        all_markers.value[actualUser.value].push(startMark);
     }
 
     if(page === totalpages - 1){
         let finishMark = new Marker({ element: el_finish })
             .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
             .addTo(map.value);
-        all_markers.value.push(finishMark);
+        all_markers.value[actualUser.value].push(finishMark);
+        actualUser.value++;
         changeLoading();
     }
+}
 
-    allPoints.forEach((point, index) => {
-            let el_point = createMarkerElement(
-                point.longitude,
-                point.latitude,
-                "pin.png"
-            );
-            let defaultMark = new Marker({ element: el_point })
-                .setLngLat([point.longitude, point.latitude])
-                .addTo(map.value);
-            all_markers.value.push(defaultMark);
-    });
+
+function createPin(color, name){
+    let user_pin = document.createElement("div");
+
+    user_pin.style.width = `25px`;
+    user_pin.style.height = `25px`;
+    user_pin.style.backgroundColor = color;
+    user_pin.style.color = "black";
+    user_pin.style.borderRadius = "50%";
+    user_pin.style.display = "flex";
+    user_pin.style.alignItems = "center";
+    user_pin.style.justifyContent = "center";
+    user_pin.innerHTML = name;
+
+    return user_pin;
+}
+
+function createImg(imgSrc){
+    let img = document.createElement("img");
+    img.src = imgSrc;
+    img.style.width = `25px`;
+    img.style.height = `25px`;
+    img.style.filter = "drop-shadow(0px 0px 2px #fff)";
+
+    return img;
 }
 
 // Função para criar um elemento de marcador personalizado
-function createMarkerElement(lng, lat, imgSrc) {
+function createMarkerElement(name, element) {
     let el = document.createElement("div");
-    let img = document.createElement("img");
+    
     let son = document.createElement("div");
+    
 
-    son.textContent = `Long: ${lng}, Lat: ${lat}`;
+    son.textContent = `${name}`;
     son.style.backgroundColor = "#FFF";
     son.style.display = "block";
     son.style.opacity = "0";
@@ -199,12 +248,7 @@ function createMarkerElement(lng, lat, imgSrc) {
     son.style.border = "1px solid black";
     son.style.transition = "opacity 0.3s ease-in-out";
 
-    img.src = imgSrc;
-    img.style.width = `25px`;
-    img.style.height = `25px`;
-    img.style.filter = "drop-shadow(0px 0px 2px #fff)";
-
-    el.appendChild(img);
+    el.appendChild(element);
     el.appendChild(son);
 
     el.addEventListener("mouseover", () => (son.style.opacity = "1"));
@@ -249,12 +293,6 @@ watch(
         }
     }
 );
-
-function adicionarMarcadores() {
-    if (dados) {
-        plotPontos(dados);
-    }
-}
 </script>
 
 <style scoped>
