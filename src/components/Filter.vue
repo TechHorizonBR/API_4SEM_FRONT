@@ -1,6 +1,6 @@
 <template>
 
-  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
+  <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd'}">
     <!--<h2 :class="isDark ? 'title-filter-dark' : 'title-filter-light'" class="title-filter">LocalTracker</h2>-->
 
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
@@ -12,12 +12,27 @@
         :isDark="isDark"
       />
     </div>
-    <DateFilters :isDark="isDark" @updatePeriod="handleUpdatePeriod" />
+
+    <!-- Campo de Filtro de Período de Datas -->
+    <div class="date-range-filter">
+      <label for="date-range" class="label-position-time" :style="{color: isDark ? 'white' : 'black'}">Position Time Range:</label>
+      <input :class="isDark ? 'input-data-dark' : 'input-data-light'"
+        type="text"
+        id="date-range"
+        ref="dateRangePicker"
+        @change="handleDateRangeChange"
+        placeholder="Select Date Range"
+      />
+    </div>
+
+
+    <DateFilters 
+      :isDark="isDark"
+      @updatePeriod="handleUpdatePeriod" />
 
     <button @click="triggerSearch">Search</button>
 
-
-    <div :class="{'selected-users' : selectedUsers.length !== 0}">
+    <div class="selected-users">
       <h3 v-if="selectedUsers.length !== 0" :class=" isDark ? 'labelDark' : 'labelLight'">
         Selected Users
       </h3>
@@ -37,7 +52,9 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, onMounted, nextTick } from 'vue';
+  import flatpickr from 'flatpickr'; // Biblioteca para seleção de data
+  import 'flatpickr/dist/flatpickr.css'; // Estilo para flatpickr
   import Autocomplete from './autocomplete/Autocomplete.vue';
   import DevicesService from '../services/devices';
   import DateFilters from '../components/DateFilters.vue';
@@ -64,7 +81,12 @@
     nameUser: string,
     cicleColor: string
   }>>([]);
-  const showMessage = ref<boolean>();
+  const showMessage = ref<boolean>(false);
+
+  const dateRangePicker = ref<HTMLInputElement | null>(null);
+
+  // Variável de controle da data selecionada
+  const selectedDate = ref<string | null>(null);
 
 const fetchDevices = async () => {
   try {
@@ -73,15 +95,49 @@ const fetchDevices = async () => {
     console.error("Erro ao buscar dispositivos:", error);
   }
 };
+const handleDateRangeChange = (selectedDates: any) => {
+  if (selectedDates.length === 2) {
+    periods.value.dataInicio = selectedDates[0].toISOString().split('T')[0];
+    periods.value.dataFim = selectedDates[1].toISOString().split('T')[0];
+    console.log("Data de Início:", periods.value.dataInicio);
+    console.log("Data de Fim:", periods.value.dataFim);
+  }
+};
 
-onMounted(() => {
-  fetchDevices();
+const updateFlatpickrDates = () => {
+  if (dateRangePicker.value) {
+    const picker = flatpickr(dateRangePicker.value);
+    const startDate = periods.value.dataInicio ? new Date(periods.value.dataInicio) : null;
+    const endDate = periods.value.dataFim ? new Date(periods.value.dataFim) : null;
+
+    // Definir o intervalo de datas no flatpickr
+    if (startDate && endDate) {
+      picker.setDate([startDate, endDate]);
+    }
+  }
+};
+
+
+onMounted(async () => {
+  await fetchDevices();
+  
+  // Inicializando flatpickr para intervalo de datas
+  nextTick(() => {
+    if (dateRangePicker.value) {
+      flatpickr(dateRangePicker.value, {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        onChange: handleDateRangeChange
+      });
+    }
+  });
 });
 
-  onMounted(() => {
-    fetchDevices();
-  });
-
+  const handleUpdatePeriod = (period: { dataInicio: string | null; dataFim: string | null }) => {
+    periods.value.dataInicio = period.dataInicio;
+    periods.value.dataFim = period.dataFim;
+    updateFlatpickrDates();
+  };
 
   const triggerSearch = () => {
 
@@ -102,6 +158,7 @@ onMounted(() => {
       userCode: userCode.value,
       dataInicio: periods.value.dataInicio,
       dataFim: periods.value.dataFim,
+      selectedDate: selectedDate.value, // Data selecionada incluída na pesquisa
       cicleColor: color
     });
   }  
@@ -121,6 +178,7 @@ onMounted(() => {
 
   return `#${red.padStart(2, '0')}${green.padStart(2, '0')}${blue.padStart(2, '0')}`;
  }
+ 
 
 </script>
 
@@ -129,12 +187,24 @@ onMounted(() => {
   position: absolute;
   top: 3vh;
   left: 3vw;
-  padding: 25px 40px;
-  background-color: white;
+  padding: 15px 25px;
+  background-color: #f7f7f7cd;
   border-radius: 20px;
   z-index: 1000;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
 }
+
+.date-range-filter {
+  margin-bottom: 15px;
+}
+
+.date-range-filter input {
+  width: 93%;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
 
 .label {
   width: 100%;
@@ -149,6 +219,10 @@ onMounted(() => {
   margin-bottom: 6px;
   margin-top: 8px;
   font-size: 20px;
+}
+
+.label-position-time{
+  font-size: 1.2em;
 }
 
 button {
@@ -201,12 +275,37 @@ button:hover {
 .labelLight{
   color: black;
 }
+.input-data-dark{
+  background-color: #383838;
+  color: white;
+  border: none;
+}
+.input-data-light{
+  background-color: white;
+  color: black;
+  border: 1px solid rgb(156, 156, 156);
+}
+
 h3{
   font-weight: normal;
 }
 .selected-users{
   margin: 15% 0 0 0;
 }
+
+/* Estilo para o campo de data */
+.date-filter {
+  margin-bottom: 15px;
+}
+
+.date-filter input {
+  width: 93%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgb(156, 156, 156);
+  font-size: 14px;
+}
+
 .users-scrool{
   overflow-y: auto;
   max-height: 25vh;
