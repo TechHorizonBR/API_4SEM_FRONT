@@ -15,8 +15,8 @@
 
     <!-- Campo de Filtro de Período de Datas -->
     <div class="date-range-filter">
-      <label for="date-range" class="label-position-time">Position Time Range:</label>
-      <input
+      <label for="date-range" class="label-position-time" :style="{color: isDark ? 'white' : 'black'}">Position Time Range:</label>
+      <input :class="isDark ? 'input-data-dark' : 'input-data-light'"
         type="text"
         id="date-range"
         ref="dateRangePicker"
@@ -190,7 +190,6 @@ onMounted(async () => {
   width: 93%;
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid rgb(156, 156, 156);
   font-size: 14px;
 }
 
@@ -264,6 +263,17 @@ button:hover {
 .labelLight{
   color: black;
 }
+.input-data-dark{
+  background-color: #383838;
+  color: white;
+  border: none;
+}
+.input-data-light{
+  background-color: white;
+  color: black;
+  border: 1px solid rgb(156, 156, 156);
+}
+
 h3{
   font-weight: normal;
 }
