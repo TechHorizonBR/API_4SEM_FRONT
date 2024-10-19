@@ -248,7 +248,7 @@ function createPin(color, name, isStopped) {
         user_pin.style.height = `25px`;
     }
     if(isStopped){
-      user_pin.style.border = "solid"
+      user_pin.style.border = "dotted 2px"
     }
 
     user_pin.style.minWidth = `25px`;
