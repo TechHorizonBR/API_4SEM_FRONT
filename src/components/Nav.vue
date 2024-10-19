@@ -1,7 +1,7 @@
 <template>
 
   <nav class="navbar"
-    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
+    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd'}">
     <ul class="navbar-list">
       <li class="navbar-item">
         <button
@@ -73,21 +73,20 @@ export default {
   components: {
     FontAwesomeIcon,
   },
+  emits: [
+    'toggleFilter'
+  ],
   methods: {
     toggleFilter() {
       this.$emit("toggleFilter");
     },
     triggerAlert() {
-      console.log("Alerts clicked");
     },
     goToMapMarker() {
-      console.log("Map Marker clicked");
     },
     addUser() {
-      console.log("Add User clicked");
     },
     signInOut() {
-      console.log("Sign In/Out clicked");
     },
   },
 };

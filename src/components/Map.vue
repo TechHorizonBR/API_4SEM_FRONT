@@ -11,9 +11,15 @@
 
             <Nav @toggleFilter="toggleFilter" :isDark="mapModeStore.isDarkMode" />
 
-            <transition name="fade" @before-enter="beforeEnter" @before-leave="beforeLeave">
-                <Filter v-show="showFilter" @search="handleSearch" @removeUser="handleDelete"
-                    :isDark="mapModeStore.isDarkMode" />
+            <transition
+                name="fade"
+            >
+                <Filter
+                    v-show="showFilter"
+                    @search="handleSearch"
+                    @removeUser="handleDelete"
+                    :isDark="mapModeStore.isDarkMode"
+                />
             </transition>
         </div>
     </div>
