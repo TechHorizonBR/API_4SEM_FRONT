@@ -24,11 +24,6 @@
               <label for="month-radio">Last Month</label>
             </div>
             
-            <div class="radios">
-              <input type="radio" name="year-radio" id="year-radio" value="365" v-model="value" @change="updatePeriod">
-              <label for="year-radio">Last Year</label>
-            </div>
-            
             
         </div>
 

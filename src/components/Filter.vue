@@ -45,6 +45,10 @@
     <p v-if="showMessage" :style="{color: isDark ? 'white' : 'black'}">
       {{ message }}
     </p>
+
+    <p v-if="showMessageEmpty" :style="{color: isDark ? 'white' : 'black'}">
+      {{ messageEmpty }}
+    </p>
   </div>
 </template>
 
@@ -70,7 +74,7 @@
   const userCode = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
   const emit = defineEmits(['search', 'removeUser']);
-  const props = defineProps<{isDark : boolean}>();
+  const props = defineProps<{isDark : boolean, messageEmpty: string, showMessageEmpty: boolean}>();
   const periods = ref<{ dataInicio: string | null, dataFim: string | null }>({
     dataInicio: null,
     dataFim: null
@@ -141,7 +145,7 @@
   };
 
   const triggerSearch = () => {
-    if(fullName.value === null || periods.value.dataFim === null || periods.value.dataInicio === null || userCode.value === null){
+    if(!fullName.value || !periods.value.dataFim || !periods.value.dataInicio || !userCode.value){
       message.value = 'It is needed all fields are completed!'
       showMessage.value = true;
       setTimeout(() => {
@@ -170,16 +174,12 @@
           selectedDate: selectedDate.value,
           cicleColor: color
         });
-        fullName.value = '';
-        codeDevice.value = '';
-        userCode.value = '';
-        periods.value.dataInicio = null;
-        periods.value.dataFim = null;
 
         if (dateRangePicker.value) {
           const picker = flatpickr(dateRangePicker.value);
           picker.clear();
         }
+        updateFlatpickrDates()
       }  
     }
     

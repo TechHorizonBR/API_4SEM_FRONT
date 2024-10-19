@@ -82,13 +82,14 @@ const props = defineProps<{
   source: Device[];
   modelValueFullName: string;
   modelValueCodeDevice: string;
-  modelValueUserCode: string;
+  modelValueUserCode: string | number;
   isDark: boolean;
 }>();
 
 const emit = defineEmits<{
   (e: "update:modelValueFullName", value: string): void;
   (e: "update:modelValueCodeDevice", value: string): void;
+  (e: "update:modelValueUserCode", value: string): void;
 }>();
 
 const searchName = ref<string>(props.modelValueFullName);
@@ -122,14 +123,14 @@ const setSelected = (item: Device, type: "name" | "code") => {
     userCode.value = item.idUsuario;
     emit("update:modelValueFullName", item.nome);
     emit("update:modelValueCodeDevice", item.codigoDevice);
-    emit("update:modelValueUserCode", item.idUsuario);
+    emit("update:modelValueUserCode", String(item.idUsuario));
   } else {
     searchCode.value = item.codigoDevice;
     searchName.value = item.nome;
     userCode.value = item.idUsuario;
     emit("update:modelValueCodeDevice", item.codigoDevice);
     emit("update:modelValueFullName", item.nome);
-    emit("update:modelValueUserCode", item.idUsuario);
+    emit("update:modelValueUserCode", String(item.idUsuario));
   }
 
   showNameResults.value = false;

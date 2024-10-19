@@ -19,6 +19,8 @@
                     @search="handleSearch"
                     @removeUser="handleDelete"
                     :isDark="mapModeStore.isDarkMode"
+                    :messageEmpty="messageEmpty"
+                    :showMessageEmpty="showMessageEmpty"
                 />
             </transition>
         </div>
@@ -44,6 +46,8 @@ const all_markers = shallowRef([]);
 const loading = shallowRef(false);
 const showFilter = shallowRef(true);
 const actualUser = ref(0);
+const messageEmpty =shallowRef('');
+const showMessageEmpty = shallowRef(false)
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
@@ -97,8 +101,8 @@ const handleDelete = (deleteParams, idUser) => {
 const getPoints = async (searchParams) => {
     try {
         const firstReq = await RegistrosService.getRegistros(searchParams.userCode, 0, searchParams.dataInicio, searchParams.dataFim);
-
-        if (firstReq) {
+        console.log(firstReq)
+        if (firstReq.registers.length != 0) {
             const allPages = firstReq.totalPages;
             allCoords.push(firstReq.registers);
             transformData(firstReq.registers, 0, allPages, searchParams);
@@ -114,6 +118,15 @@ const getPoints = async (searchParams) => {
                     transformData(req.registers, page, allPages, searchParams);
                 }
             }
+        }else{
+            changeLoading();
+            messageEmpty.value = 'This user has not registers in this period.'
+            showMessageEmpty.value = true
+            setTimeout(() =>{
+                showMessageEmpty.value = false
+                messageEmpty.value = ''
+            }, 3000);
+
         }
     } catch (error) {
         console.error("Error:", error);
@@ -216,9 +229,9 @@ async function plotPontos(allPoints, page, totalpages, elementData) {
                 "line-cap": "round",
             },
             paint: {
-                "line-color": "#0074D9",
+                "line-color": elementData.cicleColor,
                 "line-width": 2,
-                "line-dasharray": [5, 5],
+                "line-dasharray": [1, 1],
             },
         });
 
