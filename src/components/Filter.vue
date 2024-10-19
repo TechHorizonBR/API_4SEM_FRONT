@@ -147,40 +147,6 @@
       setTimeout(() => {
         showMessage.value = false;
       }, 3000);
-<<<<<<< HEAD
-  }else{
-    const color = generateRandomColor()
-    selectedUsers.value.push({
-      nameUser: fullName.value,
-      cicleColor: color,
-      userCode: userCode.value
-    });
-    emit("search", {
-      fullName: fullName.value,
-      codeDevice: codeDevice.value,
-      userCode: userCode.value,
-      dataInicio: periods.value.dataInicio,
-      dataFim: periods.value.dataFim,
-      cicleColor: color
-    });
-  }  
-};
-
-const handleRemoveUser = (username: string) => {
-    const index = selectedUsers.value.findIndex(user => user.nameUser === username);
-
-    if (index !== -1) {
-        const userCodeToRemove = selectedUsers.value[index].userCode; // Recupera o userCode do usuário a ser removido
-        selectedUsers.value.splice(index, 1);
-        emit('removeUser', index, userCodeToRemove); // Emite o evento com o index e o userCode
-    }
-}
-
-  const generateRandomColor = () => {
-    const red = Math.floor(Math.random() * 56 + 200).toString(16);  // Valores altos para vermelho
-  const green = Math.floor(Math.random() * 56 + 200).toString(16); // Valores altos para verde
-  const blue = Math.floor(Math.random() * 56 + 200).toString(16);  // Valores altos para azul
-=======
     }else{
       if(selectedUsers.value.some(user => user.nameUser === fullName.value)){
         message.value = 'Usuário already has selected!';
@@ -192,7 +158,8 @@ const handleRemoveUser = (username: string) => {
         const color = generateRandomColor()
         selectedUsers.value.push({
           nameUser: fullName.value,
-          cicleColor: color
+          cicleColor: color,
+          userCode: userCode.value
         });
         emit("search", {
           fullName: fullName.value,
@@ -222,10 +189,11 @@ const handleRemoveUser = (username: string) => {
 const handleRemoveUser = (username: string) => {
   const index = selectedUsers.value.findIndex(user => user.nameUser === username);
   if(index !== -1){
-    selectedUsers.value.splice(index, 1);
+      const userCodeToRemove = selectedUsers.value[index].userCode;
+      selectedUsers.value.splice(index, 1);
+      emit('removeUser', index, userCodeToRemove);
   }
 }
->>>>>>> 0da30de542ba8657f14707e963a6538d8919e330
 
 const generateRandomColor = () => {
   const red = Math.floor(Math.random() * 56 + 200).toString(16);
