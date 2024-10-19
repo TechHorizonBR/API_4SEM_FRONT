@@ -73,7 +73,6 @@ const handleSearch = (searchParams) => {
 };
 
 const handleDelete = (deleteParams, idUser) => {
-    console.log("idUser:", idUser);
     all_markers.value[deleteParams].forEach((marker) => marker.remove());
     all_markers.value.splice(deleteParams, 1);
 
@@ -81,12 +80,10 @@ const handleDelete = (deleteParams, idUser) => {
 
     if (map.value.getLayer(routeId)) {
         map.value.removeLayer(routeId);
-        console.log(`Layer ${routeId} removida.`);
     }
 
     if (map.value.getSource(routeId)) {
         map.value.removeSource(routeId);
-        console.log(`Source ${routeId} removida.`);
     }
 
     if (actualUser.value > deleteParams) {
@@ -94,8 +91,6 @@ const handleDelete = (deleteParams, idUser) => {
     } else if (actualUser.value === deleteParams) {
         actualUser.value = Math.max(0, actualUser.value - 1);
     }
-
-    console.log(`Usuário no índice ${deleteParams} deletado.`);
 };
 
 
@@ -172,7 +167,7 @@ async function plotPontos(allPoints, page, totalpages, elementData) {
     allPoints.forEach((point, index) => {
         let el_point = createMarkerElement(
             elementData.fullName,
-            createPin(elementData.cicleColor, iniciais)
+            createPin(elementData.cicleColor, iniciais, point.isStopped)
         );
         const defaultMark = new Marker({ element: el_point })
             .setLngLat([point.longitude, point.latitude])
@@ -187,7 +182,6 @@ async function plotPontos(allPoints, page, totalpages, elementData) {
         all_markers.value[actualUser.value].push(startMark);
     }
     if (!allPoints || allPoints.length === 0) {
-        console.log("Nenhum ponto disponível para este usuário.");
         return;
     }
 
@@ -202,7 +196,6 @@ async function plotPontos(allPoints, page, totalpages, elementData) {
         let formattedCoords = flattenedCoords.map(coord => [coord.longitude, coord.latitude]);
 
         const routeId = `route${elementData.userCode}`;
-        console.log(routeId);
         map.value.addSource(routeId, {
             type: "geojson",
             data: {
@@ -240,8 +233,9 @@ async function plotPontos(allPoints, page, totalpages, elementData) {
 }
 
 
-function createPin(color, name) {
+function createPin(color, name, isStopped) {
     let user_pin = document.createElement("div");
+
 
     if (name == "START" || name == "FINISH") {
         user_pin.style.borderRadius = "3px";
@@ -252,6 +246,9 @@ function createPin(color, name) {
     } else {
         user_pin.style.borderRadius = "50%";
         user_pin.style.height = `25px`;
+    }
+    if(isStopped){
+      user_pin.style.border = "dotted 2px"
     }
 
     user_pin.style.minWidth = `25px`;
