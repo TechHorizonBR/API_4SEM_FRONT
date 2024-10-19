@@ -33,6 +33,7 @@ const mapContainer = shallowRef(null);
 const map = shallowRef(null);
 const mapModeStore = useMapModeStore();
 let dados;
+let allCoords = [];
 const all_markers = shallowRef([]);
 const loading = shallowRef(false);
 const showFilter = shallowRef(true);
@@ -62,12 +63,25 @@ const changeLoading = () => {
 
 const handleSearch = (searchParams) => {
     changeLoading();
-    getPoints(searchParams);
+    getPoints(searchParams)
 };
 
-const handleDelete = (deleteParams) => {
+const handleDelete = (deleteParams, idUser) => {
+    console.log("idUser:", idUser);
     all_markers.value[deleteParams].forEach((marker) => marker.remove());
     all_markers.value.splice(deleteParams, 1);
+
+    const routeId = `route${idUser}`;
+
+    if (map.value.getLayer(routeId)) {
+        map.value.removeLayer(routeId);
+        console.log(`Layer ${routeId} removida.`);
+    }
+
+    if (map.value.getSource(routeId)) {
+        map.value.removeSource(routeId);
+        console.log(`Source ${routeId} removida.`);
+    }
 
     if (actualUser.value > deleteParams) {
         actualUser.value--;
@@ -85,6 +99,7 @@ const getPoints = async (searchParams) => {
 
         if (firstReq) {
             const allPages = firstReq.totalPages;
+            allCoords.push(firstReq.registers);
             transformData(firstReq.registers, 0, allPages, searchParams);
             map.value.fitBounds([
                 [firstReq.maxMinCoordinates.minLongitude - 1, firstReq.maxMinCoordinates.minLatitude - 1],
@@ -93,16 +108,12 @@ const getPoints = async (searchParams) => {
 
             for (let page = 1; page <= allPages; page++) {
                 const req = await RegistrosService.getRegistros(searchParams.userCode, page, searchParams.dataInicio, searchParams.dataFim);
-
                 if (req) {
+                    allCoords.push(req.registers);
                     transformData(req.registers, page, allPages, searchParams);
                 }
-
             }
-
         }
-
-
     } catch (error) {
         console.error("Error:", error);
     }
@@ -135,48 +146,6 @@ function inicializarMapa() {
 }
 
 async function plotPontos(allPoints, page, totalpages, elementData) {
-    if (map.value.getLayer("route")) {
-        map.value.removeLayer("route");
-    }
-    if (map.value.getSource("route")) {
-        map.value.removeSource("route");
-    }
-
-    const coordinates = allPoints.map((point) => [
-        point.longitude,
-        point.latitude,
-    ]);
-
-    console.log("COORDINATES:", coordinates)
-
-    //GEOJSON
-    map.value.addSource("route", {
-        type: "geojson",
-        data: {
-            type: "Feature",
-            geometry: {
-                type: "LineString",
-                coordinates: coordinates,
-            },
-        },
-    });
-
-    // LINHA DA ROTA
-    map.value.addLayer({
-        id: "route",
-        type: "line",
-        source: "route",
-        layout: {
-            "line-join": "round",
-            "line-cap": "round",
-        },
-        paint: {
-            "line-color": "#0074D9",
-            "line-width": 4,
-            "line-dasharray": [5, 5],
-        },
-    });
-
     if (!all_markers.value[actualUser.value]) {
         all_markers.value[actualUser.value] = [];
     }
@@ -211,7 +180,6 @@ async function plotPontos(allPoints, page, totalpages, elementData) {
             .addTo(map.value);
         all_markers.value[actualUser.value].push(startMark);
     }
-    // Se tiver ponto desenha a linha se n tiver mantem o mapa limpo
     if (!allPoints || allPoints.length === 0) {
         console.log("Nenhum ponto disponível para este usuário.");
         return;
@@ -221,10 +189,48 @@ async function plotPontos(allPoints, page, totalpages, elementData) {
         let finishMark = new Marker({ element: el_finish })
             .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
             .addTo(map.value);
+
         all_markers.value[actualUser.value].push(finishMark);
+
+        let flattenedCoords = allCoords.flat();
+        let formattedCoords = flattenedCoords.map(coord => [coord.longitude, coord.latitude]);
+
+        const routeId = `route${elementData.userCode}`;
+        console.log(routeId);
+        map.value.addSource(routeId, {
+            type: "geojson",
+            data: {
+                type: "Feature",
+                geometry: {
+                    type: "LineString",
+                    coordinates: formattedCoords,
+                },
+            },
+        });
+
+        map.value.addLayer({
+            id: routeId,
+            type: "line",
+            source: routeId,
+            layout: {
+                "line-join": "round",
+                "line-cap": "round",
+            },
+            paint: {
+                "line-color": "#0074D9",
+                "line-width": 2,
+                "line-dasharray": [5, 5],
+            },
+        });
+
+        formattedCoords = null;
+        allCoords = [];
+
         actualUser.value++;
         changeLoading();
     }
+
+
 }
 
 
@@ -232,7 +238,6 @@ function createPin(color, name) {
     let user_pin = document.createElement("div");
 
     if (name == "START" || name == "FINISH") {
-        // user_pin.style.border = "1px solid black"
         user_pin.style.borderRadius = "3px";
         user_pin.style.height = `10px`;
         user_pin.style.paddingInline = "5px";
@@ -265,7 +270,6 @@ function createImg(imgSrc) {
     return img;
 }
 
-// Função para criar um elemento de marcador personalizado
 function createMarkerElement(name, element) {
     let el = document.createElement("div");
 
@@ -278,7 +282,7 @@ function createMarkerElement(name, element) {
     son.style.opacity = "0";
     son.style.width = "max-content";
     son.style.position = "absolute";
-    son.style.bottom = "25px";
+    son.style.bottom = "15px";
     son.style.left = "50%";
     son.style.zIndex = "1";
     son.style.transform = "translate(-50%, -50%)";
