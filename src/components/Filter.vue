@@ -77,7 +77,8 @@
   });
   const selectedUsers = ref<Array<{
     nameUser: string,
-    cicleColor: string
+    cicleColor: string,
+    userCode: string
   }>>([]);
   const showMessage = ref<boolean>(false);
   const message = ref<string>('');
@@ -157,7 +158,8 @@
         const color = generateRandomColor()
         selectedUsers.value.push({
           nameUser: fullName.value,
-          cicleColor: color
+          cicleColor: color,
+          userCode: userCode.value
         });
         emit("search", {
           fullName: fullName.value,
@@ -187,7 +189,9 @@
 const handleRemoveUser = (username: string) => {
   const index = selectedUsers.value.findIndex(user => user.nameUser === username);
   if(index !== -1){
-    selectedUsers.value.splice(index, 1);
+      const userCodeToRemove = selectedUsers.value[index].userCode;
+      selectedUsers.value.splice(index, 1);
+      emit('removeUser', index, userCodeToRemove);
   }
 }
 
