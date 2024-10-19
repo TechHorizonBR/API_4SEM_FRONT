@@ -1,71 +1,100 @@
 <template>
-  <nav class="navbar">
+
+  <nav class="navbar"
+    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd'}">
     <ul class="navbar-list">
       <li class="navbar-item">
-        <button @click="toggleFilter">
+        <button
+          @click="toggleFilter"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'filter']" />
           Filter
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="goToMapMarker">
+        <button
+          @click="goToMapMarker"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'map-marker-alt']" />
           Map Marker
         </button>
       </li>
-      <li class="navbar-item">
-        <button @click="triggerAlert">
-          <font-awesome-icon :icon="['fas', 'bell']" />
-          Alerts
-        </button>
+      <li class="navbar-item logo">
+        <img src="..\assets\localTracker.ico" alt="Logo" class="logo-image" />
       </li>
       <li class="navbar-item">
-        <button @click="addUser">
+        <button
+          @click="addUser"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
           Add User
         </button>
       </li>
       <li class="navbar-item">
-        <button @click="signInOut">
+        <button
+          @click="signInOut"
+          :class="{ 'dark-button': isDark, 'light-button': !isDark }"
+        >
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
         </button>
       </li>
     </ul>
   </nav>
+
+  <!-- Campo Username no topo da tela -->
+  <div class="username-container">
+    <div class="user-icon"  :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
+        <font-awesome-icon :icon="['fas', 'user']" />
+      </div>
+      <div class="username-label-container" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
+        <div class="username-label">Username</div>
+      </div>
+
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-export default defineComponent({
-  name: 'Navbar',
-  components: {
-    FontAwesomeIcon
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+
+export default {
+  name: "Navbar",
+  props: {
+    isDark: {
+      type: Boolean,
+      required: true,
+    },
   },
+  components: {
+    FontAwesomeIcon,
+  },
+  emits: [
+    'toggleFilter'
+  ],
   methods: {
     toggleFilter() {
-      this.$emit('toggleFilter');
+      this.$emit("toggleFilter");
     },
     triggerAlert() {
-      console.log('Alerts clicked');
     },
     goToMapMarker() {
-      console.log('Map Marker clicked');
     },
     addUser() {
-      console.log('Add User clicked');
     },
     signInOut() {
-      console.log('Sign In/Out clicked');
-    }
-  }
-});
+    },
+  },
+};
+
 </script>
 
 <style scoped>
+/* Navbar na parte inferior */
 .navbar {
   position: fixed;
   margin-bottom: 20px;
@@ -74,17 +103,17 @@ export default defineComponent({
   transform: translateX(-50%);
   display: flex;
   justify-content: center;
-  background-color: #f7f7f7;
+  background-color: #f5f5f5e4;
   padding: 10px 30px;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px 8px 8px 8px;
+  border-radius: 8px;
   z-index: 1000;
 }
 
 .navbar-list {
   list-style: none;
   display: flex;
-  gap: 20px; /* Aumenta o espaçamento entre os itens */
+  gap: 20px; /* Espaçamento entre os itens */
   padding: 0;
   margin: 0;
 }
@@ -93,7 +122,6 @@ export default defineComponent({
   display: flex;
   align-items: center;
 }
-
 .navbar-item button {
   background: none;
   border: none;
@@ -101,24 +129,93 @@ export default defineComponent({
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  color: #4b0076;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: 13px;
 }
 
 .navbar-item button:hover {
   color: #7d009b;
 }
 
-.icon-alert, .icon-map-marker, .icon-filter, .icon-add-user, .icon-sign-in-out {
+/* Container do botão de Username no topo */
+.username-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.username-label-container-dark{
+  background: #0a0012e3;
+  color: white;
+}
+.username-label-container-light{
+  background: white;
+  color: #4b0076;
+}
+.username-label-container {
+  width: 120px;
+  height: 30px;
+  display: inline-flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  border-radius: 25px;
+  margin-top: -15px;
+}
+.icon-alert,
+.icon-map-marker,
+.icon-filter,
+.icon-add-user,
+.icon-sign-in-out {
   font-size: 18px;
   margin-bottom: 5px;
 }
 
-@media (max-width: 600px) {
-  .navbar-list {
-    flex-direction: column;
-    gap: 10px;
-  }
+.user-icon-container {
+  display: flex;
+  align-items: center;
+  background-color: #4b0076;
+  color: white;
+  border-radius: 25px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  justify-content: center;
+}
+
+.user-icon {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 28px;
+}
+
+.navbar-item logo {
+  display: flex;
+  align-items: center;
+}
+
+.logo-image {
+  height: 40px;
+}
+
+.username-label {
+  font-size: 14px;
+  font-weight: bold;
+}
+.dark-button {
+  color: #fff;
+}
+.light-button {
+  color: #4b0076;
+}
+.dark-button {
+  color: #fff;
+}
+.light-button {
+  color: #4b0076;
 }
 </style>
