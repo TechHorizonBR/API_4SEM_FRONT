@@ -1,7 +1,7 @@
 <template>
 
   <nav class="navbar"
-    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7'}">
+    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd'}">
     <ul class="navbar-list">
       <li class="navbar-item">
         <button
