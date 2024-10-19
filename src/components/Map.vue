@@ -177,19 +177,33 @@ async function plotPontos(allPoints) {
     .addTo(map.value);
   all_markers.value.push(finishMark);
 
-  allPoints.forEach((point, index) => {
-    if (index !== 0 && index !== fin) {
-      let el_point = createMarkerElement(
-        point.longitude,
-        point.latitude,
-        "pin.png",
+  let el_point;
+
+allPoints.forEach((point, index) => {
+
+    if (point.isStopped) {
+      el_point = createMarkerElement(
+      allPoints[fin].longitude,
+      allPoints[fin].latitude,
+      "pin.png",
+      true
       );
-      let defaultMark = new Marker({ element: el_point })
+    }
+    else{
+      el_point = createMarkerElement(
+      allPoints[fin].longitude,
+      allPoints[fin].latitude,
+      false
+    );
+    }
+    
+    // Adiciona o marcador ao mapa.
+    let defaultMark = new Marker({ element: el_point })
         .setLngLat([point.longitude, point.latitude])
         .addTo(map.value);
-      all_markers.value.push(defaultMark);
-    }
-  });
+
+    all_markers.value.push(defaultMark);
+});
 
   const coordinates = allPoints.map((point) => [
     point.longitude,
@@ -226,11 +240,12 @@ async function plotPontos(allPoints) {
 }
 
 // Função para criar um elemento de marcador personalizado
-function createMarkerElement(lng, lat, imgSrc) {
+function createMarkerElement(lng, lat, imgSrc, isStopped) {
   let el = document.createElement("div");
   let img = document.createElement("img");
   let son = document.createElement("div");
-
+  
+  son.textContent = `Parado por ${isStopped} minutos`;
   son.textContent = `Long: ${lng}, Lat: ${lat}`;
   son.style.backgroundColor = "#FFF";
   son.style.display = "block";
