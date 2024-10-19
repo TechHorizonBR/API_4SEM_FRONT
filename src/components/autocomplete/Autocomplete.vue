@@ -12,6 +12,7 @@
         v-model="searchName"
         @input="handleNameInput"
         class="dropdown-input"
+        placeholder="Type Username"
         :style="{
           backgroundColor: isDark ? '#383838' : '#FFF',
           color: isDark ? '#FFF' : '#000',
@@ -51,6 +52,7 @@
           color: isDark ? '#FFF' : '#000',
           border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)',
         }"
+        placeholder="Type Name Card"
       />
       <ul v-if="showCodeResults" class="dropdown-menu">
         <li
@@ -172,7 +174,7 @@ input {
   width: 93%;
   padding: 9px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .dropdown-menu {
