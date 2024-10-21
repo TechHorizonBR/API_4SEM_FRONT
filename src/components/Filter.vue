@@ -1,7 +1,5 @@
 <template>
-
   <div class="filter" :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd'}">
-
     <div class="filter-autocomplete" v-if="showAutocompleteFilter">
       <Autocomplete
         :source="devices"
@@ -29,6 +27,8 @@
 
     <button @click="triggerSearch">Search</button>
 
+    <Alerts :message="message" :show="showMessage" class="alert-popup" />
+
     <div class="selected-users" v-if="selectedUsers.length !== 0">
       <h3 :class=" isDark ? 'labelDark' : 'labelLight'">
         Selected Users
@@ -41,10 +41,6 @@
         @removeUser="handleRemoveUser" />
       </div>
     </div>
-
-    <p v-if="showMessage" :style="{color: isDark ? 'white' : 'black'}">
-      {{ message }}
-    </p>
 
     <p v-if="showMessageEmpty" :style="{color: isDark ? 'white' : 'black'}">
       {{ messageEmpty }}
@@ -60,6 +56,7 @@
   import DevicesService from '../services/devices';
   import DateFilters from '../components/DateFilters.vue';
   import SelectedUser from './SelectedUser.vue';
+  import Alerts from './Alerts.vue'; // Importando o novo componente Alerts.vue
 
   // VARIAVEIS
   interface Device {
@@ -84,8 +81,8 @@
     cicleColor: string,
     userCode: string
   }>>([]);
-  const showMessage = ref<boolean>(false);
-  const message = ref<string>('');
+  const showMessage = ref<boolean>(false); // Variável de controle para exibir a mensagem
+  const message = ref<string>(''); // Variável que armazena a mensagem a ser exibida
   const dateRangePicker = ref<HTMLInputElement | null>(null);
   const selectedDate = ref<string | null>(null);
 
@@ -137,7 +134,7 @@
       }
     });
   });
-
+  
   const handleUpdatePeriod = (period: { dataInicio: string | null; dataFim: string | null }) => {
     periods.value.dataInicio = period.dataInicio;
     periods.value.dataFim = period.dataFim;
@@ -145,21 +142,21 @@
   };
 
   const triggerSearch = () => {
-    if(!fullName.value || !periods.value.dataFim || !periods.value.dataInicio || !userCode.value){
-      message.value = 'It is needed all fields are completed!'
-      showMessage.value = true;
+    if (!fullName.value || !periods.value.dataFim || !periods.value.dataInicio || !userCode.value) {
+      message.value = 'It is needed all fields are completed!';
+      showMessage.value = true; // Exibir mensagem de alerta
       setTimeout(() => {
-        showMessage.value = false;
+        showMessage.value = false; // Esconder mensagem de alerta após 3 segundos
       }, 3000);
-    }else{
-      if(selectedUsers.value.some(user => user.nameUser === fullName.value)){
+    } else {
+      if (selectedUsers.value.some(user => user.nameUser === fullName.value)) {
         message.value = 'Usuário already has selected!';
         showMessage.value = true;
         setTimeout(() => {
-            showMessage.value = false;
+          showMessage.value = false;
         }, 3000);
-      }else{
-        const color = generateRandomColor()
+      } else {
+        const color = generateRandomColor();
         selectedUsers.value.push({
           nameUser: fullName.value,
           cicleColor: color,
@@ -179,165 +176,91 @@
           const picker = flatpickr(dateRangePicker.value);
           picker.clear();
         }
-        updateFlatpickrDates()
-      }  
+        updateFlatpickrDates();
+      }
     }
-    
+  };
 
-};
-
-const handleRemoveUser = (username: string) => {
-  const index = selectedUsers.value.findIndex(user => user.nameUser === username);
-  if(index !== -1){
+  const handleRemoveUser = (username: string) => {
+    const index = selectedUsers.value.findIndex(user => user.nameUser === username);
+    if (index !== -1) {
       const userCodeToRemove = selectedUsers.value[index].userCode;
       selectedUsers.value.splice(index, 1);
       emit('removeUser', index, userCodeToRemove);
-  }
-}
+    }
+  };
 
-const generateRandomColor = () => {
-  const red = Math.floor(Math.random() * 56 + 200).toString(16);
-  const green = Math.floor(Math.random() * 56 + 200).toString(16);
-  const blue = Math.floor(Math.random() * 56 + 200).toString(16);
-  return `#${red.padStart(2, '0')}${green.padStart(2, '0')}${blue.padStart(2, '0')}`;
-}
+  const generateRandomColor = () => {
+    const red = Math.floor(Math.random() * 56 + 200).toString(16);
+    const green = Math.floor(Math.random() * 56 + 200).toString(16);
+    const blue = Math.floor(Math.random() * 56 + 200).toString(16);
+    return `#${red.padStart(2, '0')}${green.padStart(2, '0')}${blue.padStart(2, '0')}`;
+  };
 </script>
 
 <style scoped>
-.filter {
-  position: absolute;
-  top: 3vh;
-  left: 3vw;
-  padding: 15px 25px;
-  background-color: #f7f7f7cd;
-  border-radius: 20px;
-  z-index: 1000;
-  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
-}
-.date-range-filter {
-  margin-bottom: 15px;
-}
-.date-range-filter input {
-  width: 93%;
-  padding: 10px;
-  border-radius: 8px;
-  font-size: 14px;
-}
-.label {
-  width: 100%;
-  display: block;
-  margin-bottom: 6px;
-  margin-top: 8px;
-}
-.label {
-  width: 100%;
-  display: block;
-  margin-bottom: 6px;
-  margin-top: 8px;
-  font-size: 20px;
-}
-.label-position-time{
-  font-size: 1.2em;
-}
-button {
-  width: 100%;
-  background-color: #35005d;
-  color: white;
-  padding: 12px;
-  margin-top: 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #3c0564;
-}
-.fade-enter-active {
-  animation: fadeInUp 0.3s ease-out;
-}
-.fade-leave-active {
-  animation: fadeOutDown 0.3s ease-in forwards;
-}
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
+  .filter {
+    position: absolute;
+    top: 3vh;
+    left: 3vw;
+    padding: 15px 25px;
+    background-color: #f7f7f7cd;
+    border-radius: 20px;
+    z-index: 1000;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .date-range-filter {
+    margin-bottom: 15px;
   }
-}
-@keyframes fadeOutDown {
-  from {
-    opacity: 1;
-    transform: translateY(0);
+  .date-range-filter input {
+    width: 93%;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
   }
-  to {
-    opacity: 0;
-    transform: translateY(20px);
+  .label {
+    width: 100%;
+    display: block;
+    margin-bottom: 6px;
+    margin-top: 8px;
   }
-}
-.labelDark{
-  color: white;
-}
-.labelLight{
-  color: black;
-}
-.input-data-dark{
-  background-color: #383838;
-  color: white;
-  border: none;
-}
-.input-data-light{
-  background-color: white;
-  color: black;
-  border: 1px solid rgb(156, 156, 156);
-}
-h3{
-  font-weight: normal;
-}
-.selected-users{
-  margin: 15% 0 0 0;
-}
-.date-filter {
-  margin-bottom: 15px;
-}
-.date-filter input {
-  width: 93%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid rgb(156, 156, 156);
-  font-size: 14px;
-}
-.users-scrool{
-  overflow-y: auto;
-  max-height: 25vh;
-}
-.users-scrool::-webkit-scrollbar {
-  width: 10px;
-}
-.users-scrool::-webkit-scrollbar-thumb {
-  background-color: #35005d;
-  border-radius: 10px;
-}
-.users-scrool::-webkit-scrollbar-track {
-  background-color: #f1f1f1;
-}
-.title-filter-dark{
-  color: white;
-}
-.title-filter-light{
-  color: #35005d
-}
-.title-filter{
-  text-align: center;
-  font-family: "Roboto", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-  font-size: 2.3em;
-}
-h1{
-  text-align: center;
-}
+  .label-position-time {
+    font-size: 1.2em;
+  }
+  button {
+    width: 100%;
+    background-color: #35005d;
+    color: white;
+    padding: 12px;
+    margin-top: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #3c0564;
+  }
+  .labelDark {
+    color: white;
+  }
+  .labelLight {
+    color: black;
+  }
+  .input-data-dark {
+    background-color: #383838;
+    color: white;
+    border: 1px solid #ffffff45;
+  }
+  .input-data-light {
+    background-color: white;
+    color: black;
+    border: 1px solid #00000020;
+  }
+  .selected-users {
+    margin-top: 20px;
+  }
+  .users-scrool {
+    max-height: 200px;
+    overflow-y: auto;
+  }
 </style>
