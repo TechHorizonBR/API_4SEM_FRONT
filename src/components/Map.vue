@@ -44,7 +44,7 @@ let dados;
 let allCoords = [];
 const all_markers = shallowRef([]);
 const loading = shallowRef(false);
-const showFilter = shallowRef(true);
+const showFilter = shallowRef(false);
 const actualUser = ref(0);
 const messageEmpty =shallowRef('');
 const showMessageEmpty = shallowRef(false)
@@ -101,7 +101,7 @@ const handleDelete = (deleteParams, idUser) => {
 const getPoints = async (searchParams) => {
     try {
         const firstReq = await RegistrosService.getRegistros(searchParams.userCode, 0, searchParams.dataInicio, searchParams.dataFim);
-        console.log(firstReq)
+
         if (firstReq.registers.length != 0) {
             const allPages = firstReq.totalPages;
             allCoords.push(firstReq.registers);
@@ -321,35 +321,30 @@ watch(
     (isDarkMode) => {
         if (map.value) {
             map.value.setStyle(isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS);
-            map.value.on("load", () => {
-                const attributionControl = document.querySelector(
-                    ".maplibregl-ctrl-attrib a",
-                );
+
+
+            map.value.on('load', () => {
+                const attributionControl = document.querySelector('.maplibregl-ctrl-attrib a');
                 if (attributionControl) {
-                    attributionControl.style.display = "none";
+                    attributionControl.style.display = 'none';
                 }
             });
-
-            const controlElements =
-                document.getElementsByClassName("maplibregl-ctrl");
+            const controlElements = document.getElementsByClassName('maplibregl-ctrl');
             for (let element of controlElements) {
                 if (isDarkMode) {
-                    element.style.backgroundColor = "#0a0012e3";
-                    element.style.color = "#fff";
+                    element.style.backgroundColor = '#0a0012e3';
+                    element.style.color = '#fff'
                 } else {
-                    element.style.backgroundColor = "#fff";
-                    element.style.color = "#000";
+                    element.style.backgroundColor = '#fff';
+                    element.style.color = '#000'
                 }
             }
-
-            const controlIcons = document.getElementsByClassName(
-                "maplibregl-ctrl-icon",
-            );
-            for (let icon of controlIcons) {
-                if (isDarkMode) {
-                    icon.style.filter = "invert(100%)";
-                } else {
-                    icon.style.filter = "none";
+            const controlIcons = document.getElementsByClassName('maplibregl-ctrl-icon');
+            for (let icon of controlIcons){
+                if(isDarkMode){
+                    icon.style.filter = 'invert(100%)'
+                }else{
+                    icon.style.filter = 'none'
                 }
             }
         }

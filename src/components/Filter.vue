@@ -175,6 +175,11 @@
           cicleColor: color
         });
 
+        fullName.value = '';
+        codeDevice.value = '';
+        userCode.value = '';
+        periods.value.dataInicio = null;
+        periods.value.dataFim = null;
         if (dateRangePicker.value) {
           const picker = flatpickr(dateRangePicker.value);
           picker.clear();
