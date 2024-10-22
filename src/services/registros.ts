@@ -9,7 +9,7 @@ class RegistrosService {
   ) {
     try {
       const response = await axios.get(
-        `http://localhost:8080/registros/filtros/2024-01-01}/2024-10-01/${id}/${page}`,
+        `http://localhost:8080/registros/filtros/${dataInicio}/${dataFim}/${id}/${page}`,
       );
       return response.data;
     } catch (error) {

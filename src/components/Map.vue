@@ -396,4 +396,6 @@ watch(
 .maplibregl-ctrl-attrib a {
     display: none;
 }
+
+
 </style>

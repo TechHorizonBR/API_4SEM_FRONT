@@ -23,7 +23,10 @@
 
     <DateFilters 
       :isDark="isDark"
-      @updatePeriod="handleUpdatePeriod" />
+      @updatePeriod="handleUpdatePeriod"
+      @resetDateFilters="handleResetDateFilters" 
+    />
+
 
     <button @click="triggerSearch">Search</button>
 
@@ -41,10 +44,7 @@
         @removeUser="handleRemoveUser" />
       </div>
     </div>
-
-    <p v-if="showMessageEmpty" :style="{color: isDark ? 'white' : 'black'}">
-      {{ messageEmpty }}
-    </p>
+    <Alerts :message="messageEmpty" :show="showMessageEmpty" class="alert-popup" />
   </div>
 </template>
 
@@ -70,7 +70,7 @@
   const codeDevice = ref<string>('');
   const userCode = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
-  const emit = defineEmits(['search', 'removeUser']);
+  const emit = defineEmits(['search', 'removeUser', 'resetDateFilters']);
   const props = defineProps<{isDark : boolean, messageEmpty: string, showMessageEmpty: boolean}>();
   const periods = ref<{ dataInicio: string | null, dataFim: string | null }>({
     dataInicio: null,
@@ -172,6 +172,8 @@
           cicleColor: color
         });
 
+        handleResetDateFilters();
+
         fullName.value = '';
         codeDevice.value = '';
         userCode.value = '';
@@ -185,6 +187,10 @@
       }
     }
   };
+  const handleResetDateFilters = () => {
+  periods.value.dataInicio = null;
+  periods.value.dataFim = null;
+};
 
   const handleRemoveUser = (username: string) => {
     const index = selectedUsers.value.findIndex(user => user.nameUser === username);
@@ -213,6 +219,7 @@
     border-radius: 20px;
     z-index: 1000;
     box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+    animation: fadeInOut 3s ease-in-out;
   }
   .date-range-filter {
     margin-bottom: 15px;
@@ -268,4 +275,34 @@
     max-height: 200px;
     overflow-y: auto;
   }
+
+  .fade-enter-active {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.fade-leave-active {
+  animation: fadeOutDown 0.3s ease-in forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
 </style>
