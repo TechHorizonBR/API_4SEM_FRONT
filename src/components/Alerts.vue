@@ -12,15 +12,17 @@
 
     .alert-popup {
         position: fixed;
-        bottom: 20px;
+        margin-bottom: 20px;
+        bottom: 0px;
         left: 35px;
         background-color: #35005d;
         color: white;
-        padding: 12px;
-        border-radius: 15px;
+        padding: 2px 10px;
+        border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         z-index: 1000;
         animation: fadeInOut 3s ease-in-out; /* Animação de aparecer/desaparecer */
+        width: 20vw;
     }
 
     @keyframes fadeInOut {
