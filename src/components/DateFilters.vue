@@ -11,7 +11,7 @@
           
             <div class="radios">
               <input type="radio" name="today-radio" id="today-radio" value="1" v-model="value" @change="updatePeriod">
-              <label for="today-radio">Last day</label>
+              <label for="today-radio">Last Day</label>
             </div>
             
             <div class="radios">
