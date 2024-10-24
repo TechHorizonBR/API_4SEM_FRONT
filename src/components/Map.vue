@@ -11,6 +11,12 @@
 
             <Nav @toggleFilter="toggleFilter" :isDark="mapModeStore.isDarkMode" />
 
+            <HistoricoLocalicao 
+                v-if="showHistoricoLocalizacao" 
+                :isDark="mapModeStore.isDarkMode" 
+            />
+
+
             <transition
                 name="fade"
             >
@@ -36,6 +42,7 @@ import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
 import { useMapModeStore } from "@/stores/useMapMode";
+import HistoricoLocalicao from "./HistoricoLocalicao.vue";
 
 const mapContainer = shallowRef(null);
 const map = shallowRef(null);
@@ -48,6 +55,7 @@ const showFilter = shallowRef(false);
 const actualUser = ref(0);
 const messageEmpty =shallowRef('');
 const showMessageEmpty = shallowRef(false)
+const showHistoricoLocalizacao = shallowRef(true);
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";

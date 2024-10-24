@@ -60,7 +60,6 @@
 <script lang="ts">
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
 export default {
   name: "Navbar",
