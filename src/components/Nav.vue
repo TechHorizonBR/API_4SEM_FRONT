@@ -40,7 +40,7 @@
         >
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
-        </button>
+        </button> 
       </li>
     </ul>
   </nav>
@@ -53,14 +53,15 @@
       <div class="username-label-container" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
         <div class="username-label">Username</div>
       </div>
-
   </div>
+  <MapMarker v-if="showMapMarker" :isDark="isDark" />
 </template>
 
 <script lang="ts">
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
+import MapMarker from './MapMarker.vue';
 
 export default {
   name: "Navbar",
@@ -72,6 +73,7 @@ export default {
   },
   components: {
     FontAwesomeIcon,
+    MapMarker,
   },
   emits: [
     'toggleFilter'
@@ -83,13 +85,20 @@ export default {
     triggerAlert() {
     },
     goToMapMarker() {
+      this.showMapMarker = !this.showMapMarker;
     },
     addUser() {
     },
     signInOut() {
     },
   },
+  data() {
+  return {
+    showMapMarker: false,
+    };
+  },
 };
+
 
 </script>
 
