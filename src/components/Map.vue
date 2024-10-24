@@ -36,6 +36,10 @@ import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
 import { useMapModeStore } from "@/stores/useMapMode";
+import mapboxgl from 'mapbox-gl';
+import MapboxDraw from "@mapbox/mapbox-gl-draw";
+
+
 
 const mapContainer = shallowRef(null);
 const map = shallowRef(null);
@@ -146,6 +150,15 @@ onUnmounted(() => {
     }
 });
 
+var draw = new MapboxDraw({
+        displayControlsDefault: false,
+        controls: {
+            polygon: true,
+            trash: true
+        }
+    });
+    
+
 function inicializarMapa() {
     const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
 
@@ -156,10 +169,23 @@ function inicializarMapa() {
             center: [initialState.lng, initialState.lat],
             zoom: initialState.zoom,
         }),
-    );
+    );    
+    drawInit(map);
 }
 
+function drawInit(){
+    map.value.addControl(draw);
+
+    const drawControls = document.querySelectorAll(".mapboxgl-ctrl-group.mapboxgl-ctrl");
+    drawControls.forEach((elem) => {
+        elem.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group');
+    });
+}
+
+
 async function plotPontos(allPoints, page, totalpages, elementData) {
+
+    console.log(draw.getAll());
     if (!all_markers.value[actualUser.value]) {
         all_markers.value[actualUser.value] = [];
     }
