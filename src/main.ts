@@ -5,12 +5,12 @@ import router from "./router";
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faUser, faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt, faMapPin, faMapLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faUser, faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt, faMapPin, faMapLocationDot, faClock, faMobile, faCalendar } from '@fortawesome/free-solid-svg-icons';
 
 import "./styles.css";
 
 // Adiciona os ícones à biblioteca do FontAwesome, incluindo o ícone de filtro (faFilter)
-library.add(faUser, faBell, faMapMarkerAlt, faUserPlus, faSignInAlt, faFilter, faMapPin, faMapLocationDot);
+library.add(faUser, faBell, faMapMarkerAlt, faUserPlus, faSignInAlt, faFilter, faMapPin, faMapLocationDot, faClock, faMobile, faCalendar);
 
 // Cria a aplicação
 const app = createApp(App);

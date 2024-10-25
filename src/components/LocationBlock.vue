@@ -3,6 +3,9 @@
         <div class="first-block">
             <font-awesome-icon :icon="['fas', 'map-location-dot']" class="icons"/>
             <h4>596.61km</h4>
+
+            <font-awesome-icon :icon="['fas', 'clock']" class="icons clock-icon" />
+            <h4>74m</h4>
         </div>
 
         <div class="locations">
@@ -11,7 +14,7 @@
                     <font-awesome-icon :icon="['fas', 'map-pin']" class="icons icon-inicio" />
                     <h3 class="datas">2024-10-23 20:47:00</h3>
                 </div>
-                <p class="endereco">Rua José do Benedito Aparecido - Bairro João Clevus - Caçapava /SP - Brazil</p>
+                <p class="endereco" :class="{'endereco-dark': isDark, 'endereco-light': !isDark}">Rua José do Benedito Aparecido - Bairro João Clevus - Caçapava /SP - Brazil</p>
             </div>
 
             <div class="fim-jornada">
@@ -19,7 +22,7 @@
                     <font-awesome-icon :icon="['fas', 'map-pin']" class="icons icon-chegada"/>
                     <h3 class="datas">2024-10-23 20:47:00</h3>
                 </div>
-                <p class="endereco">Rua José do Benedito Aparecido - Bairro João Clevus - Caçapava /SP - Brazil</p>
+                <p class="endereco" :class="{'endereco-dark': isDark, 'endereco-light': !isDark}">Rua José do Benedito Aparecido - Bairro João Clevus - Caçapava /SP - Brazil</p>
             </div>
             
         </div>
@@ -57,17 +60,14 @@ const props = defineProps<{
 }
 .icons{
     font-size: 1.5em;
-    margin: 0 3% 0 0;
+    margin: 0 3%;
 }
+
 h4, h3{
     margin:0
 }
 .container-icon-data{
     display: flex
-}
-
-.icon-inicio, .icon-chegada{
-    color: #35005d;
 }
 .endereco{
     margin: 0 0 0 10%;
@@ -85,13 +85,24 @@ h4, h3{
     top: 3.5vh;
     left: -1.3vw;
 }
+.icon-inicio{
+    color: #00FF00
+}
+.icon-chegada{
+    color: #FF0000
+}
 .locations{
     position: relative;
 }
 .datas{
     font-weight: bold;
     font-size: 1.0em;
-    color: #35005d
+}
+.endereco-dark{
+    color: #8d8d8d;
+}
+.endereco-light{
+    color: #565656;
 }
 
 </style>
