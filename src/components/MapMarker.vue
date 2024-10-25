@@ -1,5 +1,5 @@
 <template>
-  <div class="filter" >
+  <div class="filter" :class="{'mapMarker-Dark': props.isDark, 'mapMarker-Light': !props.isDark}" >
     <div class="title">
       <h3>Saved Areas:</h3>
     </div>
@@ -29,43 +29,16 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import axios from 'axios'; // para requisições HTTP
 
 const savedData = ref([]);
 const areaName = ref('');
 const userName = ref('');
+const props = defineProps<{
+  isDark: boolean,
+}>();
 
-// Função para buscar áreas salvas do banco de dados
-const fetchSavedAreas = async () => {
-  try {
-    const response = await axios.get('/api/areas'); //endpoint
-    savedData.value = response.data;
-  } catch (error) {
-    console.error('Erro ao carregar áreas:', error);
-  }
-};
-
-onMounted(() => {
-  fetchSavedAreas();
-});
-
-const selectArea = () => {
-  console.log('Área selecionada:', areaName.value);
-};
-
-const saveData = async () => {
-  try {
-    await axios.post('/api/areas', {
-      nomeArea: areaName.value,
-      nomeUsuario: userName.value
-    });
-    fetchSavedAreas(); // Atualiza a lista de áreas após salvar
-  } catch (error) {
-    console.error('Erro ao salvar área:', error);
-  }
-};
 </script>
 
 <style scoped>
@@ -81,6 +54,10 @@ const saveData = async () => {
   z-index: 1000;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
   animation: fadeInOut 3s ease-in-out;
+}
+
+.mapMarker-Dark{
+  background: #0a0012e3;
 }
 
 .data-list {
@@ -107,7 +84,7 @@ const saveData = async () => {
   padding: 9px;
   border-radius: 8px;
   font-size: 13px;
-  border: 1px solid #000000; /* Exemplo de estilo para borda */
+  border: 1px solid #ccc; /* Exemplo de estilo para borda */
   margin-bottom: 6px;
 }
 
@@ -129,6 +106,36 @@ button:hover {
 
 .buttons{
   margin-top: 5px;
+}
+
+.fade-enter-active {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.fade-leave-active {
+  animation: fadeOutDown 0.3s ease-in forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 
 </style>

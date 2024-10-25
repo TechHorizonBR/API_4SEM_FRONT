@@ -54,7 +54,10 @@
         <div class="username-label">Username</div>
       </div>
   </div>
+  <transition
+  name="fade">
   <MapMarker v-if="showMapMarker" :isDark="isDark" />
+  </transition>
 </template>
 
 <script lang="ts">
