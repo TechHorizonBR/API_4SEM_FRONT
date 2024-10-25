@@ -1,29 +1,51 @@
 <template>
   <div class="filter" :class="{'mapMarker-Dark': props.isDark, 'mapMarker-Light': !props.isDark}" >
-    <div class="title">
+    <div class="title" :class="{'titule-Dark': isDark, 'titule-Light': !isDark}" >
       <h3>Saved Areas:</h3>
     </div>
-    <div class="data-list">
+    <div class="data-list" :class="{'list-Dark': isDark, 'list-Light': !isDark}" >
       <ul>
 
       </ul>
     </div>
-    <div class="title2">
+    <div class="title2" :class="{'title2-Dark': isDark, 'title2-Light': !isDark}" >
       <h3>New Area</h3>
     </div>
 
     <div class="data-marker">
-      <div class="text-label">
+      <div class="text-label" :class="{'textL-Dark': isDark, 'textL-Light': !isDark}" >
         <label for="area-name">Name:</label><br>
-        <input type="text" id="area-name" v-model="areaName" class="label-style" placeholder="Type New Area Name"/>
+        <input
+          type="text" 
+          id="area-name" 
+          v-model="areaName" 
+          class="label-style" 
+          placeholder="Type New Area Name"
+          :style="{
+          backgroundColor: isDark ? '#383838' : '#FFF',
+          color: isDark ? '#FFF' : '#000',
+          border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)',
+          }"
+        />
       </div>
-      <div class="text-label">
+      <div class="text-label" :class="{'textL-Dark': isDark, 'textL-Light': !isDark}" >
         <label for="user-name">User Name:</label><br>
-        <input type="text" id="user-name" v-model="userName" class="label-style" placeholder="Type Linked Username"/>
+        <input
+          type="text" 
+          id="user-name" 
+          v-model="userName" 
+          class="label-style" 
+          placeholder="Type Linked Username"
+          :style="{
+          backgroundColor: isDark ? '#383838' : '#FFF',
+          color: isDark ? '#FFF' : '#000',
+          border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)',
+          }"
+        />
       </div>
       <div class="buttons">
-        <button @click="selectArea">Select Area</button>
-        <button @click="saveData">Save</button>
+        <button @click="">Select Area</button>
+        <button @click="">Save</button>
       </div>
     </div>
   </div>
@@ -60,6 +82,10 @@ const props = defineProps<{
   background: #0a0012e3;
 }
 
+.titule-Dark{
+  color: white;
+}
+
 .data-list {
   border: 2px inset rgba(0, 0, 0, 0.192);
   height: 35%;
@@ -67,12 +93,24 @@ const props = defineProps<{
   margin-bottom: 10px;
 }
 
+.list-Dark{
+  background-color: #383838;
+}
+
 .title2 {
   text-align: center;
 }
 
+.title2-Dark {
+  color: white;
+}
+
 .text-label{
   font-size: 1.2em;
+}
+
+.textL-Dark{
+  color: white
 }
 
 .data-marker{
