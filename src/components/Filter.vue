@@ -56,7 +56,7 @@
   import DevicesService from '../services/devices';
   import DateFilters from '../components/DateFilters.vue';
   import SelectedUser from './SelectedUser.vue';
-  import Alerts from './Alerts.vue'; // Importando o novo componente Alerts.vue
+  import Alerts from './Alerts.vue';
 
   // VARIAVEIS
   interface Device {
@@ -221,24 +221,29 @@
     box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
     animation: fadeInOut 3s ease-in-out;
   }
+  
   .date-range-filter {
     margin-bottom: 15px;
   }
+
   .date-range-filter input {
     width: 93%;
     padding: 10px;
     border-radius: 8px;
     font-size: 14px;
   }
+
   .label {
     width: 100%;
     display: block;
     margin-bottom: 6px;
     margin-top: 8px;
   }
+
   .label-position-time {
     font-size: 1.2em;
   }
+
   button {
     width: 100%;
     background-color: #35005d;
@@ -249,28 +254,35 @@
     border-radius: 8px;
     cursor: pointer;
   }
+
   button:hover {
     background-color: #3c0564;
   }
+
   .labelDark {
     color: white;
   }
+
   .labelLight {
     color: black;
   }
+
   .input-data-dark {
     background-color: #383838;
     color: white;
     border: 1px solid #ffffff45;
   }
+
   .input-data-light {
     background-color: white;
     color: black;
     border: 1px solid #00000020;
   }
+
   .selected-users {
     margin-top: 20px;
   }
+  
   .users-scrool {
     max-height: 200px;
     overflow-y: auto;
