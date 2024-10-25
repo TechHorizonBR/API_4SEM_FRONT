@@ -14,8 +14,6 @@
                 <p class="endereco">Rua José do Benedito Aparecido - Bairro João Clevus - Caçapava /SP - Brazil</p>
             </div>
 
-            <div class="linha-pontilhada"></div>
-            
             <div class="fim-jornada">
                 <div class="container-icon-data">
                     <font-awesome-icon :icon="['fas', 'map-pin']" class="icons icon-chegada"/>
@@ -68,14 +66,10 @@ h4, h3{
     display: flex
 }
 
-.icon-inicio{
-    color: rgb(6, 222, 6)
-}
-.icon-chegada{
-    color: rgb(255, 98, 98)
+.icon-inicio, .icon-chegada{
+    color: #35005d;
 }
 .endereco{
-    color: rgba(128, 128, 128, 0.744);
     margin: 0 0 0 10%;
 }
 .inicio-jornada{
@@ -96,7 +90,8 @@ h4, h3{
 }
 .datas{
     font-weight: bold;
-    font-size: 1.0em
+    font-size: 1.0em;
+    color: #35005d
 }
 
 </style>
