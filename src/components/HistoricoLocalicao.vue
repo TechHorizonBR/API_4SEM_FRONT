@@ -1,6 +1,6 @@
 <template>
-    <div class="container" :class="{'container-dark': props.isDark, 'container-light': !props.isDark}">
-        <div class="header" :style="{color: isDark ? 'white' : '#373737'}">
+    <div class="container" :class="{ 'container-dark': props.isDark, 'container-light': !props.isDark }">
+        <div class="header" :style="{ color: isDark ? 'white' : '#373737' }">
             <h1>Location History</h1>
             <div class="user-icon-name">
                 <font-awesome-icon :icon="['fas', 'user']" class="icons" />
@@ -17,29 +17,34 @@
                 <h2>Date: 2024-10-23 to 2024-10-30</h2>
             </div>
         </div>
-        
 
+      
         <div class="localizacoes-usuarios">
             <LocationBlock :isDark="props.isDark" />
             <LocationBlock :isDark="props.isDark" />
             <LocationBlock :isDark="props.isDark" />
-
-
-
         </div>
-       
-        
+
+
     </div>
 
 </template>
 
 <script lang="ts" setup>
+import { computed, onMounted, ref } from 'vue';
 import LocationBlock from './LocationBlock.vue';
+import LocatiosAPIOpenCageData from '@/services/locations';
 
 const props = defineProps<{
     isDark: boolean
 }>();
-
+onMounted( () =>{
+    getLocations();
+})
+const getLocations = async () =>{
+    const response = await LocatiosAPIOpenCageData.getAddressByCoordenadas(41.0, 20.9);
+    console.log(response)
+}
 
 </script>
 
@@ -57,50 +62,61 @@ const props = defineProps<{
     box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
     /*animation: fadeInOut 3s ease-in-out;*/
 }
-h1{
+
+h1 {
     font-size: 1.2em;
     text-align: center;
     border-bottom: solid rgba(128, 128, 128, 0.744) 0.9px;
 }
-h2{
+
+h2 {
     font-size: 1em;
 }
-.container-dark{
+
+.container-dark {
     background-color: #0a0012e3;
     color: white;
 }
-.container-light{
+
+.container-light {
     background-color: #f7f7f7e6;
     color: #383838;
 }
-.localizacoes-usuarios{
+
+.localizacoes-usuarios {
     max-height: 60vh;
     overflow-y: auto;
 }
 
-.user-icon-name{
+.user-icon-name {
     display: flex;
     margin: 1% 0;
 
 }
-.user-icon-name > h2{
+
+.user-icon-name>h2 {
     margin: 0;
 }
-.icons{
+
+.icons {
     margin: 0 2% 0 0;
     font-size: 1.5em;
 }
+
 .localizacoes-usuarios::-webkit-scrollbar {
-  width: 10px;
+    width: 10px;
 }
+
 .localizacoes-usuarios::-webkit-scrollbar-thumb {
-  background-color: #35005d;
-  border-radius: 10px;
+    background-color: #35005d;
+    border-radius: 10px;
 }
+
 .localizacoes-usuarios::-webkit-scrollbar-track {
-  background-color: #8f8f8f;
+    background-color: #8f8f8f;
 }
-.header{
+
+.header {
     margin: 0 0 7% 0;
 }
 </style>
