@@ -24,6 +24,7 @@
                 />
             </transition>
         </div>
+        <DrawPolygon v-if="map" :map="map" />
     </div>
 </template>
 
@@ -36,6 +37,9 @@ import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
 import { useMapModeStore } from "@/stores/useMapMode";
+import DrawPolygon from './DrawPolygon.vue';
+
+
 
 const mapContainer = shallowRef(null);
 const map = shallowRef(null);
@@ -156,7 +160,7 @@ function inicializarMapa() {
             center: [initialState.lng, initialState.lat],
             zoom: initialState.zoom,
         }),
-    );
+    );    
 }
 
 async function plotPontos(allPoints, page, totalpages, elementData) {
