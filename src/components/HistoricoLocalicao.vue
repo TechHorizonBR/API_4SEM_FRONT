@@ -24,8 +24,6 @@
             <LocationBlock :isDark="props.isDark" />
             <LocationBlock :isDark="props.isDark" />
         </div>
-
-
     </div>
 
 </template>

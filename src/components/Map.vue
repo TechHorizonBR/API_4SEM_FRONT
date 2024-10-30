@@ -43,6 +43,7 @@ import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
 import { useMapModeStore } from "@/stores/useMapMode";
 import HistoricoLocalicao from "./HistoricoLocalicao.vue";
+import { selectedUsers } from "@/stores/selectedUsers";
 
 const mapContainer = shallowRef(null);
 const map = shallowRef(null);
@@ -56,6 +57,40 @@ const actualUser = ref(0);
 const messageEmpty =shallowRef('');
 const showMessageEmpty = shallowRef(false)
 const showHistoricoLocalizacao = shallowRef(true);
+
+
+const addSelectedUsersStore = (registers, userCode) => {
+  const selectedUserStore = selectedUsers();
+  const user = {
+    id: userCode,
+    coordenadas: [],
+  };
+
+  for (let register of registers) {
+    const coordenada = {
+      lat: register.latitude,
+      lng: register.longitude,
+    };
+    user.coordenadas.push(coordenada);
+  }
+  selectedUserStore.addUser(user);
+};
+
+const addCoordenadasSelectedUsersStore = (coordenadas, userCode) => {
+  const selectedUsersStore = selectedUsers();
+  const registersToAdd = ref([]);
+
+  for (let register of coordenadas) {
+    const coordenada = {
+      lat: register.latitude,
+      lng: register.longitude,
+    };
+    registersToAdd.value.push(coordenada);
+  }
+  selectedUsersStore.addCoordenadas(userCode, registersToAdd.value);
+  console.log("Lista de usuários:", selectedUsers.users);
+};
+
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
@@ -118,14 +153,17 @@ const getPoints = async (searchParams) => {
                 [firstReq.maxMinCoordinates.minLongitude - 1, firstReq.maxMinCoordinates.minLatitude - 1],
                 [firstReq.maxMinCoordinates.maxLongitude + 1, firstReq.maxMinCoordinates.maxLatitude + 1]
             ]);
+            addSelectedUsersStore(firstReq.registers, searchParams.userCode);   
 
             for (let page = 1; page <= allPages; page++) {
                 const req = await RegistrosService.getRegistros(searchParams.userCode, page, searchParams.dataInicio, searchParams.dataFim);
                 if (req) {
                     allCoords.push(req.registers);
                     transformData(req.registers, page, allPages, searchParams);
+                    addCoordenadasSelectedUsersStore(req.registers, searchParams.userCode);
                 }
             }
+            
         }else{
             changeLoading();
             messageEmpty.value = 'This user has not registers in this period.'
@@ -252,6 +290,7 @@ async function plotPontos(allPoints, page, totalpages, elementData) {
 
 
 }
+
 
 
 function createPin(color, name, isStopped) {
