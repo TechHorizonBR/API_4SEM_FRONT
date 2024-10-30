@@ -1,7 +1,5 @@
 <template>
-
-  <nav class="navbar"
-    :style="{backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd'}">
+  <nav class="navbar" :style="{ backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd' }">
     <ul class="navbar-list">
       <li class="navbar-item">
         <button
@@ -22,7 +20,13 @@
         </button>
       </li>
       <li class="navbar-item logo">
-        <img src="..\assets\localTracker.ico" alt="Logo" class="logo-image" />
+        <img 
+          src="../assets/localTracker.ico" 
+          alt="Logo" 
+          class="logo-image" 
+          @click="resetMap" 
+          style="cursor: pointer;" 
+        />
       </li>
       <li class="navbar-item">
         <button
@@ -45,14 +49,13 @@
     </ul>
   </nav>
 
-  <!-- Campo Username no topo da tela -->
   <div class="username-container">
-    <div class="user-icon"  :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
-        <font-awesome-icon :icon="['fas', 'user']" />
-      </div>
-      <div class="username-label-container" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
-        <div class="username-label">Username</div>
-      </div>
+    <div class="user-icon" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
+      <font-awesome-icon :icon="['fas', 'user']" />
+    </div>
+    <div class="username-label-container" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
+      <div class="username-label">Username</div>
+    </div>
   </div>
   <transition
   name="fade">
@@ -61,10 +64,9 @@
 </template>
 
 <script lang="ts">
-
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 import MapMarker from './MapMarker.vue';
+
 
 export default {
   name: "Navbar",
@@ -79,20 +81,24 @@ export default {
     MapMarker,
   },
   emits: [
-    'toggleFilter'
+    'toggleFilter',
+    'resetMap' // Evento para resetar o mapa
   ],
   methods: {
     toggleFilter() {
       this.$emit("toggleFilter");
     },
-    triggerAlert() {
+    resetMap() {
+      this.$emit("resetMap"); // Emitir evento resetMap
     },
     goToMapMarker() {
       this.showMapMarker = !this.showMapMarker;
     },
     addUser() {
+      // Lógica para adicionar um usuário
     },
     signInOut() {
+      // Lógica para sign in/out
     },
   },
   data() {
@@ -101,8 +107,6 @@ export default {
     };
   },
 };
-
-
 </script>
 
 <style scoped>
@@ -158,11 +162,11 @@ export default {
   flex-direction: column;
   align-items: center;
 }
-.username-label-container-dark{
+.username-label-container-dark {
   background: #0a0012e3;
   color: white;
 }
-.username-label-container-light{
+.username-label-container-light {
   background: white;
   color: #4b0076;
 }
@@ -176,36 +180,17 @@ export default {
   border-radius: 25px;
   margin-top: -15px;
 }
-.icon-alert,
-.icon-map-marker,
-.icon-filter,
-.icon-add-user,
-.icon-sign-in-out {
-  font-size: 18px;
-  margin-bottom: 5px;
-}
-
-.user-icon-container {
-  display: flex;
-  align-items: center;
-  background-color: #4b0076;
-  color: white;
-  border-radius: 25px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  justify-content: center;
-}
-
 .user-icon {
-    width: 50px;
-    height: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
-    font-size: 28px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 28px;
 }
 
-.navbar-item logo {
+.navbar-item.logo {
   display: flex;
   align-items: center;
 }
@@ -217,12 +202,6 @@ export default {
 .username-label {
   font-size: 14px;
   font-weight: bold;
-}
-.dark-button {
-  color: #fff;
-}
-.light-button {
-  color: #4b0076;
 }
 .dark-button {
   color: #fff;

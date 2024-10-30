@@ -17,10 +17,7 @@
                 alt="Loading..."
             />
 
-            <Nav
-                @toggleFilter="toggleFilter"
-                :isDark="mapModeStore.isDarkMode"
-            />
+            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" :isDark="mapModeStore.isDarkMode" />
 
             <transition name="fade">
                 <Filter
@@ -66,8 +63,10 @@ const all_markers = shallowRef<Marker[][]>([]);
 const loading = shallowRef(false);
 const showFilter = shallowRef(true);
 const actualUser = ref(0);
-const messageEmpty = shallowRef("");
+const messageEmpty = shallowRef('');
 const showMessageEmpty = shallowRef(false);
+
+const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
@@ -202,6 +201,16 @@ function inicializarMapa() {
     }
 }
 
+const resetMap = () => {
+    if (map.value) {
+        map.value.flyTo({
+            center: [initialState.lng, initialState.lat],
+            zoom: initialState.zoom,
+            essential: true,
+        });
+    }
+};
+
 async function plotPontos(
     allPoints: any,
     page: number,
@@ -308,39 +317,10 @@ async function plotPontos(
     }
 }
 
-// function walkPoints(allPoints) {
-//     allPoints.forEach((point, index) => {
-//         let el_point = createMarkerElement(
-//             elementData.fullName,
-//             createPin("#000", ":)", false)
-//         );
-//         const defaultMark = new Marker({ element: el_point })
-//             .setLngLat([point.longitude, point.latitude])
-//             .addTo(map.value);
-//         all_markers.value[actualUser.value].push(defaultMark);
-//         setTimeout(()=>{
-
-//         },1000);
-//     });
-// }
-
 function createPin(color: string, name: string, isStopped: boolean) {
     let user_pin = document.createElement("div");
-
-    if (name == "START" || name == "FINISH") {
-        user_pin.style.borderRadius = "3px";
-        user_pin.style.height = `10px`;
-        user_pin.style.paddingInline = "5px";
-        user_pin.style.paddingBlock = "2px";
-        user_pin.style.zIndex = "5";
-    } else {
-        user_pin.style.borderRadius = "50%";
-        user_pin.style.height = `25px`;
-    }
-    if (isStopped) {
-        user_pin.style.border = "dotted 2px";
-    }
-
+    user_pin.style.borderRadius = name == "START" || name == "FINISH" ? "3px" : "50%";
+    user_pin.style.height = name == "START" || name == "FINISH" ? `10px` : `25px`;
     user_pin.style.minWidth = `25px`;
     user_pin.style.boxShadow =
         "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);";
@@ -349,48 +329,26 @@ function createPin(color: string, name: string, isStopped: boolean) {
     user_pin.style.display = "flex";
     user_pin.style.alignItems = "center";
     user_pin.style.justifyContent = "center";
+    user_pin.style.fontWeight = "bold";
     user_pin.innerHTML = name;
+
+    if (isStopped) {
+        user_pin.style.backgroundColor = "gray";
+    }
 
     return user_pin;
 }
 
-function createImg(imgSrc: string) {
-    let img = document.createElement("img");
-    img.src = imgSrc;
-    img.style.width = `25px`;
-    img.style.height = `25px`;
-    img.style.filter = "drop-shadow(0px 0px 2px #fff)";
+function createMarkerElement(fullName: string, pinElement: HTMLElement) {
+    let element = document.createElement("div");
+    element.className = "marker";
+    element.appendChild(pinElement);
 
-    return img;
-}
-
-function createMarkerElement(name: string, element: HTMLElement) {
-    let el = document.createElement("div");
-
-    let son = document.createElement("div");
-
-    son.textContent = `${name}`;
-    son.style.backgroundColor = "#FFF";
-    son.style.display = "block";
-    son.style.opacity = "0";
-    son.style.width = "max-content";
-    son.style.position = "absolute";
-    son.style.bottom = "15px";
-    son.style.left = "50%";
-    son.style.zIndex = "1";
-    son.style.transform = "translate(-50%, -50%)";
-    son.style.padding = "5px";
-    son.style.borderRadius = "10px";
-    son.style.border = "1px solid black";
-    son.style.transition = "opacity 0.3s ease-in-out";
-
-    el.appendChild(element);
-    el.appendChild(son);
-
-    el.addEventListener("mouseover", () => (son.style.opacity = "1"));
-    el.addEventListener("mouseout", () => (son.style.opacity = "0"));
-
-    return el;
+    const userName = document.createElement("span");
+    userName.innerHTML = fullName;
+    element.appendChild(userName);
+    
+    return element;
 }
 
 watch(
@@ -436,6 +394,7 @@ watch(
         }
     }
 );
+
 </script>
 
 <style scoped>
