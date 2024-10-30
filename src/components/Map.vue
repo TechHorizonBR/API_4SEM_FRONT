@@ -9,11 +9,9 @@
             </div>
             <img v-if="loading" src="/loading.gif" id="loading" alt="Loading..." />
 
-            <Nav @toggleFilter="toggleFilter" :isDark="mapModeStore.isDarkMode" />
+            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" :isDark="mapModeStore.isDarkMode" />
 
-            <transition
-                name="fade"
-            >
+            <transition name="fade">
                 <Filter
                     v-show="showFilter"
                     @search="handleSearch"
@@ -46,16 +44,16 @@ const all_markers = shallowRef([]);
 const loading = shallowRef(false);
 const showFilter = shallowRef(false);
 const actualUser = ref(0);
-const messageEmpty =shallowRef('');
-const showMessageEmpty = shallowRef(false)
+const messageEmpty = shallowRef('');
+const showMessageEmpty = shallowRef(false);
+
+const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
     inicializarMapa();
 
-    const controlElements = document.getElementsByClassName(
-        "maplibregl-ctrl-top-right",
-    );
+    const controlElements = document.getElementsByClassName("maplibregl-ctrl-top-right");
     for (let element of controlElements) {
         element.style.top = "auto";
         element.style.bottom = "80px";
@@ -73,7 +71,7 @@ const changeLoading = () => {
 
 const handleSearch = (searchParams) => {
     changeLoading();
-    getPoints(searchParams)
+    getPoints(searchParams);
 };
 
 const handleDelete = (deleteParams, idUser) => {
@@ -97,7 +95,6 @@ const handleDelete = (deleteParams, idUser) => {
     }
 };
 
-
 const getPoints = async (searchParams) => {
     try {
         const firstReq = await RegistrosService.getRegistros(searchParams.userCode, 0, searchParams.dataInicio, searchParams.dataFim);
@@ -118,15 +115,14 @@ const getPoints = async (searchParams) => {
                     transformData(req.registers, page, allPages, searchParams);
                 }
             }
-        }else{
+        } else {
             changeLoading();
-            messageEmpty.value = 'This user has not registers in this period.'
-            showMessageEmpty.value = true
-            setTimeout(() =>{
-                showMessageEmpty.value = false
-                messageEmpty.value = ''
+            messageEmpty.value = 'This user has not registers in this period.';
+            showMessageEmpty.value = true;
+            setTimeout(() => {
+                showMessageEmpty.value = false;
+                messageEmpty.value = '';
             }, 3000);
-
         }
     } catch (error) {
         console.error("Error:", error);
@@ -147,8 +143,6 @@ onUnmounted(() => {
 });
 
 function inicializarMapa() {
-    const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
-
     map.value = markRaw(
         new Map({
             container: mapContainer.value,
@@ -158,6 +152,16 @@ function inicializarMapa() {
         }),
     );
 }
+
+const resetMap = () => {
+    if (map.value) {
+        map.value.flyTo({
+            center: [initialState.lng, initialState.lat],
+            zoom: initialState.zoom,
+            essential: true,
+        });
+    }
+};
 
 async function plotPontos(allPoints, page, totalpages, elementData) {
     if (!all_markers.value[actualUser.value]) {
@@ -241,29 +245,12 @@ async function plotPontos(allPoints, page, totalpages, elementData) {
         actualUser.value++;
         changeLoading();
     }
-
-
 }
-
 
 function createPin(color, name, isStopped) {
     let user_pin = document.createElement("div");
-
-
-    if (name == "START" || name == "FINISH") {
-        user_pin.style.borderRadius = "3px";
-        user_pin.style.height = `10px`;
-        user_pin.style.paddingInline = "5px";
-        user_pin.style.paddingBlock = "2px";
-        user_pin.style.zIndex = "5";
-    } else {
-        user_pin.style.borderRadius = "50%";
-        user_pin.style.height = `25px`;
-    }
-    if(isStopped){
-      user_pin.style.border = "dotted 2px"
-    }
-
+    user_pin.style.borderRadius = name == "START" || name == "FINISH" ? "3px" : "50%";
+    user_pin.style.height = name == "START" || name == "FINISH" ? `10px` : `25px`;
     user_pin.style.minWidth = `25px`;
     user_pin.style.boxShadow = "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);"
     user_pin.style.backgroundColor = color;
@@ -271,49 +258,26 @@ function createPin(color, name, isStopped) {
     user_pin.style.display = "flex";
     user_pin.style.alignItems = "center";
     user_pin.style.justifyContent = "center";
+    user_pin.style.fontWeight = "bold";
     user_pin.innerHTML = name;
+
+    if (isStopped) {
+        user_pin.style.backgroundColor = "gray";
+    }
 
     return user_pin;
 }
 
-function createImg(imgSrc) {
-    let img = document.createElement("img");
-    img.src = imgSrc;
-    img.style.width = `25px`;
-    img.style.height = `25px`;
-    img.style.filter = "drop-shadow(0px 0px 2px #fff)";
+function createMarkerElement(fullName, pinElement) {
+    let element = document.createElement("div");
+    element.className = "marker";
+    element.appendChild(pinElement);
 
-    return img;
-}
-
-function createMarkerElement(name, element) {
-    let el = document.createElement("div");
-
-    let son = document.createElement("div");
-
-
-    son.textContent = `${name}`;
-    son.style.backgroundColor = "#FFF";
-    son.style.display = "block";
-    son.style.opacity = "0";
-    son.style.width = "max-content";
-    son.style.position = "absolute";
-    son.style.bottom = "15px";
-    son.style.left = "50%";
-    son.style.zIndex = "1";
-    son.style.transform = "translate(-50%, -50%)";
-    son.style.padding = "5px";
-    son.style.borderRadius = "10px";
-    son.style.border = "1px solid black";
-    son.style.transition = "opacity 0.3s ease-in-out";
-
-    el.appendChild(element);
-    el.appendChild(son);
-
-    el.addEventListener("mouseover", () => (son.style.opacity = "1"));
-    el.addEventListener("mouseout", () => (son.style.opacity = "0"));
-
-    return el;
+    const userName = document.createElement("span");
+    userName.innerHTML = fullName;
+    element.appendChild(userName);
+    
+    return element;
 }
 
 watch(
@@ -321,35 +285,41 @@ watch(
     (isDarkMode) => {
         if (map.value) {
             map.value.setStyle(isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS);
-
-
-            map.value.on('load', () => {
-                const attributionControl = document.querySelector('.maplibregl-ctrl-attrib a');
+            map.value.on("load", () => {
+                const attributionControl = document.querySelector(
+                    ".maplibregl-ctrl-attrib a",
+                );
                 if (attributionControl) {
-                    attributionControl.style.display = 'none';
+                    attributionControl.style.display = "none";
                 }
             });
-            const controlElements = document.getElementsByClassName('maplibregl-ctrl');
+
+            const controlElements =
+                document.getElementsByClassName("maplibregl-ctrl");
             for (let element of controlElements) {
                 if (isDarkMode) {
-                    element.style.backgroundColor = '#0a0012e3';
-                    element.style.color = '#fff'
+                    element.style.backgroundColor = "#0a0012e3";
+                    element.style.color = "#fff";
                 } else {
-                    element.style.backgroundColor = '#fff';
-                    element.style.color = '#000'
+                    element.style.backgroundColor = "#fff";
+                    element.style.color = "#000";
                 }
             }
-            const controlIcons = document.getElementsByClassName('maplibregl-ctrl-icon');
-            for (let icon of controlIcons){
-                if(isDarkMode){
-                    icon.style.filter = 'invert(100%)'
-                }else{
-                    icon.style.filter = 'none'
+
+            const controlIcons = document.getElementsByClassName(
+                "maplibregl-ctrl-icon",
+            );
+            for (let icon of controlIcons) {
+                if (isDarkMode) {
+                    icon.style.filter = "invert(100%)";
+                } else {
+                    icon.style.filter = "none";
                 }
             }
         }
     },
 );
+
 </script>
 
 <style scoped>
