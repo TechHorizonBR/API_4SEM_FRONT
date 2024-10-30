@@ -44,7 +44,7 @@
         >
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
-        </button>
+        </button> 
       </li>
     </ul>
   </nav>
@@ -57,10 +57,16 @@
       <div class="username-label">Username</div>
     </div>
   </div>
+  <transition
+  name="fade">
+  <MapMarker v-if="showMapMarker" :isDark="isDark" />
+  </transition>
 </template>
 
 <script lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import MapMarker from './MapMarker.vue';
+
 
 export default {
   name: "Navbar",
@@ -72,6 +78,7 @@ export default {
   },
   components: {
     FontAwesomeIcon,
+    MapMarker,
   },
   emits: [
     'toggleFilter',
@@ -85,7 +92,7 @@ export default {
       this.$emit("resetMap"); // Emitir evento resetMap
     },
     goToMapMarker() {
-      // Lógica para ir ao marcador no mapa
+      this.showMapMarker = !this.showMapMarker;
     },
     addUser() {
       // Lógica para adicionar um usuário
@@ -93,6 +100,11 @@ export default {
     signInOut() {
       // Lógica para sign in/out
     },
+  },
+  data() {
+  return {
+    showMapMarker: false,
+    };
   },
 };
 </script>

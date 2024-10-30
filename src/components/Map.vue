@@ -22,6 +22,7 @@
                 />
             </transition>
         </div>
+        <DrawPolygon v-if="map" :map="map" />
     </div>
 </template>
 
@@ -34,6 +35,9 @@ import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
 import { useMapModeStore } from "@/stores/useMapMode";
+import DrawPolygon from './DrawPolygon.vue';
+
+
 
 const mapContainer = shallowRef(null);
 const map = shallowRef(null);
@@ -42,7 +46,7 @@ let dados;
 let allCoords = [];
 const all_markers = shallowRef([]);
 const loading = shallowRef(false);
-const showFilter = shallowRef(false);
+const showFilter = shallowRef(true);
 const actualUser = ref(0);
 const messageEmpty = shallowRef('');
 const showMessageEmpty = shallowRef(false);
@@ -98,7 +102,7 @@ const handleDelete = (deleteParams, idUser) => {
 const getPoints = async (searchParams) => {
     try {
         const firstReq = await RegistrosService.getRegistros(searchParams.userCode, 0, searchParams.dataInicio, searchParams.dataFim);
-
+        console.log(firstReq)
         if (firstReq.registers.length != 0) {
             const allPages = firstReq.totalPages;
             allCoords.push(firstReq.registers);
@@ -150,7 +154,7 @@ function inicializarMapa() {
             center: [initialState.lng, initialState.lat],
             zoom: initialState.zoom,
         }),
-    );
+    );    
 }
 
 const resetMap = () => {
@@ -366,6 +370,4 @@ watch(
 .maplibregl-ctrl-attrib a {
     display: none;
 }
-
-
 </style>
