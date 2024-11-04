@@ -27,8 +27,10 @@
       @resetDateFilters="handleResetDateFilters" 
     />
 
-
-    <button @click="triggerSearch">Search</button>
+    <div class="buttons-filters">
+      <button @click="triggerSearch">Search</button>
+      <button>Clean</button>
+    </div>
 
     <Alerts :message="message" :show="showMessage" class="alert-popup" />
 
@@ -58,7 +60,7 @@
   import DateFilters from '../components/DateFilters.vue';
   import SelectedUser from './SelectedUser.vue';
   import Alerts from './Alerts.vue';
-  
+
   // VARIAVEIS
   interface Device {
     fullName: string;
@@ -246,11 +248,11 @@
   }
 
   button {
-    width: 100%;
+    width: 47%;
     background-color: #35005d;
     color: white;
     padding: 12px;
-    margin-top: 16px;
+    margin: 16px 0 0 0;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -296,7 +298,10 @@
 .fade-leave-active {
   animation: fadeOutDown 0.3s ease-in forwards;
 }
-
+.buttons-filters{
+  display: flex;
+  justify-content: space-between;
+}
 @keyframes fadeInUp {
   from {
     opacity: 0;
