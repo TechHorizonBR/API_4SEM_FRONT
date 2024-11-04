@@ -2,7 +2,10 @@
     <div :class="isDark ? 'selected-user-dark' : 'selected-user-light'" class="selected-user">
         <p id="iniciais" :style="{backgroundColor: props.cicleColor, color: 'black'}">{{ workingOnName.iniciais }}</p>
         <p class="name">{{ workingOnName.name }}</p>
-        <button @click="removeUser">X</button>
+        <div class="buttons-options">
+          <font-awesome-icon :icon="['fas', 'trash']" class="icones-buttons" title="Remove User"/>
+          <font-awesome-icon :icon="['fas', 'map']" class="icones-buttons" title="See location history" />
+        </div>
     </div>
 
 </template>
@@ -10,7 +13,6 @@
 <script lang="ts" setup>
 import type { Color } from '@maptiler/sdk';
 import { computed } from 'vue';
-
 
  const props = defineProps<{
     nameUser: string,
@@ -51,11 +53,6 @@ import { computed } from 'vue';
    border-radius: 1em; 
    margin: 0 0 3% 0;
  }
- button{
-   cursor: pointer;
-   border: none;
-    
- }
  .selected-user-dark > button{
    background-color: #383838;
    color: white
@@ -63,13 +60,21 @@ import { computed } from 'vue';
  .selected-user-light > button{
    background-color: white;
  }
+ .buttons-options{
+  display: flex;
+  align-items: center;
+  font-size: 1.2em;
+ }
+ .icones-buttons{
+  margin: 0 15%;
+ }
  .name{
    font-size: 1em;
    max-width: 130px;
    min-width: 130px;
    text-align: left;
-   white-space: nowrap;       /* Evita que o texto quebre a linha */
-   overflow: hidden;          /* Esconde o texto que ultrapassar o limite */
+   white-space: nowrap;
+   overflow: hidden;
    text-overflow: ellipsis;
  }
  #iniciais{

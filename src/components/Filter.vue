@@ -45,6 +45,7 @@
       </div>
     </div>
     <Alerts :message="messageEmpty" :show="showMessageEmpty" class="alert-popup" />
+
   </div>
 </template>
 
@@ -57,7 +58,7 @@
   import DateFilters from '../components/DateFilters.vue';
   import SelectedUser from './SelectedUser.vue';
   import Alerts from './Alerts.vue';
-
+  
   // VARIAVEIS
   interface Device {
     fullName: string;
