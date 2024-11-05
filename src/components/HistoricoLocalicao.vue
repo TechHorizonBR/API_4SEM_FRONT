@@ -18,11 +18,12 @@
             </div>
         </div>
 
-      
+        
+        
+        <h2 v-if="props.locations.length === 0">User has not registers.</h2>
+
         <div class="localizacoes-usuarios">
-            <LocationBlock :isDark="props.isDark" />
-            <LocationBlock :isDark="props.isDark" />
-            <LocationBlock :isDark="props.isDark" />
+            <LocationBlock :isDark="props.isDark" v-for="location of props.locations" :location="location"/>
         </div>
     </div>
 
@@ -32,14 +33,18 @@
 import { computed, onMounted, ref } from 'vue';
 import LocationBlock from './LocationBlock.vue';
 import LocatiosAPIOpenCageData from '@/services/locations';
+import {type Location} from '@/interfaces/types';
 
 const props = defineProps<{
-    isDark: boolean
+    isDark: boolean,
+    locations: Location[]
 }>();
-onMounted( () =>{
+
+
+onMounted(() => {
     getLocations();
 })
-const getLocations = async () =>{
+const getLocations = async () => {
     const response = await LocatiosAPIOpenCageData.getAddressByCoordenadas(41.0, 20.9);
     console.log(response)
 }
@@ -53,13 +58,25 @@ const getLocations = async () =>{
     top: 3vh;
     left: 3vw;
     padding: 15px 25px;
-    min-width: 21vw;
-    background-color: #606060cd;
+    background-color: #f7f7f7cd;
     border-radius: 20px;
     z-index: 1000;
     box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+    animation: fadeInOut 3s ease-in-out;
+    min-width: 25vw;
     /*animation: fadeInOut 3s ease-in-out;*/
 }
+.filter {
+    position: absolute;
+    top: 3vh;
+    left: 3vw;
+    padding: 15px 25px;
+    background-color: #f7f7f7cd;
+    border-radius: 20px;
+    z-index: 1000;
+    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+    animation: fadeInOut 3s ease-in-out;
+  }
 
 h1 {
     font-size: 1.2em;
@@ -68,7 +85,7 @@ h1 {
 }
 
 h2 {
-    font-size: 1em;
+    font-size: .9em;
 }
 
 .container-dark {
@@ -98,7 +115,7 @@ h2 {
 
 .icons {
     margin: 0 2% 0 0;
-    font-size: 1.5em;
+    font-size: 1em;
 }
 
 .localizacoes-usuarios::-webkit-scrollbar {

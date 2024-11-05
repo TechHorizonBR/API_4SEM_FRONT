@@ -12,19 +12,21 @@
             <div class="inicio-jornada">
                 <div class="container-icon-data">
                     <font-awesome-icon :icon="['fas', 'map-pin']" class="icons icon-inicio" />
-                    <h3 class="datas">2024-10-23 20:47:00</h3>
+                    <h3 class="datas">{{ props.location.dataInicio }}</h3>
                 </div>
-                <p class="endereco" :class="{ 'endereco-dark': isDark, 'endereco-light': !isDark }">Rua José do Benedito
-                    Aparecido - Bairro João Clevus - Caçapava /SP - Brazil</p>
+                <p class="endereco" :class="{ 'endereco-dark': isDark, 'endereco-light': !isDark }">
+                    {{ props.location.latitudeInicio }}
+                </p>
             </div>
 
             <div class="fim-jornada">
                 <div class="container-icon-data">
                     <font-awesome-icon :icon="['fas', 'map-pin']" class="icons icon-chegada" />
-                    <h3 class="datas">2024-10-23 20:47:00</h3>
+                    <h3 class="datas">{{ props.location.dataFim }}</h3>
                 </div>
-                <p class="endereco" :class="{ 'endereco-dark': isDark, 'endereco-light': !isDark }">Rua José do Benedito
-                    Aparecido - Bairro João Clevus - Caçapava /SP - Brazil</p>
+                <p class="endereco" :class="{ 'endereco-dark': isDark, 'endereco-light': !isDark }">
+                    {{ props.location.latitudeInicio }}
+                </p>
             </div>
 
         </div>
@@ -32,9 +34,11 @@
 </template>
 
 <script lang="ts" setup>
+import {type Location } from '@/interfaces/types'
 
 const props = defineProps<{
-    isDark: boolean
+    isDark: boolean,
+    location: Location
 }>();
 
 </script>
@@ -65,7 +69,7 @@ const props = defineProps<{
 }
 
 .icons {
-    font-size: 1.5em;
+    font-size: 1em;
     margin: 0 3%;
 }
 
@@ -80,6 +84,7 @@ h3 {
 
 .endereco {
     margin: 0 0 0 10%;
+    font-size: .8em;
 }
 
 .inicio-jornada {
@@ -111,7 +116,7 @@ h3 {
 
 .datas {
     font-weight: bold;
-    font-size: 1.0em;
+    font-size: 0.8em;
 }
 
 .endereco-dark {

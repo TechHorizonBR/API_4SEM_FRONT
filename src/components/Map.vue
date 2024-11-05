@@ -34,6 +34,7 @@
             </transition>
         </div>
         <DrawPolygon v-if="map" :map="map" />
+        <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showHistoryFuntion.showHistory"  />
     </div>
 </template>
 
@@ -47,9 +48,24 @@ import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
 import { useMapModeStore } from "@/stores/useMapMode";
 import DrawPolygon from "./DrawPolygon.vue";
-import { type User, type Coordinate } from '../interfaces/types';
+import { type User, type Coordinate, type Location } from '../interfaces/types';
 import { selectedUsers } from "@/stores/selectedUsers";
+import HistoricoLocalicao from "./HistoricoLocalicao.vue";
+import { showHistory } from "@/stores/showHistory";
 
+const mapContainer = shallowRef(null);
+const map = shallowRef<Map | null>(null);
+const mapModeStore = useMapModeStore();
+const allCoords = ref<any[]>([]);
+const all_markers = shallowRef<Marker[][]>([]);
+const loading = shallowRef(false);
+const showFilter = shallowRef(false);
+const actualUser = ref(0);
+const messageEmpty = shallowRef('');
+const showMessageEmpty = shallowRef(false);
+const locations = ref<Location[]>([]);
+const showHistoryFuntion = showHistory();
+const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
 
 interface SearchParams {
     fullName: string;
@@ -93,18 +109,7 @@ const addCoordenadasSelectedUsersStore = (coordenadas : any, userCode: number) =
   console.log("Lista de usuários:", selectedUsersStore.users);
 };
 
-const mapContainer = shallowRef(null);
-const map = shallowRef<Map | null>(null);
-const mapModeStore = useMapModeStore();
-const allCoords = ref<any[]>([]);
-const all_markers = shallowRef<Marker[][]>([]);
-const loading = shallowRef(false);
-const showFilter = shallowRef(true);
-const actualUser = ref(0);
-const messageEmpty = shallowRef('');
-const showMessageEmpty = shallowRef(false);
 
-const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";

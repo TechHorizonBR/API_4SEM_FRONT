@@ -3,23 +3,29 @@
         <p id="iniciais" :style="{backgroundColor: props.cicleColor, color: 'black'}">{{ workingOnName.iniciais }}</p>
         <p class="name">{{ workingOnName.name }}</p>
         <div class="buttons-options">
-          <font-awesome-icon :icon="['fas', 'trash']" class="icones-buttons" title="Remove User"/>
-          <font-awesome-icon :icon="['fas', 'map']" class="icones-buttons" title="See location history" />
+          <font-awesome-icon :icon="['fas', 'trash']" class="icones-buttons" title="Remove User" @click="removeUser"/>
+          <font-awesome-icon :icon="['fas', 'map']" class="icones-buttons" title="See location history" @click="showHistoryPanelFunction"/>
+         
         </div>
     </div>
 
 </template>
 
 <script lang="ts" setup>
-import type { Color } from '@maptiler/sdk';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import { showHistory } from '@/stores/showHistory';
 
  const props = defineProps<{
     nameUser: string,
     isDark: boolean,
     cicleColor: string
  }>();
+ const showHistoryPanel = showHistory();
 
+
+ const showHistoryPanelFunction = () => {
+  showHistoryPanel.toggleMode();
+ }
  const emit = defineEmits(['removeUser']);
 
  const removeUser = () => {
@@ -67,6 +73,10 @@ import { computed } from 'vue';
  }
  .icones-buttons{
   margin: 0 15%;
+ }
+ .icones-buttons:hover{
+  cursor: pointer;
+  color: #35005d;
  }
  .name{
    font-size: 1em;

@@ -223,6 +223,7 @@
     z-index: 1000;
     box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
     animation: fadeInOut 3s ease-in-out;
+    min-width: 25vw;
   }
   
   .date-range-filter {
