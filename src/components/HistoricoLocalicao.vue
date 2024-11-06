@@ -11,12 +11,7 @@
                 <font-awesome-icon :icon="['fas', 'mobile']" class="icons" />
                 <h2>Card: CARD_0989</h2>
             </div>
-
-            <div class="user-icon-name">
-                <font-awesome-icon :icon="['fas', 'calendar']" class="icons" />
-                <h2>Date: 2024-10-23 to 2024-10-30</h2>
-                <h2>{{ user?.coordenadas }}</h2>
-            </div>
+            
         </div>
         <h2 v-if="props.locations.length === 0">User has not registers.</h2>
 
