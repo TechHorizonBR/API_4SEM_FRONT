@@ -3,22 +3,21 @@
         <div class="header" :style="{ color: isDark ? 'white' : '#373737' }">
             <h1>Location History</h1>
             <div class="user-icon-name">
-                <font-awesome-icon :icon="['fas', 'user']" class="icons" />
                 <h2>User: JHONY SANTOS DE SOUZA</h2>
             </div>
 
             <div class="user-icon-name">
-                <font-awesome-icon :icon="['fas', 'mobile']" class="icons" />
                 <h2>Card: CARD_0989</h2>
             </div>
-            
+
         </div>
-        <h2 v-if="props.locations.length === 0">User has not registers.</h2>
+        
+        <h2 v-if="locations?.length === 0">User has not registers.</h2>
 
         <div class="localizacoes-usuarios">
-            <LocationBlock :isDark="props.isDark" v-for="location of props.locations" :location="location"/>
+            <LocationBlock :isDark="props.isDark" v-for="location of locations" :location="location"/>
         </div>
-
+        <Alerts :message="message" :show="showMessage" class="alert-popup" />
     </div>
 
 </template>
@@ -26,29 +25,37 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref } from 'vue';
 import LocationBlock from './LocationBlock.vue';
-import LocatiosAPIOpenCageData from '@/services/locations';
-import {type Location, type User} from '@/interfaces/types';
+import Alerts from './Alerts.vue';
+
+import {type Coordinate, type Location, type User} from '@/interfaces/types';
 import { selectedUsers } from '@/stores/selectedUsers';
 
 const props = defineProps<{
     isDark: boolean,
-    locations: Location[],
     id: string
 }>();
 
 const selectedUserStore = selectedUsers();
 const user = ref<User>();
-
+const locations = ref<Coordinate[]>();
+const message = ref<string>("");
+const showMessage = ref<boolean>(false);
 onMounted(() => {
-    getLocations();
     findUsuarioInStore();
 })
 const findUsuarioInStore = () => {
     user.value = selectedUserStore.findById(Number(props.id));
-}
-const getLocations = async () => {
-    const response = await LocatiosAPIOpenCageData.getAddressByCoordenadas(41.0, 20.9);
-    console.log(response)
+    locations.value = user.value?.coordenadas ?? [];
+
+    if(locations.value.length === 0){
+        message.value = "User has not registers";
+        showMessage.value = true;
+
+        setTimeout(() =>{
+            message.value = "";
+            showMessage.value = false;
+        }, 3000);
+    }
 }
 
 </script>

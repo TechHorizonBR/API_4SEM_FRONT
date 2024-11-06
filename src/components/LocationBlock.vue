@@ -1,45 +1,58 @@
 <template>
     <div class="container-block" :class="{ 'container-dark-block': isDark, 'container-light-block': !isDark }">
-        <div class="first-block">
+        <!-- <div class="first-block">
             <font-awesome-icon :icon="['fas', 'map-location-dot']" class="icons" />
             <h4>596.61km</h4>
 
             <font-awesome-icon :icon="['fas', 'clock']" class="icons clock-icon" />
             <h4>74m</h4>
-        </div>
+        </div> -->
 
         <div class="locations">
             <div class="inicio-jornada">
                 <div class="container-icon-data">
                     <font-awesome-icon :icon="['fas', 'map-pin']" class="icons icon-inicio" />
-                    <h3 class="datas">{{ props.location.dataInicio }}</h3>
+                    <h3 class="datas">{{ props.location.data }}</h3>
                 </div>
                 <p class="endereco" :class="{ 'endereco-dark': isDark, 'endereco-light': !isDark }">
-                    {{ props.location.latitudeInicio }}
+                    {{ endereco }}
                 </p>
             </div>
 
+<!-- 
             <div class="fim-jornada">
                 <div class="container-icon-data">
                     <font-awesome-icon :icon="['fas', 'map-pin']" class="icons icon-chegada" />
-                    <h3 class="datas">{{ props.location.dataFim }}</h3>
+                 <h3 class="datas">{{ props.location.dataFim }}</h3>
                 </div>
                 <p class="endereco" :class="{ 'endereco-dark': isDark, 'endereco-light': !isDark }">
-                    {{ props.location.latitudeInicio }}
+                    {{ props.location.latitudeInicio }} 
                 </p>
-            </div>
+            </div> -->
 
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
-import {type Location } from '@/interfaces/types'
+import {type Coordinate, type Location } from '@/interfaces/types'
+import { onMounted, ref } from 'vue';
+import LocatiosAPIOpenCageData from '@/services/locations';
 
 const props = defineProps<{
     isDark: boolean,
-    location: Location
+    location: Coordinate
 }>();
+const endereco = ref<string>('');
+
+onMounted(() => {
+    getLocations();
+})
+
+const getLocations = async () => {
+    const response = await LocatiosAPIOpenCageData.getAddressByCoordenadas(props.location.lat, props.location.lng);
+    endereco.value = `${response.road} - ${response.city} / ${response.state} - ${response.country}`;
+}
 
 </script>
 

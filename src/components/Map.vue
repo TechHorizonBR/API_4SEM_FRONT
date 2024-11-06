@@ -94,6 +94,7 @@ const addSelectedUsersStore = (registers: any, userCode: number) => {
     const coordenada = ref<Coordinate>({
       lat: register.latitude,
       lng: register.longitude,
+      data: register.dataHora
     });
     user.value.coordenadas.push(coordenada.value);
   }
@@ -108,6 +109,7 @@ const addCoordenadasSelectedUsersStore = (coordenadas : any, userCode: number) =
     const coordenada = ref<Coordinate>({
       lat: register.latitude,
       lng: register.longitude,
+      data: register.dataHora
     });
     registersToAdd.value.push(coordenada.value);
   }
