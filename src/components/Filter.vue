@@ -31,7 +31,6 @@
       <button @click="triggerSearch">Search</button>
       <button>Clean</button>
     </div>
-
     <Alerts :message="message" :show="showMessage" class="alert-popup" />
 
     <div class="selected-users" v-if="selectedUsers.length !== 0">
@@ -43,7 +42,9 @@
         :nameUser="user.nameUser"
         :isDark="isDark" 
         :cicle-color="user.cicleColor"
-        @removeUser="handleRemoveUser" />
+        @removeUser="handleRemoveUser" 
+        @send-id="receiveId"
+        :idUser="user.userCode"/>
       </div>
     </div>
     <Alerts :message="messageEmpty" :show="showMessageEmpty" class="alert-popup" />
@@ -73,7 +74,7 @@
   const codeDevice = ref<string>('');
   const userCode = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
-  const emit = defineEmits(['search', 'removeUser', 'resetDateFilters']);
+  const emit = defineEmits(['search', 'removeUser', 'resetDateFilters', 'sendId']);
   const props = defineProps<{isDark : boolean, messageEmpty: string, showMessageEmpty: boolean}>();
   const periods = ref<{ dataInicio: string | null, dataFim: string | null }>({
     dataInicio: null,
@@ -97,7 +98,9 @@
       console.error("Erro ao buscar dispositivos:", error);
     }
   };
-
+  const receiveId = (idUser: string) =>{
+    emit('sendId', idUser);
+  }
   const handleDateRangeChange = (selectedDates: any) => {
     if (selectedDates.length === 2) {
       periods.value.dataInicio = selectedDates[0].toISOString().split('T')[0];

@@ -18,15 +18,16 @@ import { showHistory } from '@/stores/showHistory';
  const props = defineProps<{
     nameUser: string,
     isDark: boolean,
-    cicleColor: string
+    cicleColor: string, 
+    idUser: string
  }>();
  const showHistoryPanel = showHistory();
 
-
  const showHistoryPanelFunction = () => {
+  emit('sendId', props.idUser);
   showHistoryPanel.toggleMode();
  }
- const emit = defineEmits(['removeUser']);
+ const emit = defineEmits(['removeUser', 'sendId']);
 
  const removeUser = () => {
     emit('removeUser', props.nameUser)

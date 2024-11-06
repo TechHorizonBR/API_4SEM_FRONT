@@ -27,6 +27,7 @@
                     v-show="showFilter"
                     @search="handleSearch"
                     @removeUser="handleDelete"
+                    @send-id="receiveId"
                     :isDark="mapModeStore.isDarkMode"
                     :messageEmpty="messageEmpty"
                     :showMessageEmpty="showMessageEmpty"
@@ -34,7 +35,7 @@
             </transition>
         </div>
         <DrawPolygon v-if="map" :map="map" />
-        <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showHistoryFuntion.showHistory"  />
+        <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showHistoryFuntion.showHistory" :id="idUsuario" />
     </div>
 </template>
 
@@ -66,6 +67,7 @@ const showMessageEmpty = shallowRef(false);
 const locations = ref<Location[]>([]);
 const showHistoryFuntion = showHistory();
 const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
+const idUsuario = ref<string>('');
 
 interface SearchParams {
     fullName: string;
@@ -75,6 +77,10 @@ interface SearchParams {
     dataFim: string;
     selectedDate: string;
     cicleColor: string;
+}
+
+const receiveId = (idUser : string) => {
+    idUsuario.value = idUser;
 }
 const addSelectedUsersStore = (registers: any, userCode: number) => {
   const selectedUserStore = selectedUsers();

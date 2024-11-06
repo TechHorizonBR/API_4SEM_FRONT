@@ -22,9 +22,12 @@ export const selectedUsers = defineStore("selectedUser", {
       if(user){
         for(let coordenada of coordenadas){
           user.coordenadas.push(coordenada);
-
         }
       }
+    },
+    findById(idUser : number){
+      return this.users.find(user => user.id == idUser);
     }
+    
   },
 });

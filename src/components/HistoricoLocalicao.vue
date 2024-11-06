@@ -15,16 +15,15 @@
             <div class="user-icon-name">
                 <font-awesome-icon :icon="['fas', 'calendar']" class="icons" />
                 <h2>Date: 2024-10-23 to 2024-10-30</h2>
+                <h2>{{ user?.coordenadas }}</h2>
             </div>
         </div>
-
-        
-        
         <h2 v-if="props.locations.length === 0">User has not registers.</h2>
 
         <div class="localizacoes-usuarios">
             <LocationBlock :isDark="props.isDark" v-for="location of props.locations" :location="location"/>
         </div>
+
     </div>
 
 </template>
@@ -33,17 +32,25 @@
 import { computed, onMounted, ref } from 'vue';
 import LocationBlock from './LocationBlock.vue';
 import LocatiosAPIOpenCageData from '@/services/locations';
-import {type Location} from '@/interfaces/types';
+import {type Location, type User} from '@/interfaces/types';
+import { selectedUsers } from '@/stores/selectedUsers';
 
 const props = defineProps<{
     isDark: boolean,
-    locations: Location[]
+    locations: Location[],
+    id: string
 }>();
 
+const selectedUserStore = selectedUsers();
+const user = ref<User>();
 
 onMounted(() => {
     getLocations();
+    findUsuarioInStore();
 })
+const findUsuarioInStore = () => {
+    user.value = selectedUserStore.findById(Number(props.id));
+}
 const getLocations = async () => {
     const response = await LocatiosAPIOpenCageData.getAddressByCoordenadas(41.0, 20.9);
     console.log(response)
