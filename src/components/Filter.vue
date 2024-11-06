@@ -143,7 +143,7 @@
 
   const triggerSearch = () => {
     if (!fullName.value || !periods.value.dataFim || !periods.value.dataInicio || !userCode.value) {
-      message.value = 'It is needed all fields are completed!';
+      message.value = 'All fields must be completed!';
       showMessage.value = true; // Exibir mensagem de alerta
       setTimeout(() => {
         showMessage.value = false; // Esconder mensagem de alerta após 3 segundos
