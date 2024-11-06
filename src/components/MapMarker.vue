@@ -44,21 +44,29 @@
         />
       </div>
       <div class="buttons">
-        <button @click="">Select Area</button>
+        <button @click="initDraw">Select Area</button>
         <button @click="">Save</button>
       </div>
+      <DrawPolygon v-if="showDraw" :map="map" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import DrawPolygon from './DrawPolygon.vue';
 
 const savedData = ref([]);
 const areaName = ref('');
 const userName = ref('');
+
+const showDraw = ref(false);
+const initDraw = () =>   {showDraw.value = true};
+
+
 const props = defineProps<{
   isDark: boolean,
+  map: Object
 }>();
 
 </script>

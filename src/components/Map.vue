@@ -17,7 +17,7 @@
                 alt="Loading..."
             />
 
-            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" :isDark="mapModeStore.isDarkMode" />
+            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" :isDark="mapModeStore.isDarkMode" :map="map" v-if="map" />
 
             <transition name="fade">
                 <Filter
@@ -30,7 +30,7 @@
                 />
             </transition>
         </div>
-        <DrawPolygon v-if="map" :map="map" />
+        <!-- <DrawPolygon v-if="map" :map="map" /> -->
     </div>
 </template>
 

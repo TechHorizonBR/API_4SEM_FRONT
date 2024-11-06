@@ -59,7 +59,7 @@
   </div>
   <transition
   name="fade">
-  <MapMarker v-if="showMapMarker" :isDark="isDark" />
+  <MapMarker v-if="showMapMarker" :isDark="isDark" :map="$props.map" />
   </transition>
 </template>
 
@@ -75,6 +75,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    map: {
+      type: Object,
+      required: true
+    }
   },
   components: {
     FontAwesomeIcon,
