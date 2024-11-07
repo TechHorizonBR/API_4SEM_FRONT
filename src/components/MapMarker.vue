@@ -37,9 +37,12 @@
       <div class="buttons">
         <button @click="initDraw">Select Area</button>
         <button @click="saveDemarcation">Save</button>
+        <button @click="getDemarcationsByUser">Search By User</button>
+
       </div>
       <DrawPolygon v-if="showDraw" :map="map" ref="drawPolygon" @enviarCoordenadas="recebeCoordenadas"/>
     </div>
+    <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
   </div>
 </template>
 
@@ -60,6 +63,8 @@ const devices = ref<Device[]>([]);
 const fullName = ref<string>('');
 const codeDevice = ref<string>('');
 const userCode = ref<string>('');
+const showMessage = ref<boolean>(false);
+const messageAlert = ref<string>('');
 
 interface Device {
     fullName: string;
@@ -103,6 +108,30 @@ const props = defineProps<{
 onMounted(() => { 
   fetchDevices();
 })
+
+const getDemarcationsByUser = async () => {
+  try{
+    const response = await DemarcationsServices.getDemarcacoesByUsuario(Number(userCode.value));
+    
+    if(response === "Error"){
+      showAlert("Something is wrong. Please, try again later.");
+    }else{
+      console.log(response);
+    }
+  }catch(error){ 
+    showAlert("Something is wrong. Please, try again later.");    
+  }
+}
+
+const showAlert = (message : string) => {
+  showMessage.value = true;
+  messageAlert.value = message;
+
+  setTimeout(() =>{
+    showMessage.value = false;
+    messageAlert.value = '';
+  }, 3000);
+}
 
 </script>
 

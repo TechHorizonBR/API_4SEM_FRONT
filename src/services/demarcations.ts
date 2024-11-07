@@ -30,8 +30,12 @@ class Demarcacoes{
 
     async getDemarcacoesByUsuario(usuarioId: number){
     try {
-      const response = await axios.get(`http://localhost:8080/demarcacoes/usuario/${usuarioId}`);
-      return response.data;
+      const response = await axios.get(`http://localhost:8080/demarcacoes/user/${usuarioId}`);
+      if(response.status == 200){
+        return response.data;
+      }else{
+        return "Error";
+      }
     } catch (error) {
       return "Error";
     }
