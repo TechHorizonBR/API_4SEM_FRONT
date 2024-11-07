@@ -1,6 +1,4 @@
 <template>
-
-
   <div class="filter" :class="{'mapMarker-Dark': props.isDark, 'mapMarker-Light': !props.isDark}" >
     <div class="title" :class="{'titule-Dark': isDark, 'titule-Light': !isDark}" >
 
@@ -38,7 +36,7 @@
       
       <div class="buttons">
         <button @click="initDraw">Select Area</button>
-        <button @click="">Save</button>
+        <button @click="saveDemarcation">Save</button>
       </div>
       <DrawPolygon v-if="showDraw" :map="map" ref="drawPolygon" @enviarCoordenadas="recebeCoordenadas"/>
     </div>
@@ -51,22 +49,9 @@ import DrawPolygon from './DrawPolygon.vue';
 import Autocomplete from './autocomplete/Autocomplete.vue';
 import DevicesService from '../services/devices';
 import DemarcationsServices from '../services/demarcations';
+import Alerts from './Alerts.vue';
 
-async function demarcation () {
-  try {
-    
-  } catch (error) {
-    
-  }
-} 
-
-interface Device {
-    fullName: string;
-    codeDevice: string;
-    userCode: string;
-  }
-
-const savedData = ref([]);
+const savedData = ref<[]>([]);
 const areaName = ref('');
 const userName = ref('');
 const showDraw = ref(false);
@@ -75,6 +60,22 @@ const devices = ref<Device[]>([]);
 const fullName = ref<string>('');
 const codeDevice = ref<string>('');
 const userCode = ref<string>('');
+
+interface Device {
+    fullName: string;
+    codeDevice: string;
+    userCode: string;
+  }
+
+async function saveDemarcation () {
+  try {
+    const  data = {nome: String(fullName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
+    const response = await DemarcationsServices.create(data); 
+    
+  } catch (error) {
+    console.log("Deu erro: ", error);
+  }
+} 
 
 function recebeCoordenadas(coordenadas:any){
   savedData.value = coordenadas;
@@ -97,8 +98,6 @@ const props = defineProps<{
 onMounted(() => { 
   fetchDevices();
 })
-
-
 
 </script>
 

@@ -31,7 +31,6 @@ function parseCoordinates( coordinates:any ){
   }
 }
 
-
 function drawInit() {
   draw.value = new MapboxDraw({
     displayControlsDefault: false,
