@@ -69,7 +69,12 @@ interface Device {
 
 async function saveDemarcation () {
   try {
-    const  data = {nome: String(fullName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
+    if (areaName.value.trim() === '') {
+      throw new Error("O nome da área não pode estar vazio");
+    }
+
+
+    const  data = {nome: String(areaName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
     const response = await DemarcationsServices.create(data); 
     
   } catch (error) {
