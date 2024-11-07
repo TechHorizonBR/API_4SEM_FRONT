@@ -35,7 +35,6 @@ class Demarcacoes{
     } catch (error) {
       return "Error";
     }
-  }
-
-    
+    }
 }
+export default new Demarcacoes();

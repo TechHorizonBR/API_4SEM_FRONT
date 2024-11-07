@@ -49,7 +49,7 @@ import { ref, onMounted } from 'vue';
 import DrawPolygon from './DrawPolygon.vue';
 import Autocomplete from './autocomplete/Autocomplete.vue';
 import DevicesService from '../services/devices';
-
+import DemarcacoesService from '@/services/demarcations';
 interface Device {
     fullName: string;
     codeDevice: string;
@@ -87,6 +87,8 @@ const props = defineProps<{
 onMounted(() => { 
   fetchDevices();
 })
+
+
 
 </script>
 
