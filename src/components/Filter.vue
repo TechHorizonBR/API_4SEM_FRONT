@@ -27,9 +27,10 @@
       @resetDateFilters="handleResetDateFilters" 
     />
 
-
-    <button @click="triggerSearch">Search</button>
-
+    <div class="buttons-filters">
+      <button @click="triggerSearch">Search</button>
+      <button>Clean</button>
+    </div>
     <Alerts :message="message" :show="showMessage" class="alert-popup" />
 
     <div class="selected-users" v-if="selectedUsers.length !== 0">
@@ -41,10 +42,13 @@
         :nameUser="user.nameUser"
         :isDark="isDark" 
         :cicle-color="user.cicleColor"
-        @removeUser="handleRemoveUser" />
+        @removeUser="handleRemoveUser" 
+        @send-id="receiveId"
+        :idUser="user.userCode"/>
       </div>
     </div>
     <Alerts :message="messageEmpty" :show="showMessageEmpty" class="alert-popup" />
+
   </div>
 </template>
 
@@ -70,7 +74,7 @@
   const codeDevice = ref<string>('');
   const userCode = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
-  const emit = defineEmits(['search', 'removeUser', 'resetDateFilters']);
+  const emit = defineEmits(['search', 'removeUser', 'resetDateFilters', 'sendId']);
   const props = defineProps<{isDark : boolean, messageEmpty: string, showMessageEmpty: boolean}>();
   const periods = ref<{ dataInicio: string | null, dataFim: string | null }>({
     dataInicio: null,
@@ -94,7 +98,9 @@
       console.error("Erro ao buscar dispositivos:", error);
     }
   };
-
+  const receiveId = (idUser: string) =>{
+    emit('sendId', idUser);
+  }
   const handleDateRangeChange = (selectedDates: any) => {
     if (selectedDates.length === 2) {
       periods.value.dataInicio = selectedDates[0].toISOString().split('T')[0];
@@ -220,6 +226,7 @@
     z-index: 1000;
     box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
     animation: fadeInOut 3s ease-in-out;
+    min-width: 25vw;
   }
   
   .date-range-filter {
@@ -245,11 +252,11 @@
   }
 
   button {
-    width: 100%;
+    width: 47%;
     background-color: #35005d;
     color: white;
     padding: 12px;
-    margin-top: 16px;
+    margin: 16px 0 0 0;
     border: none;
     border-radius: 8px;
     cursor: pointer;
@@ -295,7 +302,10 @@
 .fade-leave-active {
   animation: fadeOutDown 0.3s ease-in forwards;
 }
-
+.buttons-filters{
+  display: flex;
+  justify-content: space-between;
+}
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -316,5 +326,31 @@
     opacity: 0;
     transform: translateY(20px);
   }
+}
+.users-scrool::-webkit-scrollbar {
+  width: 10px;
+}
+.users-scrool::-webkit-scrollbar-thumb {
+  background-color: #35005d;
+  border-radius: 10px;
+}
+.users-scrool::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+}
+.title-filter-dark{
+  color: white;
+}
+.title-filter-light{
+  color: #35005d
+}
+.title-filter{
+  text-align: center;
+  font-family: "Roboto", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 2.3em;
+}
+h1{
+  text-align: center;
 }
 </style>

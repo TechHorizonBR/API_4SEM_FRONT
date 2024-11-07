@@ -68,6 +68,14 @@ watch(() => emit('resetDateFilters'), () => {
 </script>
 
 <style scoped>
+.periods{
+  display: flex;
+  justify-content: space-around;
+}
+.radios{
+  display: flex;
+  align-items: flex-start;
+}
 .labels {
   font-size: 1.2em;
 }
