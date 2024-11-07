@@ -1,15 +1,22 @@
 <template>
+
+
   <div class="filter" :class="{'mapMarker-Dark': props.isDark, 'mapMarker-Light': !props.isDark}" >
     <div class="title" :class="{'titule-Dark': isDark, 'titule-Light': !isDark}" >
-      <h3>Saved Areas:</h3>
+
+      <Autocomplete
+        :source="devices"
+        v-model:modelValueFullName="fullName"
+        v-model:modelValueCodeDevice="codeDevice"
+        v-model:modelValueUserCode="userCode"
+        :isDark="isDark"
+      />
     </div>
     <div class="data-list" :class="{'list-Dark': isDark, 'list-Light': !isDark}" >
       <ul>
-
       </ul>
     </div>
     <div class="title2" :class="{'title2-Dark': isDark, 'title2-Light': !isDark}" >
-      <h3>New Area</h3>
     </div>
 
     <div class="data-marker">
@@ -28,13 +35,7 @@
           }"
         />
       </div>
-      <Autocomplete
-        :source="devices"
-        v-model:modelValueFullName="fullName"
-        v-model:modelValueCodeDevice="codeDevice"
-        v-model:modelValueUserCode="userCode"
-        :isDark="isDark"
-      />
+      
       <div class="buttons">
         <button @click="initDraw">Select Area</button>
         <button @click="">Save</button>
@@ -49,7 +50,16 @@ import { ref, onMounted } from 'vue';
 import DrawPolygon from './DrawPolygon.vue';
 import Autocomplete from './autocomplete/Autocomplete.vue';
 import DevicesService from '../services/devices';
-import DemarcacoesService from '@/services/demarcations';
+import DemarcationsServices from '../services/demarcations';
+
+async function demarcation () {
+  try {
+    
+  } catch (error) {
+    
+  }
+} 
+
 interface Device {
     fullName: string;
     codeDevice: string;
