@@ -50,32 +50,26 @@ import DrawPolygon from './DrawPolygon.vue';
 import Autocomplete from './autocomplete/Autocomplete.vue';
 import DevicesService from '../services/devices';
 
-
-const savedData = ref([]);
-const areaName = ref('');
-const userName = ref('');
-const showDraw = ref(false);
-const initDraw = () =>   {showDraw.value = true};
 interface Device {
     fullName: string;
     codeDevice: string;
     userCode: string;
   }
 
+const savedData = ref([]);
+const areaName = ref('');
+const userName = ref('');
+const showDraw = ref(false);
+const initDraw = () =>   {showDraw.value = true};
 const devices = ref<Device[]>([]);
 const fullName = ref<string>('');
 const codeDevice = ref<string>('');
 const userCode = ref<string>('');
 
-
 function recebeCoordenadas(coordenadas:any){
   savedData.value = coordenadas;
   console.log(savedData.value);
 }
-
-onMounted(() => { 
-  fetchDevices();
-})
 
 const fetchDevices = async () => {
     try {
@@ -89,6 +83,10 @@ const props = defineProps<{
   isDark: boolean,
   map: Object
 }>();
+
+onMounted(() => { 
+  fetchDevices();
+})
 
 </script>
 
