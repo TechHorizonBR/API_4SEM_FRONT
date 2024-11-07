@@ -39,9 +39,12 @@
       <div class="buttons">
         <button @click="initDraw">Select Area</button>
         <button @click="">Save</button>
+        <button @click="getDemarcationsByUser">Search By User</button>
+
       </div>
       <DrawPolygon v-if="showDraw" :map="map" ref="drawPolygon" @enviarCoordenadas="recebeCoordenadas"/>
     </div>
+    <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
   </div>
 </template>
 
@@ -51,6 +54,7 @@ import DrawPolygon from './DrawPolygon.vue';
 import Autocomplete from './autocomplete/Autocomplete.vue';
 import DevicesService from '../services/devices';
 import DemarcationsServices from '../services/demarcations';
+import Alerts from './Alerts.vue';
 
 async function demarcation () {
   try {
@@ -75,6 +79,8 @@ const devices = ref<Device[]>([]);
 const fullName = ref<string>('');
 const codeDevice = ref<string>('');
 const userCode = ref<string>('');
+const showMessage = ref<boolean>(false);
+const messageAlert = ref<string>('');
 
 function recebeCoordenadas(coordenadas:any){
   savedData.value = coordenadas;
@@ -98,7 +104,29 @@ onMounted(() => {
   fetchDevices();
 })
 
+const getDemarcationsByUser = async () => {
+  try{
+    const response = await DemarcationsServices.getDemarcacoesByUsuario(Number(userCode.value));
+    
+    if(response === "Error"){
+      showAlert("Something is wrong. Please, try again later.");
+    }else{
+      console.log(response);
+    }
+  }catch(error){ 
+    showAlert("Something is wrong. Please, try again later.");    
+  }
+}
 
+const showAlert = (message : string) => {
+  showMessage.value = true;
+  messageAlert.value = message;
+
+  setTimeout(() =>{
+    showMessage.value = false;
+    messageAlert.value = '';
+  }, 3000);
+}
 
 </script>
 
