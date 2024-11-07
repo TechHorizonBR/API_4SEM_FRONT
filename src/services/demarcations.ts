@@ -14,5 +14,28 @@ class Demarcacoes{
             return "Error";
         }
     }
+
+    async create(data: {nome: string, usuario: {id:number}, coordenadas:{x: number, y:number}}){
+        try {
+            const response = await axios.post("http://localhost:8080/demarcacoes", data);
+            if (response.status === 201) {
+              return "Demacation has been created";
+            } else {
+              return "Error";
+            }
+        } catch (error) {
+            return "Error";
+        }
+    }
+
+    async getDemarcacoesByUsuario(usuarioId: number){
+    try {
+      const response = await axios.get(`http://localhost:8080/demarcacoes/usuario/${usuarioId}`);
+      return response.data;
+    } catch (error) {
+      return "Error";
+    }
+  }
+
     
 }
