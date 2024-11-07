@@ -30,7 +30,6 @@
                 />
             </transition>
         </div>
-        <!-- <DrawPolygon v-if="map" :map="map" /> -->
     </div>
 </template>
 
@@ -43,7 +42,7 @@ import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
 import { useMapModeStore } from "@/stores/useMapMode";
-import DrawPolygon from "./DrawPolygon.vue";
+import MapboxDraw from '@mapbox/mapbox-gl-draw';
 
 interface SearchParams {
     fullName: string;
@@ -196,6 +195,13 @@ function inicializarMapa() {
                 zoom: initialState.zoom,
             })
         );
+
+
+    //fix conytrols style
+    const drawControls = document.querySelectorAll(".mapboxgl-ctrl-group.mapboxgl-ctrl");
+    drawControls.forEach((elem) => {
+        elem.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group');
+    });
     } else {
         console.warn("mapContainer is not available");
     }

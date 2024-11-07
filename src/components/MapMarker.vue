@@ -14,7 +14,7 @@
 
     <div class="data-marker">
       <div class="text-label" :class="{'textL-Dark': isDark, 'textL-Light': !isDark}" >
-        <label for="area-name">Name:</label><br>
+        <label for="area-name">Demarcation name:</label><br>
         <input
           type="text" 
           id="area-name" 
@@ -28,26 +28,18 @@
           }"
         />
       </div>
-      <div class="text-label" :class="{'textL-Dark': isDark, 'textL-Light': !isDark}" >
-        <label for="user-name">User Name:</label><br>
-        <input
-          type="text" 
-          id="user-name" 
-          v-model="userName" 
-          class="label-style" 
-          placeholder="Type Linked Username"
-          :style="{
-          backgroundColor: isDark ? '#383838' : '#FFF',
-          color: isDark ? '#FFF' : '#000',
-          border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)',
-          }"
-        />
-      </div>
+      <Autocomplete
+        :source="devices"
+        v-model:modelValueFullName="fullName"
+        v-model:modelValueCodeDevice="codeDevice"
+        v-model:modelValueUserCode="userCode"
+        :isDark="isDark"
+      />
       <div class="buttons">
         <button @click="initDraw">Select Area</button>
         <button @click="">Save</button>
       </div>
-      <DrawPolygon v-if="showDraw" :map="map" />
+      <DrawPolygon v-if="showDraw" :map="map" ref="drawPolygon" @enviarCoordenadas="recebeCoordenadas"/>
     </div>
   </div>
 </template>
@@ -55,14 +47,43 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import DrawPolygon from './DrawPolygon.vue';
+import Autocomplete from './autocomplete/Autocomplete.vue';
+import DevicesService from '../services/devices';
+
 
 const savedData = ref([]);
 const areaName = ref('');
 const userName = ref('');
-
 const showDraw = ref(false);
 const initDraw = () =>   {showDraw.value = true};
+interface Device {
+    fullName: string;
+    codeDevice: string;
+    userCode: string;
+  }
 
+const devices = ref<Device[]>([]);
+const fullName = ref<string>('');
+const codeDevice = ref<string>('');
+const userCode = ref<string>('');
+
+
+function recebeCoordenadas(coordenadas:any){
+  savedData.value = coordenadas;
+  console.log(savedData.value);
+}
+
+onMounted(() => { 
+  fetchDevices();
+})
+
+const fetchDevices = async () => {
+    try {
+      devices.value = await DevicesService.getDevices();
+    } catch (error) {
+      console.error("Erro ao buscar dispositivos:", error);
+    }
+  };
 
 const props = defineProps<{
   isDark: boolean,
