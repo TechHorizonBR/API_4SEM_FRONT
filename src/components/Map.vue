@@ -19,17 +19,22 @@
 
             <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" :isDark="mapModeStore.isDarkMode" :map="map" v-if="map" />
 
-            <transition name="fade">
+
+            <transition
+                name="fade"
+            >
                 <Filter
                     v-show="showFilter"
                     @search="handleSearch"
                     @removeUser="handleDelete"
+                    @send-id="receiveId"
                     :isDark="mapModeStore.isDarkMode"
                     :messageEmpty="messageEmpty"
                     :showMessageEmpty="showMessageEmpty"
                 />
             </transition>
         </div>
+        <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showHistoryFuntion.showHistory" :id="idUsuario" />
     </div>
 </template>
 
@@ -41,8 +46,26 @@ import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
-import { useMapModeStore } from "@/stores/useMapMode";
-import MapboxDraw from '@mapbox/mapbox-gl-draw';
+import { useMapModeStore } from "@/stores/useMapMode";;
+import { type User, type Coordinate, type Location } from '../interfaces/types';
+import { selectedUsers } from "@/stores/selectedUsers";
+import HistoricoLocalicao from "./HistoricoLocalicao.vue";
+import { showHistory } from "@/stores/showHistory";
+
+const mapContainer = shallowRef(null);
+const map = shallowRef<Map | null>(null);
+const mapModeStore = useMapModeStore();
+const allCoords = ref<any[]>([]);
+const all_markers = shallowRef<Marker[][]>([]);
+const loading = shallowRef(false);
+const showFilter = shallowRef(false);
+const actualUser = ref(0);
+const messageEmpty = shallowRef('');
+const showMessageEmpty = shallowRef(false);
+const locations = ref<Location[]>([]);
+const showHistoryFuntion = showHistory();
+const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
+const idUsuario = ref<string>('');
 
 interface SearchParams {
     fullName: string;
@@ -54,18 +77,45 @@ interface SearchParams {
     cicleColor: string;
 }
 
-const mapContainer = shallowRef(null);
-const map = shallowRef<Map | null>(null);
-const mapModeStore = useMapModeStore();
-const allCoords = ref<any[]>([]);
-const all_markers = shallowRef<Marker[][]>([]);
-const loading = shallowRef(false);
-const showFilter = shallowRef(true);
-const actualUser = ref(0);
-const messageEmpty = shallowRef('');
-const showMessageEmpty = shallowRef(false);
+const receiveId = (idUser : string) => {
+    idUsuario.value = idUser;
+}
+const addSelectedUsersStore = (registers: any, userCode: number) => {
+  const selectedUserStore = selectedUsers();
+  const user = ref<User>({
+    id: userCode,
+    coordenadas: [],
+    nome: ''
+  });
 
-const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
+  for (let register of registers) {
+    const coordenada = ref<Coordinate>({
+      lat: register.latitude,
+      lng: register.longitude,
+      data: register.dataHora
+    });
+    user.value.coordenadas.push(coordenada.value);
+  }
+  selectedUserStore.addUser(user.value);
+};
+
+const addCoordenadasSelectedUsersStore = (coordenadas : any, userCode: number) => {
+  const selectedUsersStore = selectedUsers();
+  const registersToAdd = ref<Coordinate[]>([]);
+
+  for (let register of coordenadas) {
+    const coordenada = ref<Coordinate>({
+      lat: register.latitude,
+      lng: register.longitude,
+      data: register.dataHora
+    });
+    registersToAdd.value.push(coordenada.value);
+  }
+  selectedUsersStore.addCoordenadas(userCode, registersToAdd.value);
+  console.log("Lista de usuários:", selectedUsersStore.users);
+};
+
+
 
 onMounted(() => {
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
@@ -137,6 +187,7 @@ const getPoints = async (searchParams: SearchParams) => {
                     firstReq.maxMinCoordinates.maxLatitude + 1,
                 ],
             ]);
+            addSelectedUsersStore(firstReq.registers, searchParams.userCode);   
 
             for (let page = 1; page <= allPages; page++) {
                 const req = await RegistrosService.getRegistros(
@@ -148,6 +199,7 @@ const getPoints = async (searchParams: SearchParams) => {
                 if (req) {
                     allCoords.value.push(req.registers);
                     transformData(req.registers, page, allPages, searchParams);
+                    addCoordenadasSelectedUsersStore(req.registers, searchParams.userCode);
                 }
             }
         } else {

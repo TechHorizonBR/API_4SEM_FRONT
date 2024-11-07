@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 
 export const useMapModeStore = defineStore("mapMode", {
   state: () => ({
-    isDarkMode: false,
+    isDarkMode: true,
   }),
   actions: {
     toggleMode() {
