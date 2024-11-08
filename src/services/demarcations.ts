@@ -15,7 +15,7 @@ class Demarcacoes{
         }
     }
 
-    async create(data: {nome: string, usuarioId: {id:number}, coordinates:[]}){
+    async create(data: {nome: string, usuarioId: number, coordinates:[]}){
         try {
             const response = await axios.post("http://localhost:8080/demarcacoes", data);
             if (response.status === 201) {

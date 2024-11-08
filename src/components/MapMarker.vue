@@ -36,8 +36,8 @@
       </div>
       
       <div class="buttons">
-        <button @click="initDraw">Select Area</button>
-        <button @click="saveDemarcation">Save</button>
+        <button @click="initDraw">Create New Area</button>
+        <button @click="saveDemarcation">Save Area</button>
         <button @click="getDemarcationsByUser">Search By User</button>
 
       </div>
@@ -78,11 +78,27 @@ interface Device {
 
 async function saveDemarcation () {
   try {
-    const  data = {nome: String(fullName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
+    if( !userCode.value ) {
+      showAlert("Please select an user.");
+      return;
+    }
+
+    if (areaName.value.trim() === '') {
+      showAlert("Please enter the name of the demarcation.");
+      return;
+    }
+    
+    if( savedData.value.length === 0) {
+      showAlert("Please select the area.");
+      return;
+    }
+
+
+    const  data = {nome: String(areaName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
     const response = await DemarcationsServices.create(data); 
     
   } catch (error) {
-    console.log("Deu erro: ", error);
+    showAlert("Something is wrong. Please try again later.");
   }
 } 
 
@@ -139,7 +155,7 @@ const showAlert = (message : string) => {
 .filter {
   position: absolute;
   width: 330px;
-  height: 473px;
+  height: 540px;
   top: 3vh;
   left: 3vw;
   padding: 20px 20px;
