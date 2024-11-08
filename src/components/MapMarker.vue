@@ -74,18 +74,21 @@ interface Device {
 
 async function saveDemarcation () {
   try {
-    if (areaName.value.trim() === '') {
-      showAlert("Please enter the name of the demarcation.");
-      return;
-    }
-    if( savedData.value.length === 0) {
-      showAlert("Please select the area.");
-      return;
-    }
     if( !userCode.value ) {
       showAlert("Please select an user.");
       return;
     }
+
+    if (areaName.value.trim() === '') {
+      showAlert("Please enter the name of the demarcation.");
+      return;
+    }
+    
+    if( savedData.value.length === 0) {
+      showAlert("Please select the area.");
+      return;
+    }
+
 
     const  data = {nome: String(areaName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
     const response = await DemarcationsServices.create(data); 
@@ -147,7 +150,7 @@ const showAlert = (message : string) => {
 .filter {
   position: absolute;
   width: 330px;
-  height: 473px;
+  height: 540px;
   top: 3vh;
   left: 3vw;
   padding: 20px 20px;
