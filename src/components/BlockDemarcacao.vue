@@ -32,7 +32,6 @@ const deleteById = async () => {
     
     if(response === "Demarcation has been deleted"){
         emit("updateList");
-        showAlert("Demarcation has been deleted.");
     }
 }
 const showAlert = (message : string) => {

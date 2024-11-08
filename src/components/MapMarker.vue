@@ -97,6 +97,7 @@ async function saveDemarcation () {
     const  data = {nome: String(areaName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
     const response = await DemarcationsServices.create(data);
 
+    getDemarcationsByUser()
     showAlert(response);
     areaName.value = '';
     
@@ -136,6 +137,9 @@ const getDemarcationsByUser = async () => {
       showAlert("Something is wrong. Please, try again later.");
     }else{
       demarcations.value = response;
+      if(demarcations.value.length === 0){
+        showAlert("User does not have demarcations.");
+      }
     }
   }catch(error){ 
     showAlert("Something is wrong. Please, try again later.");    
