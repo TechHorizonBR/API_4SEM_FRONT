@@ -175,7 +175,7 @@ const showAlert = (message : string) => {
 }
 
 .data-list {
-  height: 35%;
+  max-height: 35%;
   overflow-y: auto;
   margin-bottom: 10px;
 }
