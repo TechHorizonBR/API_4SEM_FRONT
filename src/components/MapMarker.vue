@@ -35,8 +35,8 @@
       </div>
       
       <div class="buttons">
-        <button @click="initDraw">Select Area</button>
-        <button @click="saveDemarcation">Save</button>
+        <button @click="initDraw">Create New Area</button>
+        <button @click="saveDemarcation">Save Area</button>
         <button @click="getDemarcationsByUser">Search By User</button>
 
       </div>
