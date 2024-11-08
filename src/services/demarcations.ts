@@ -19,9 +19,9 @@ class Demarcacoes{
         try {
             const response = await axios.post("http://localhost:8080/demarcacoes", data);
             if (response.status === 201) {
-              return "Demarcation has been created";
+              return "Demarcation has been created.";
             } else {
-              return "Error";
+              return "Unable to create a new demarcation.";
             }
         } catch (error) {
             return "Error";

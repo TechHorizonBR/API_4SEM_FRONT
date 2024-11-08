@@ -93,9 +93,11 @@ async function saveDemarcation () {
       return;
     }
 
-
     const  data = {nome: String(areaName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
-    const response = await DemarcationsServices.create(data); 
+    const response = await DemarcationsServices.create(data);
+
+    showAlert(response);
+    areaName.value = '';
     
   } catch (error) {
     showAlert("Something is wrong. Please try again later.");
