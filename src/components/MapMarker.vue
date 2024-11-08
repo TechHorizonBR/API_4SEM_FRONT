@@ -39,6 +39,7 @@
         <button @click="initDraw">Create New Area</button>
         <button @click="saveDemarcation">Save Area</button>
         <button @click="getDemarcationsByUser">Search By User</button>
+ 
 
       </div>
       <DrawPolygon v-if="showDraw" :map="map" ref="drawPolygon" @enviarCoordenadas="recebeCoordenadas"/>
@@ -155,7 +156,7 @@ const showAlert = (message : string) => {
 .filter {
   position: absolute;
   width: 330px;
-  height: 540px;
+  max-height: 540px;
   top: 3vh;
   left: 3vw;
   padding: 20px 20px;
