@@ -68,13 +68,13 @@ const userCode = ref<string>('');
 const showMessage = ref<boolean>(false);
 const messageAlert = ref<string>('');
 const demarcations = ref<[]>([]);
+const draw = ref(null);
 
 interface Device {
     fullName: string;
     codeDevice: string;
     userCode: string;
 }
-
 
 async function saveDemarcation () {
   try {
@@ -98,16 +98,18 @@ async function saveDemarcation () {
 
     showAlert(response);
     areaName.value = '';
+    props.map.removeControl(draw.value);
     
   } catch (error) {
     showAlert("Something is wrong. Please try again later.");
   }
 } 
 
-function recebeCoordenadas(coordenadas:any){
+function recebeCoordenadas(coordenadas:any, drawValue:any){
   savedData.value = coordenadas;
-  console.log(savedData.value);
+  draw.value = drawValue;
 }
+
 
 const fetchDevices = async () => {
     try {
