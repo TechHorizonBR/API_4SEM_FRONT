@@ -10,6 +10,11 @@
         :isDark="isDark"
       />
     </div>
+    <h3
+      v-if="demarcations.length > 0"  
+      :class="{'mode-dark-title': isDark, 'mode-light-title': !isDark}" 
+      class="title-demarcations">Demarcations:</h3>
+
     <div class="data-list"  v-if="demarcations.length > 0">
       <BlockDemarcacao v-for="demarcation of demarcations" 
       :isDark="isDark" :name="demarcation.nome" :id="demarcation.id"
@@ -164,7 +169,7 @@ const showAlert = (message : string) => {
 .filter {
   position: absolute;
   width: 330px;
-  max-height: 540px;
+  max-height: 550px;
   top: 3vh;
   left: 3vw;
   padding: 20px 20px;
@@ -173,6 +178,7 @@ const showAlert = (message : string) => {
   z-index: 1000;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
   animation: fadeInOut 3s ease-in-out;
+  min-width: 25vw;
 }
 
 .mapMarker-Dark{
@@ -184,7 +190,7 @@ const showAlert = (message : string) => {
 }
 
 .data-list {
-  max-height: 35%;
+  max-height: 25vh;
   overflow-y: auto;
   margin-bottom: 10px;
 }
@@ -248,6 +254,15 @@ button:hover {
 
 .fade-leave-active {
   animation: fadeOutDown 0.3s ease-in forwards;
+}
+.title-demarcations{
+  margin: 0 0 3% 0;
+}
+.mode-dark-title{
+  color: white;
+}
+.mode-light-tile{
+  color: black;
 }
 
 @keyframes fadeInUp {

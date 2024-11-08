@@ -13,7 +13,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { showHistory } from '@/stores/showHistory';
+import { showComponents } from '@/stores/showComponents';
 
  const props = defineProps<{
     nameUser: string,
@@ -21,11 +21,11 @@ import { showHistory } from '@/stores/showHistory';
     cicleColor: string, 
     idUser: string
  }>();
- const showHistoryPanel = showHistory();
+ const showComponentsMode = showComponents();
 
  const showHistoryPanelFunction = () => {
   emit('sendId', props.idUser);
-  showHistoryPanel.toggleMode();
+  showComponentsMode.showHistory();
  }
  const emit = defineEmits(['removeUser', 'sendId']);
 

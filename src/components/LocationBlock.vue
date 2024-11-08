@@ -1,12 +1,5 @@
 <template>
     <div class="container-block" :class="{ 'container-dark-block': isDark, 'container-light-block': !isDark }">
-        <!-- <div class="first-block">
-            <font-awesome-icon :icon="['fas', 'map-location-dot']" class="icons" />
-            <h4>596.61km</h4>
-
-            <font-awesome-icon :icon="['fas', 'clock']" class="icons clock-icon" />
-            <h4>74m</h4>
-        </div> -->
 
         <div class="locations">
             <div class="inicio-jornada">
@@ -16,20 +9,10 @@
                 </div>
                 <p class="endereco" :class="{ 'endereco-dark': isDark, 'endereco-light': !isDark }">
                     {{ endereco }}
+                    {{ city }}
+                    {{ pais }}
                 </p>
             </div>
-
-<!-- 
-            <div class="fim-jornada">
-                <div class="container-icon-data">
-                    <font-awesome-icon :icon="['fas', 'map-pin']" class="icons icon-chegada" />
-                 <h3 class="datas">{{ props.location.dataFim }}</h3>
-                </div>
-                <p class="endereco" :class="{ 'endereco-dark': isDark, 'endereco-light': !isDark }">
-                    {{ props.location.latitudeInicio }} 
-                </p>
-            </div> -->
-
         </div>
     </div>
 </template>
@@ -44,14 +27,20 @@ const props = defineProps<{
     location: Coordinate
 }>();
 const endereco = ref<string>('');
-
+const city = ref<string>('');
+const cep = ref<string>('');
+const pais = ref<string>('');
 onMounted(() => {
     getLocations();
 })
 
 const getLocations = async () => {
     const response = await LocatiosAPIOpenCageData.getAddressByCoordenadas(props.location.lat, props.location.lng);
-    endereco.value = `${response.road} - ${response.city} / ${response.state} - ${response.country}`;
+    console.log(response)
+    endereco.value = `${response.road}, ${response.house_number}`;
+    city.value = `${response.city} - ${response.state_code}`;
+    pais.value = `${response.country}`;
+
 }
 
 </script>

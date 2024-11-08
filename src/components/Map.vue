@@ -24,7 +24,7 @@
                 name="fade"
             >
                 <Filter
-                    v-show="showFilter"
+                    v-show="showComponentsMode.filter"
                     @search="handleSearch"
                     @removeUser="handleDelete"
                     @send-id="receiveId"
@@ -34,7 +34,10 @@
                 />
             </transition>
         </div>
-        <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showHistoryFuntion.showHistory" :id="idUsuario" />
+        <transition
+            name="fade">
+            <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showComponentsMode.history" :id="idUsuario" />
+        </transition>
     </div>
 </template>
 
@@ -50,8 +53,9 @@ import { useMapModeStore } from "@/stores/useMapMode";;
 import { type User, type Coordinate, type Location } from '../interfaces/types';
 import { selectedUsers } from "@/stores/selectedUsers";
 import HistoricoLocalicao from "./HistoricoLocalicao.vue";
-import { showHistory } from "@/stores/showHistory";
+import { showComponents } from "@/stores/showComponents";
 
+const showComponentsMode = showComponents();
 const mapContainer = shallowRef(null);
 const map = shallowRef<Map | null>(null);
 const mapModeStore = useMapModeStore();
@@ -63,7 +67,6 @@ const actualUser = ref(0);
 const messageEmpty = shallowRef('');
 const showMessageEmpty = shallowRef(false);
 const locations = ref<Location[]>([]);
-const showHistoryFuntion = showHistory();
 const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
 const idUsuario = ref<string>('');
 
@@ -80,12 +83,12 @@ interface SearchParams {
 const receiveId = (idUser : string) => {
     idUsuario.value = idUser;
 }
-const addSelectedUsersStore = (registers: any, userCode: number) => {
+const addSelectedUsersStore = (registers: any, userCode: number, fullName : string) => {
   const selectedUserStore = selectedUsers();
   const user = ref<User>({
     id: userCode,
     coordenadas: [],
-    nome: ''
+    nome: fullName
   });
 
   for (let register of registers) {
@@ -112,7 +115,6 @@ const addCoordenadasSelectedUsersStore = (coordenadas : any, userCode: number) =
     registersToAdd.value.push(coordenada.value);
   }
   selectedUsersStore.addCoordenadas(userCode, registersToAdd.value);
-  console.log("Lista de usuários:", selectedUsersStore.users);
 };
 
 
@@ -132,7 +134,11 @@ onMounted(() => {
 });
 
 const toggleFilter = () => {
-    showFilter.value = !showFilter.value;
+    if(showComponentsMode.filter == true){
+        showComponentsMode.esconderComponents()
+    }else{
+        showComponentsMode.showFilter();
+    }
 };
 
 const changeLoading = () => {
@@ -187,7 +193,7 @@ const getPoints = async (searchParams: SearchParams) => {
                     firstReq.maxMinCoordinates.maxLatitude + 1,
                 ],
             ]);
-            addSelectedUsersStore(firstReq.registers, searchParams.userCode);   
+            addSelectedUsersStore(firstReq.registers, searchParams.userCode, searchParams.fullName);   
 
             for (let page = 1; page <= allPages; page++) {
                 const req = await RegistrosService.getRegistros(

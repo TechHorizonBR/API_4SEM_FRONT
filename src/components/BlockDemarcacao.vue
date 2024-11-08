@@ -65,6 +65,7 @@ const showAlert = (message : string) => {
    border-radius: 1em; 
    margin: 0 0 3% 0;
    padding: 5% 3%;
+   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.174), 0 2px 6px 2px rgba(60, 64, 67, 0.048);
  }
  .mode-dark > button{
    background-color: #383838;
@@ -94,13 +95,5 @@ const showAlert = (message : string) => {
    white-space: nowrap;
    overflow: hidden;
    text-overflow: ellipsis;
- }
- #iniciais{
-   background: blue;
-   padding: 0.1em;
-   border-radius: 50%;
-   width: 20px;
-   text-align: center;
-   height: 20px;
  }
 </style>

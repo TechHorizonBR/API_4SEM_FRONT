@@ -4,6 +4,7 @@ class LocatiosAPIOpenCageData {
     async getAddressByCoordenadas(latitude: number, longitude: number) {
         try {
             const KEY_API = 'df75ee7b8df149b292e1f66afe34baa4';
+            
             const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${latitude},${longitude}&key=${KEY_API}`);
 
             if (response.data && response.data.results && response.data.results[0]) {
