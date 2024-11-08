@@ -6,7 +6,7 @@ class Demarcacoes{
             const response = await axios.delete(`http://localhost:8080/demarcacoes/${id}`);
 
             if(response.status == 204){
-                return "User has been deleted";
+                return "Demarcation has been deleted";
             }else{
                 return "Error";
             }
@@ -19,7 +19,7 @@ class Demarcacoes{
         try {
             const response = await axios.post("http://localhost:8080/demarcacoes", data);
             if (response.status === 201) {
-              return "Demacation has been created";
+              return "Demarcation has been created";
             } else {
               return "Error";
             }

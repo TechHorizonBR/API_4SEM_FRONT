@@ -10,9 +10,10 @@
         :isDark="isDark"
       />
     </div>
-    <div class="data-list" :class="{'list-Dark': isDark, 'list-Light': !isDark}" >
-      <ul>
-      </ul>
+    <div class="data-list"  v-if="demarcations.length > 0">
+      <BlockDemarcacao v-for="demarcation of demarcations" 
+      :isDark="isDark" :name="demarcation.nome" :id="demarcation.id"
+      @updateList="getDemarcationsByUser"/>
     </div>
     <div class="title2" :class="{'title2-Dark': isDark, 'title2-Light': !isDark}" >
     </div>
@@ -53,6 +54,7 @@ import Autocomplete from './autocomplete/Autocomplete.vue';
 import DevicesService from '../services/devices';
 import DemarcationsServices from '../services/demarcations';
 import Alerts from './Alerts.vue';
+import BlockDemarcacao from './BlockDemarcacao.vue';
 
 const savedData = ref<[]>([]);
 const areaName = ref('');
@@ -65,12 +67,14 @@ const codeDevice = ref<string>('');
 const userCode = ref<string>('');
 const showMessage = ref<boolean>(false);
 const messageAlert = ref<string>('');
+const demarcations = ref<[]>([]);
 
 interface Device {
     fullName: string;
     codeDevice: string;
     userCode: string;
-  }
+}
+
 
 async function saveDemarcation () {
   try {
@@ -104,6 +108,7 @@ onMounted(() => {
   fetchDevices();
 })
 
+
 const getDemarcationsByUser = async () => {
   try{
     const response = await DemarcationsServices.getDemarcacoesByUsuario(Number(userCode.value));
@@ -111,7 +116,7 @@ const getDemarcationsByUser = async () => {
     if(response === "Error"){
       showAlert("Something is wrong. Please, try again later.");
     }else{
-      console.log(response);
+      demarcations.value = response;
     }
   }catch(error){ 
     showAlert("Something is wrong. Please, try again later.");    
@@ -154,7 +159,6 @@ const showAlert = (message : string) => {
 }
 
 .data-list {
-  border: 2px inset rgba(0, 0, 0, 0.192);
   height: 35%;
   overflow-y: auto;
   margin-bottom: 10px;
