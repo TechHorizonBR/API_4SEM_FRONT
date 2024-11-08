@@ -14,13 +14,12 @@ const coordenadas = ref<any[]>([]);
 const emit = defineEmits( ["enviarCoordenadas"] );
 
 function enviarCoordenadas(){
-  emit('enviarCoordenadas', listCoordinates.value);
+  emit('enviarCoordenadas', listCoordinates.value, draw.value);
 } 
 
 function addCoordenadas(coord: any) {
   coordenadas.value = coord;
 }
-
 
 const listCoordinates = ref<[]>([]);
 
@@ -67,7 +66,7 @@ function drawInit() {
 
 function drawEnd() {
   if (draw.value) {
-    props.map.removeControl(draw.value);
+    // props.map.removeControl(draw.value);
     draw.value = null;
   }
 }
