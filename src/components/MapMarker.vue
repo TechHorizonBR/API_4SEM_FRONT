@@ -75,15 +75,23 @@ interface Device {
 async function saveDemarcation () {
   try {
     if (areaName.value.trim() === '') {
-      throw new Error("O nome da área não pode estar vazio");
+      showAlert("Please enter the name of the demarcation.");
+      return;
     }
-
+    if( savedData.value.length === 0) {
+      showAlert("Please select the area.");
+      return;
+    }
+    if( !userCode.value ) {
+      showAlert("Please select an user.");
+      return;
+    }
 
     const  data = {nome: String(areaName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
     const response = await DemarcationsServices.create(data); 
     
   } catch (error) {
-    console.log("Deu erro: ", error);
+    showAlert("Something is wrong. Please try again later.");
   }
 } 
 

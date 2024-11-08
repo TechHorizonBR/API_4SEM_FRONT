@@ -1,5 +1,5 @@
 <template>
-    <div v-if="show" class="alert">
+    <div v-if="show" class="alert-popup">
       <p>{{ message }}</p>
     </div>
   </template>
