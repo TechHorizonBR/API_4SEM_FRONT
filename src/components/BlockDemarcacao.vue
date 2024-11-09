@@ -4,7 +4,7 @@
         <h4 class="name-demarcation">{{ name }}</h4>
         <div class="buttons-options">
           <font-awesome-icon :icon="['fas', 'trash']" class="icones-buttons" title="Remove Demarcation" @click="deleteById"/>  
-          <font-awesome-icon :icon="['fas', 'eye']" class="icones-buttons" title="See Demarcation"/>        
+          <font-awesome-icon :icon="['fas', 'eye']" class="icones-buttons" title="See Demarcation" @click="showDemarcation"/>        
 
         </div>
         <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
@@ -15,14 +15,16 @@
 import DemarcationService from '@/services/demarcations';
 import { ref } from 'vue';
 import Alerts from './Alerts.vue';
+import { coordinates } from '@maptiler/sdk';
 
 const props = defineProps<{
     isDark: boolean,
     name: string, 
-    id: number
+    id: number,
+    coordinates: []
 }>();
 
-const emit = defineEmits(['updateList']);
+const emit = defineEmits(['updateList', 'sendCoordinates']);
 
 const showMessage = ref<boolean>(false);
 const messageAlert = ref<string>('');
@@ -31,8 +33,12 @@ const deleteById = async () => {
     const response = await DemarcationService.deleteById(props.id);
     
     if(response === "Demarcation has been deleted"){
-        emit("updateList");
+        emit("updateList", props.id);
     }
+}
+
+const showDemarcation = () =>{
+  emit("sendCoordinates", props.coordinates, props.id);
 }
 const showAlert = (message : string) => {
   showMessage.value = true;

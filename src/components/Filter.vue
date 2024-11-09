@@ -61,7 +61,7 @@
   import DateFilters from '../components/DateFilters.vue';
   import SelectedUser from './SelectedUser.vue';
   import Alerts from './Alerts.vue';
-
+  import { selectedUsers as selectedUserStore} from '@/stores/selectedUsers';
   // VARIAVEIS
   interface Device {
     fullName: string;
@@ -88,6 +88,7 @@
   const message = ref<string>(''); // Variável que armazena a mensagem a ser exibida
   const dateRangePicker = ref<HTMLInputElement | null>(null);
   const selectedDate = ref<string | null>(null);
+  const selectedUsersStore = selectedUserStore();
 
   // MÉTODOS
   const fetchDevices = async () => {
@@ -202,6 +203,7 @@
     if (index !== -1) {
       const userCodeToRemove = selectedUsers.value[index].userCode;
       selectedUsers.value.splice(index, 1);
+      selectedUsersStore.removeUser(Number(userCodeToRemove));
       emit('removeUser', index, userCodeToRemove);
     }
   };
