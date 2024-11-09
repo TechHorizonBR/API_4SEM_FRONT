@@ -7,13 +7,13 @@ Este projeto de front-end utiliza Vue.js para desenvolver uma interface gráfica
 ## Pré-requisitos 🧰
 ```
 NODE.JS
-VUE.JS
 ```
 ## Clonar Repositório 🟰
 
 Clone usando o comando no terminal da sua IDE; 
 ```
 git clone https://github.com/TechHorizonBR/API_4SEM_FRONT.git
+cd API_4SEM_FRONT
 ```
 
 ## Instalar Dependências ⚠️
@@ -34,7 +34,7 @@ npm run dev
 
 Em seu navegador acesse o endereço;
 ```
-localhost:8080/
+localhost:5173/
 ```
 
 ## Burndown 🔥
