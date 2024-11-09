@@ -275,31 +275,45 @@ const resetMap = () => {
     }
 };
 
-function plotPolygon(coordinates: number[][], user_id: number){
-    const filtredCoordinates = toRaw(coordinates) as number[][];
-    map.value?.addSource(`area_${user_id}`, {
-        'type': 'geojson',
-        'data': {
-            'type': 'Feature',
-            'geometry': {
-                'type': 'Polygon',
-                'coordinates': [filtredCoordinates]
-            },
-            'properties': {}
-        }
-    });
+function plotPolygon(coordinates: number[][], user_id: number) {
+    const sourceId = `area_${user_id}`;
+    const layer = map.value?.getLayer(sourceId);
 
-    map.value?.addLayer({
-        'id': `area_${user_id}`,
-        'type': 'fill',
-        'source': `area_${user_id}`,
-        'layout': {},
-        'paint': {
-            'fill-color': '#ff0000',
-            'fill-opacity': 0.5
-        }
-    });
+    if (layer) {
+        const currentVisibility = map.value?.getLayoutProperty(sourceId, 'visibility');
+        const newVisibility = currentVisibility === 'visible' ? 'none' : 'visible';
+        map.value?.setLayoutProperty(sourceId, 'visibility', newVisibility);
+    } else {
+        const filtredCoordinates = toRaw(coordinates) as number[][];
+
+        map.value?.addSource(sourceId, {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [filtredCoordinates]
+                },
+                'properties': {}
+            }
+        });
+
+        map.value?.addLayer({
+            'id': sourceId,
+            'type': 'fill',
+            'source': sourceId,
+            'layout': {
+                'visibility': 'visible'
+            },
+            'paint': {
+                'fill-color': '#ff0000',
+                'fill-opacity': 0.5
+            }
+        });
+    }
 }
+
+
 
 async function plotPontos(
     allPoints: any,
