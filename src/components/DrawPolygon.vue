@@ -62,11 +62,9 @@ function drawInit() {
   });
 }
 
-
-
 function drawEnd() {
-  if (draw.value) {
-    // props.map.removeControl(draw.value);
+  if (props.map.hasControl(draw.value)) {
+    props.map.removeControl(draw.value);
     draw.value = null;
   }
 }
