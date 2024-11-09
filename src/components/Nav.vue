@@ -59,13 +59,14 @@
   </div>
   <transition
   name="fade">
-  <MapMarker v-if="showMapMarker" :isDark="isDark" />
+  <MapMarker v-if="showComponentsMode.mapMarker" :isDark="isDark" :map="$props.map" />
   </transition>
 </template>
 
 <script lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import MapMarker from './MapMarker.vue';
+import { showComponents } from '@/stores/showComponents';
 
 
 export default {
@@ -75,6 +76,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    map: {
+      type: Object,
+      required: true
+    }
   },
   components: {
     FontAwesomeIcon,
@@ -92,7 +97,11 @@ export default {
       this.$emit("resetMap"); // Emitir evento resetMap
     },
     goToMapMarker() {
-      this.showMapMarker = !this.showMapMarker;
+      if(this.showComponentsMode.mapMarker){
+        this.showComponentsMode.esconderComponents();
+      }else{
+        this.showComponentsMode.showMapMaker();
+      }
     },
     addUser() {
       // Lógica para adicionar um usuário
@@ -104,6 +113,7 @@ export default {
   data() {
   return {
     showMapMarker: false,
+    showComponentsMode: showComponents()
     };
   },
 };

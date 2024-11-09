@@ -1,6 +1,6 @@
 <template>
     <div :class="isDark ? 'selected-user-dark' : 'selected-user-light'" class="selected-user">
-        <p id="iniciais" :style="{backgroundColor: props.cicleColor, color: 'black'}">{{ workingOnName.iniciais }}</p>
+        <p id="iniciais" :style="{backgroundColor: props.cicleColor, color: 'white'}">{{ workingOnName.iniciais }}</p>
         <p class="name">{{ workingOnName.name }}</p>
         <div class="buttons-options">
           <font-awesome-icon :icon="['fas', 'trash']" class="icones-buttons" title="Remove User" @click="removeUser"/>
@@ -13,7 +13,7 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { showHistory } from '@/stores/showHistory';
+import { showComponents } from '@/stores/showComponents';
 
  const props = defineProps<{
     nameUser: string,
@@ -21,11 +21,11 @@ import { showHistory } from '@/stores/showHistory';
     cicleColor: string, 
     idUser: string
  }>();
- const showHistoryPanel = showHistory();
+ const showComponentsMode = showComponents();
 
  const showHistoryPanelFunction = () => {
   emit('sendId', props.idUser);
-  showHistoryPanel.toggleMode();
+  showComponentsMode.showHistory();
  }
  const emit = defineEmits(['removeUser', 'sendId']);
 
@@ -47,11 +47,10 @@ import { showHistory } from '@/stores/showHistory';
 
 <style scoped>
  .selected-user-dark{
-   color: white;
+  color: white;
    background-color: #383838;
  }
  .selected-user-light{
-   color: black;
    background-color: white;
  }
  .selected-user{
@@ -90,7 +89,7 @@ import { showHistory } from '@/stores/showHistory';
  }
  #iniciais{
    background: blue;
-   padding: 0.1em;
+   padding: 0.2em;
    border-radius: 50%;
    width: 20px;
    text-align: center;

@@ -1,20 +1,31 @@
 <template>
   <div class="filter" :class="{'mapMarker-Dark': props.isDark, 'mapMarker-Light': !props.isDark}" >
     <div class="title" :class="{'titule-Dark': isDark, 'titule-Light': !isDark}" >
-      <h3>Saved Areas:</h3>
-    </div>
-    <div class="data-list" :class="{'list-Dark': isDark, 'list-Light': !isDark}" >
-      <ul>
 
-      </ul>
+      <Autocomplete
+        :source="devices"
+        v-model:modelValueFullName="fullName"
+        v-model:modelValueCodeDevice="codeDevice"
+        v-model:modelValueUserCode="userCode"
+        :isDark="isDark"
+      />
+    </div>
+    <h3
+      v-if="demarcations.length > 0"  
+      :class="{'mode-dark-title': isDark, 'mode-light-title': !isDark}" 
+      class="title-demarcations">Demarcations:</h3>
+
+    <div class="data-list"  v-if="demarcations.length > 0">
+      <BlockDemarcacao v-for="demarcation of demarcations" 
+      :isDark="isDark" :name="demarcation.nome" :id="demarcation.id"
+      @updateList="getDemarcationsByUser"/>
     </div>
     <div class="title2" :class="{'title2-Dark': isDark, 'title2-Light': !isDark}" >
-      <h3>New Area</h3>
     </div>
 
     <div class="data-marker">
       <div class="text-label" :class="{'textL-Dark': isDark, 'textL-Light': !isDark}" >
-        <label for="area-name">Name:</label><br>
+        <label for="area-name">Demarcation name:</label><br>
         <input
           type="text" 
           id="area-name" 
@@ -28,38 +39,129 @@
           }"
         />
       </div>
-      <div class="text-label" :class="{'textL-Dark': isDark, 'textL-Light': !isDark}" >
-        <label for="user-name">User Name:</label><br>
-        <input
-          type="text" 
-          id="user-name" 
-          v-model="userName" 
-          class="label-style" 
-          placeholder="Type Linked Username"
-          :style="{
-          backgroundColor: isDark ? '#383838' : '#FFF',
-          color: isDark ? '#FFF' : '#000',
-          border: isDark ? '1px solid #292929' : '1px solid rgb(156, 156, 156)',
-          }"
-        />
-      </div>
+      
       <div class="buttons">
-        <button @click="">Select Area</button>
-        <button @click="">Save</button>
+        <button @click="initDraw">Create New Area</button>
+        <button @click="saveDemarcation">Save Area</button>
+        <button @click="getDemarcationsByUser">Search By User</button>
+ 
+
       </div>
+      <DrawPolygon v-if="showDraw" :map="map" ref="drawPolygon" @enviarCoordenadas="recebeCoordenadas"/>
     </div>
+    <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import DrawPolygon from './DrawPolygon.vue';
+import Autocomplete from './autocomplete/Autocomplete.vue';
+import DevicesService from '../services/devices';
+import DemarcationsServices from '../services/demarcations';
+import Alerts from './Alerts.vue';
+import BlockDemarcacao from './BlockDemarcacao.vue';
 
-const savedData = ref([]);
+const savedData = ref<[]>([]);
 const areaName = ref('');
 const userName = ref('');
+const showDraw = ref(false);
+const initDraw = () =>   {showDraw.value = true};
+const devices = ref<Device[]>([]);
+const fullName = ref<string>('');
+const codeDevice = ref<string>('');
+const userCode = ref<string>('');
+const showMessage = ref<boolean>(false);
+const messageAlert = ref<string>('');
+const demarcations = ref<[]>([]);
+const draw = ref(null);
+
+interface Device {
+    fullName: string;
+    codeDevice: string;
+    userCode: string;
+}
+
+async function saveDemarcation () {
+  try {
+    if( !userCode.value ) {
+      showAlert("Please select an user.");
+      return;
+    }
+
+    if (areaName.value.trim() === '') {
+      showAlert("Please enter the name of the demarcation.");
+      return;
+    }
+    
+    if( savedData.value.length === 0) {
+      showAlert("Please select the area.");
+      return;
+    }
+
+    const  data = {nome: String(areaName.value), usuarioId: Number(userCode.value), coordinates:savedData.value}
+    const response = await DemarcationsServices.create(data);
+
+    getDemarcationsByUser()
+    showAlert(response);
+    areaName.value = '';
+    showDraw.value = false;
+    
+  } catch (error) {
+    showAlert("Something is wrong. Please try again later.");
+  }
+} 
+
+function recebeCoordenadas(coordenadas:any, drawValue:any){
+  savedData.value = coordenadas;
+  draw.value = drawValue;
+}
+
+
+const fetchDevices = async () => {
+    try {
+      devices.value = await DevicesService.getDevices();
+    } catch (error) {
+      console.error("Erro ao buscar dispositivos:", error);
+    }
+  };
+
 const props = defineProps<{
   isDark: boolean,
+  map: Object
 }>();
+
+onMounted(() => { 
+  fetchDevices();
+})
+
+
+const getDemarcationsByUser = async () => {
+  try{
+    const response = await DemarcationsServices.getDemarcacoesByUsuario(Number(userCode.value));
+    
+    if(response === "Error"){
+      showAlert("Something is wrong. Please, try again later.");
+    }else{
+      demarcations.value = response;
+      if(demarcations.value.length === 0){
+        showAlert("User does not have demarcations.");
+      }
+    }
+  }catch(error){ 
+    showAlert("Something is wrong. Please, try again later.");    
+  }
+}
+
+const showAlert = (message : string) => {
+  showMessage.value = true;
+  messageAlert.value = message;
+
+  setTimeout(() =>{
+    showMessage.value = false;
+    messageAlert.value = '';
+  }, 3000);
+}
 
 </script>
 
@@ -67,7 +169,7 @@ const props = defineProps<{
 .filter {
   position: absolute;
   width: 330px;
-  height: 473px;
+  max-height: 550px;
   top: 3vh;
   left: 3vw;
   padding: 20px 20px;
@@ -76,6 +178,7 @@ const props = defineProps<{
   z-index: 1000;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
   animation: fadeInOut 3s ease-in-out;
+  min-width: 25vw;
 }
 
 .mapMarker-Dark{
@@ -87,8 +190,7 @@ const props = defineProps<{
 }
 
 .data-list {
-  border: 2px inset rgba(0, 0, 0, 0.192);
-  height: 35%;
+  max-height: 25vh;
   overflow-y: auto;
   margin-bottom: 10px;
 }
@@ -152,6 +254,15 @@ button:hover {
 
 .fade-leave-active {
   animation: fadeOutDown 0.3s ease-in forwards;
+}
+.title-demarcations{
+  margin: 0 0 3% 0;
+}
+.mode-dark-title{
+  color: white;
+}
+.mode-light-tile{
+  color: black;
 }
 
 @keyframes fadeInUp {

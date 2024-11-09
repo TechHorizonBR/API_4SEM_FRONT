@@ -1,23 +1,21 @@
 <template>
     <div class="container" :class="{ 'container-dark': props.isDark, 'container-light': !props.isDark }">
+        <div class="close">
+            <font-awesome-icon :icon="['fas', 'xmark']" class="icone-button-close"
+            @click="voltarFilter"/>
+        </div>
         <div class="header" :style="{ color: isDark ? 'white' : '#373737' }">
             <h1>Location History</h1>
             <div class="user-icon-name">
-                <h2>User: JHONY SANTOS DE SOUZA</h2>
+                <h2>User: {{ username }}</h2>
             </div>
-
-            <div class="user-icon-name">
-                <h2>Card: CARD_0989</h2>
-            </div>
-
         </div>
         
-        <h2 v-if="locations?.length === 0">User has not registers.</h2>
+        <h2 v-if="locations?.length === 0">User does not have registers.</h2>
 
         <div class="localizacoes-usuarios">
             <LocationBlock :isDark="props.isDark" v-for="location of locations" :location="location"/>
         </div>
-        <Alerts :message="message" :show="showMessage" class="alert-popup" />
     </div>
 
 </template>
@@ -26,9 +24,9 @@
 import { computed, onMounted, ref } from 'vue';
 import LocationBlock from './LocationBlock.vue';
 import Alerts from './Alerts.vue';
-
 import {type Coordinate, type Location, type User} from '@/interfaces/types';
 import { selectedUsers } from '@/stores/selectedUsers';
+import { showComponents } from '@/stores/showComponents';
 
 const props = defineProps<{
     isDark: boolean,
@@ -40,12 +38,16 @@ const user = ref<User>();
 const locations = ref<Coordinate[]>();
 const message = ref<string>("");
 const showMessage = ref<boolean>(false);
+const username = ref<string>('');
+const showComponentsMode = showComponents();
+
 onMounted(() => {
     findUsuarioInStore();
 })
 const findUsuarioInStore = () => {
     user.value = selectedUserStore.findById(Number(props.id));
     locations.value = user.value?.coordenadas ?? [];
+    username.value = user.value?.nome ?? '';
 
     if(locations.value.length === 0){
         message.value = "User has not registers";
@@ -56,6 +58,10 @@ const findUsuarioInStore = () => {
             showMessage.value = false;
         }, 3000);
     }
+}
+
+const voltarFilter = () => {
+    showComponentsMode.showFilter();
 }
 
 </script>
@@ -71,21 +77,16 @@ const findUsuarioInStore = () => {
     border-radius: 20px;
     z-index: 1000;
     box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
-    animation: fadeInOut 3s ease-in-out;
     min-width: 25vw;
-    /*animation: fadeInOut 3s ease-in-out;*/
 }
-.filter {
-    position: absolute;
-    top: 3vh;
-    left: 3vw;
-    padding: 15px 25px;
-    background-color: #f7f7f7cd;
-    border-radius: 20px;
-    z-index: 1000;
-    box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
-    animation: fadeInOut 3s ease-in-out;
-  }
+.close{
+    display: flex;
+    flex-direction: row-reverse;
+}
+.icone-button-close:hover{
+    cursor: pointer;
+    color: #35005d;
+}
 
 h1 {
     font-size: 1.2em;
@@ -142,5 +143,33 @@ h2 {
 
 .header {
     margin: 0 0 7% 0;
+}
+.fade-enter-active {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+.fade-leave-active {
+  animation: fadeOutDown 0.3s ease-in forwards;
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
 }
 </style>

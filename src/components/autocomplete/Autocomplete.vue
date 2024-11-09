@@ -5,7 +5,7 @@
         class="label"
         for="name"
         :style="{ color: isDark ? '#fff' : '#000' }"
-        >Name:</label
+        >Username:</label
       >
       <input
         type="text"

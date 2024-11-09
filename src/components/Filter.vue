@@ -29,7 +29,7 @@
 
     <div class="buttons-filters">
       <button @click="triggerSearch">Search</button>
-      <button>Clean</button>
+      <button @click="cleanFields">Clean</button>
     </div>
     <Alerts :message="message" :show="showMessage" class="alert-popup" />
 
@@ -68,7 +68,6 @@
     codeDevice: string;
     userCode: string;
   }
-
   const devices = ref<Device[]>([]);
   const fullName = ref<string>('');
   const codeDevice = ref<string>('');
@@ -165,7 +164,7 @@
         const color = generateRandomColor();
         selectedUsers.value.push({
           nameUser: fullName.value,
-          cicleColor: color,
+          cicleColor: '#35005d',
           userCode: userCode.value
         });
         emit("search", {
@@ -213,6 +212,18 @@
     const blue = Math.floor(Math.random() * 56 + 200).toString(16);
     return `#${red.padStart(2, '0')}${green.padStart(2, '0')}${blue.padStart(2, '0')}`;
   };
+  const cleanFields = () =>{
+    fullName.value = '';
+    codeDevice.value = '';
+    userCode.value = '';
+    periods.value.dataInicio = null;
+    periods.value.dataFim = null;
+    if (dateRangePicker.value) {
+      const picker = flatpickr(dateRangePicker.value);
+      picker.clear();
+    }
+    updateFlatpickrDates();
+  }
 </script>
 
 <style scoped>

@@ -17,14 +17,14 @@
                 alt="Loading..."
             />
 
-            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" :isDark="mapModeStore.isDarkMode" />
+            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" :isDark="mapModeStore.isDarkMode" :map="map" v-if="map" />
 
 
             <transition
                 name="fade"
             >
                 <Filter
-                    v-show="showFilter"
+                    v-show="showComponentsMode.filter"
                     @search="handleSearch"
                     @removeUser="handleDelete"
                     @send-id="receiveId"
@@ -34,8 +34,10 @@
                 />
             </transition>
         </div>
-        <DrawPolygon v-if="map" :map="map" />
-        <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showHistoryFuntion.showHistory" :id="idUsuario" />
+        <transition
+            name="fade">
+            <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showComponentsMode.history" :id="idUsuario" />
+        </transition>
     </div>
 </template>
 
@@ -47,13 +49,13 @@ import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
 import RegistrosService from "../services/registros";
 import Nav from "./Nav.vue";
-import { useMapModeStore } from "@/stores/useMapMode";
-import DrawPolygon from "./DrawPolygon.vue";
+import { useMapModeStore } from "@/stores/useMapMode";;
 import { type User, type Coordinate, type Location } from '../interfaces/types';
 import { selectedUsers } from "@/stores/selectedUsers";
 import HistoricoLocalicao from "./HistoricoLocalicao.vue";
-import { showHistory } from "@/stores/showHistory";
+import { showComponents } from "@/stores/showComponents";
 
+const showComponentsMode = showComponents();
 const mapContainer = shallowRef(null);
 const map = shallowRef<Map | null>(null);
 const mapModeStore = useMapModeStore();
@@ -65,7 +67,6 @@ const actualUser = ref(0);
 const messageEmpty = shallowRef('');
 const showMessageEmpty = shallowRef(false);
 const locations = ref<Location[]>([]);
-const showHistoryFuntion = showHistory();
 const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
 const idUsuario = ref<string>('');
 
@@ -82,12 +83,12 @@ interface SearchParams {
 const receiveId = (idUser : string) => {
     idUsuario.value = idUser;
 }
-const addSelectedUsersStore = (registers: any, userCode: number) => {
+const addSelectedUsersStore = (registers: any, userCode: number, fullName : string) => {
   const selectedUserStore = selectedUsers();
   const user = ref<User>({
     id: userCode,
     coordenadas: [],
-    nome: ''
+    nome: fullName
   });
 
   for (let register of registers) {
@@ -114,7 +115,6 @@ const addCoordenadasSelectedUsersStore = (coordenadas : any, userCode: number) =
     registersToAdd.value.push(coordenada.value);
   }
   selectedUsersStore.addCoordenadas(userCode, registersToAdd.value);
-  console.log("Lista de usuários:", selectedUsersStore.users);
 };
 
 
@@ -134,7 +134,11 @@ onMounted(() => {
 });
 
 const toggleFilter = () => {
-    showFilter.value = !showFilter.value;
+    if(showComponentsMode.filter == true){
+        showComponentsMode.esconderComponents()
+    }else{
+        showComponentsMode.showFilter();
+    }
 };
 
 const changeLoading = () => {
@@ -189,7 +193,7 @@ const getPoints = async (searchParams: SearchParams) => {
                     firstReq.maxMinCoordinates.maxLatitude + 1,
                 ],
             ]);
-            addSelectedUsersStore(firstReq.registers, searchParams.userCode);   
+            addSelectedUsersStore(firstReq.registers, searchParams.userCode, searchParams.fullName);   
 
             for (let page = 1; page <= allPages; page++) {
                 const req = await RegistrosService.getRegistros(
@@ -249,6 +253,13 @@ function inicializarMapa() {
                 zoom: initialState.zoom,
             })
         );
+
+
+    //fix conytrols style
+    const drawControls = document.querySelectorAll(".mapboxgl-ctrl-group.mapboxgl-ctrl");
+    drawControls.forEach((elem) => {
+        elem.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group');
+    });
     } else {
         console.warn("mapContainer is not available");
     }
@@ -279,12 +290,12 @@ async function plotPontos(
 
     let el_start = createMarkerElement(
         elementData.fullName,
-        createPin(elementData.cicleColor, "START", false)
+        createPin('green', "START", false)
     );
 
     let el_finish = createMarkerElement(
         elementData.fullName,
-        createPin(elementData.cicleColor, "FINISH", false)
+        createPin('red', "FINISH", false)
     );
 
     allPoints.forEach((point: any, index: number) => {
@@ -356,9 +367,8 @@ async function plotPontos(
                 "line-cap": "round",
             },
             paint: {
-                "line-color": "#000",
-                "line-width": 2,
-                "line-dasharray": [1, 1],
+                "line-color": "#0f53ff",
+                "line-width": 4,
             },
         });
 
@@ -399,15 +409,12 @@ function createPin(color: string, name: string, isStopped: boolean) {
         user_pin.style.borderRadius = "50%";
         user_pin.style.height = `25px`;
     }
-    if (isStopped) {
-        user_pin.style.border = "dotted 2px";
-    }
 
     user_pin.style.minWidth = `25px`;
     user_pin.style.boxShadow =
         "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);";
     user_pin.style.backgroundColor = color;
-    user_pin.style.color = "black";
+    user_pin.style.color = "white";
     user_pin.style.display = "flex";
     user_pin.style.alignItems = "center";
     user_pin.style.justifyContent = "center";
@@ -415,7 +422,7 @@ function createPin(color: string, name: string, isStopped: boolean) {
     user_pin.innerHTML = name;
 
     if (isStopped) {
-        user_pin.style.backgroundColor = "gray";
+        user_pin.style.backgroundColor = "yellow";
     }
 
     return user_pin;
