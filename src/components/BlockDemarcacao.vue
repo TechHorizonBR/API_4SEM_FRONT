@@ -33,7 +33,7 @@ const deleteById = async () => {
     const response = await DemarcationService.deleteById(props.id);
     
     if(response === "Demarcation has been deleted"){
-        emit("updateList");
+        emit("updateList", props.id);
     }
 }
 

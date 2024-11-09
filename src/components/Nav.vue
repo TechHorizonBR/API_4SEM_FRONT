@@ -59,7 +59,7 @@
   </div>
   <transition
   name="fade">
-  <MapMarker @mapEmit="sendPolygon" v-if="showComponentsMode.mapMarker" :isDark="isDark" :map="$props.map" />
+  <MapMarker @mapEmit="sendPolygon" @deleteEmit="deletePolygon" v-if="showComponentsMode.mapMarker" :isDark="isDark" :map="$props.map" />
   </transition>
 </template>
 
@@ -88,7 +88,8 @@ export default {
   emits: [
     'toggleFilter',
     'resetMap',
-    'setPolygon'
+    'setPolygon',
+    'deleteArea'
     // Evento para resetar o mapa
   ],
   methods: {
@@ -100,6 +101,9 @@ export default {
     },
     sendPolygon(coordinates: [], user_id:number){
       this.$emit("setPolygon", coordinates, user_id);
+    },
+    deletePolygon(user_id: number){
+      this.$emit("deleteArea", user_id)
     },
     goToMapMarker() {
       if(this.showComponentsMode.mapMarker){

@@ -17,7 +17,7 @@
                 alt="Loading..."
             />
 
-            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" @setPolygon="plotPolygon" :isDark="mapModeStore.isDarkMode" :map="map" v-if="map" />
+            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" @setPolygon="plotPolygon" @deleteArea="deletePolygon" :isDark="mapModeStore.isDarkMode" :map="map" v-if="map" />
 
 
             <transition
@@ -255,7 +255,6 @@ function inicializarMapa() {
         );
 
 
-    //fix conytrols style
     const drawControls = document.querySelectorAll(".mapboxgl-ctrl-group.mapboxgl-ctrl");
     drawControls.forEach((elem) => {
         elem.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group');
@@ -313,6 +312,17 @@ function plotPolygon(coordinates: number[][], user_id: number) {
     }
 }
 
+function deletePolygon(user_id: number) {
+    const sourceId = `area_${user_id}`;
+
+    if (map.value?.getLayer(sourceId)) {
+        map.value?.removeLayer(sourceId);
+    }
+
+    if (map.value?.getSource(sourceId)) {
+        map.value?.removeSource(sourceId);
+    }
+}
 
 
 async function plotPontos(
@@ -530,7 +540,7 @@ watch(
             const controlElements =
                 document.getElementsByClassName("maplibregl-ctrl");
             for (let element of controlElements) {
-                const htmlElement = element as HTMLElement; // Asserção de tipo para HTMLElement
+                const htmlElement = element as HTMLElement;
                 if (isDarkMode) {
                     htmlElement.style.backgroundColor = "#0a0012e3";
                     htmlElement.style.color = "#fff";
