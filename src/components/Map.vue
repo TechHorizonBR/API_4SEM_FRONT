@@ -17,7 +17,7 @@
                 alt="Loading..."
             />
 
-            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" :isDark="mapModeStore.isDarkMode" :map="map" v-if="map" />
+            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" @setPolygon="plotPolygon" :isDark="mapModeStore.isDarkMode" :map="map" v-if="map" />
 
 
             <transition
@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { Map, MapStyle, config, Marker } from "@maptiler/sdk";
-import { shallowRef, onMounted, onUnmounted, markRaw, watch, ref } from "vue";
+import { shallowRef, onMounted, onUnmounted, markRaw, watch, ref, toRaw } from "vue";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
@@ -274,6 +274,32 @@ const resetMap = () => {
         });
     }
 };
+
+function plotPolygon(coordinates: number[][], user_id: number){
+    const filtredCoordinates = toRaw(coordinates) as number[][];
+    map.value?.addSource(`area_${user_id}`, {
+        'type': 'geojson',
+        'data': {
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Polygon',
+                'coordinates': [filtredCoordinates]
+            },
+            'properties': {}
+        }
+    });
+
+    map.value?.addLayer({
+        'id': `area_${user_id}`,
+        'type': 'fill',
+        'source': `area_${user_id}`,
+        'layout': {},
+        'paint': {
+            'fill-color': '#ff0000',
+            'fill-opacity': 0.5
+        }
+    });
+}
 
 async function plotPontos(
     allPoints: any,

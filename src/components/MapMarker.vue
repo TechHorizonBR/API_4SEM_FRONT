@@ -17,8 +17,9 @@
 
     <div class="data-list"  v-if="demarcations.length > 0">
       <BlockDemarcacao v-for="demarcation of demarcations" 
-      :isDark="isDark" :name="demarcation.nome" :id="demarcation.id"
-      @updateList="getDemarcationsByUser"/>
+      :isDark="isDark" :name="demarcation.nome" :id="demarcation.id" :coordinates="demarcation.coordinate"
+      @updateList="getDemarcationsByUser"
+      @sendCoordinates="setPolygon"/>
     </div>
     <div class="title2" :class="{'title2-Dark': isDark, 'title2-Light': !isDark}" >
     </div>
@@ -75,6 +76,13 @@ const showMessage = ref<boolean>(false);
 const messageAlert = ref<string>('');
 const demarcations = ref<[]>([]);
 const draw = ref(null);
+
+const emit = defineEmits(['mapEmit']);
+
+
+const setPolygon = (coordinates: [], user_id: number) =>{
+  emit('mapEmit', coordinates, user_id);
+}
 
 interface Device {
     fullName: string;
