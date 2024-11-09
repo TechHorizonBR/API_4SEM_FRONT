@@ -305,7 +305,7 @@ function plotPolygon(coordinates: number[][], user_id: number) {
                 'visibility': 'visible'
             },
             'paint': {
-                'fill-color': '#ff0000',
+                'fill-color': '#ff00007c',
                 'fill-opacity': 0.5
             }
         });
