@@ -290,12 +290,12 @@ async function plotPontos(
 
     let el_start = createMarkerElement(
         elementData.fullName,
-        createPin(elementData.cicleColor, "START", false)
+        createPin('green', "START", false)
     );
 
     let el_finish = createMarkerElement(
         elementData.fullName,
-        createPin(elementData.cicleColor, "FINISH", false)
+        createPin('red', "FINISH", false)
     );
 
     allPoints.forEach((point: any, index: number) => {
@@ -410,15 +410,12 @@ function createPin(color: string, name: string, isStopped: boolean) {
         user_pin.style.borderRadius = "50%";
         user_pin.style.height = `25px`;
     }
-    if (isStopped) {
-        user_pin.style.border = "dotted 2px";
-    }
 
     user_pin.style.minWidth = `25px`;
     user_pin.style.boxShadow =
         "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);";
     user_pin.style.backgroundColor = color;
-    user_pin.style.color = "black";
+    user_pin.style.color = "white";
     user_pin.style.display = "flex";
     user_pin.style.alignItems = "center";
     user_pin.style.justifyContent = "center";
@@ -426,7 +423,7 @@ function createPin(color: string, name: string, isStopped: boolean) {
     user_pin.innerHTML = name;
 
     if (isStopped) {
-        user_pin.style.backgroundColor = "gray";
+        user_pin.style.backgroundColor = "yellow";
     }
 
     return user_pin;

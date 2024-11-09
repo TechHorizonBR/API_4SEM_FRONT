@@ -11,12 +11,11 @@
             </div>
         </div>
         
-        <h2 v-if="locations?.length === 0">User has not registers.</h2>
+        <h2 v-if="locations?.length === 0">User does not have registers.</h2>
 
         <div class="localizacoes-usuarios">
             <LocationBlock :isDark="props.isDark" v-for="location of locations" :location="location"/>
         </div>
-        <Alerts :message="message" :show="showMessage" class="alert-popup" />
     </div>
 
 </template>
