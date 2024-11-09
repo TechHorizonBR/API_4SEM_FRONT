@@ -6,7 +6,7 @@ import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
 const props = defineProps<{
-  map: Object
+  map: MapboxDraw
 }>();
 
 const draw = ref<MapboxDraw | null>(null);
@@ -63,11 +63,9 @@ function drawInit() {
   });
 }
 
-
-
 function drawEnd() {
-  if (draw.value) {
-    // props.map.removeControl(draw.value);
+  if ( props.map.hasControl(draw.value) ) {
+    props.map.removeControl(draw.value);
     draw.value = null;
   }
 }

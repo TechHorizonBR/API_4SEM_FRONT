@@ -105,7 +105,7 @@ async function saveDemarcation () {
     getDemarcationsByUser()
     showAlert(response);
     areaName.value = '';
-    props.map.removeControl(draw.value);
+    showDraw.value = false;
     
   } catch (error) {
     showAlert("Something is wrong. Please try again later.");
