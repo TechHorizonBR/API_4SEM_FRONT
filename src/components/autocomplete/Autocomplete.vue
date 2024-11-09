@@ -5,7 +5,7 @@
         class="label"
         for="name"
         :style="{ color: isDark ? '#fff' : '#000' }"
-        >Name:</label
+        >Username:</label
       >
       <input
         type="text"
@@ -70,13 +70,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 interface Device {
   nome: string;
   codigoDevice: string;
   idUsuario: string;
 }
+const fullName = ref("");
+const codeDevice = ref("");
 
 const props = defineProps<{
   source: Device[];
@@ -85,6 +87,7 @@ const props = defineProps<{
   modelValueUserCode: string | number;
   isDark: boolean;
 }>();
+
 
 const emit = defineEmits<{
   (e: "update:modelValueFullName", value: string): void;
@@ -150,6 +153,27 @@ const handleCodeInput = (event: Event) => {
   showCodeResults.value = true;
   emit("update:modelValueCodeDevice", searchCode.value);
 };
+const resetFields = () => {
+  searchName.value = "";
+  searchCode.value = "";
+  userCode.value = "";
+  emit("update:modelValueFullName", "");
+  emit("update:modelValueCodeDevice", "");
+  emit("update:modelValueUserCode", "");
+};
+watch(() => props.modelValueFullName, (newValue) => {
+  if (!newValue) {
+    searchName.value = "";
+  }
+});
+
+watch(() => props.modelValueCodeDevice, (newValue) => {
+  if (!newValue) {
+    searchCode.value = "";
+  }
+});
+
+
 </script>
 
 <style scoped>

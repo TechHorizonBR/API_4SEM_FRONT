@@ -11,7 +11,7 @@ const mapModeStore = useMapModeStore();
   </label>
 </template>
 
-<style>
+<style scoped>
 .switch {
   position: relative;
   display: inline-block;

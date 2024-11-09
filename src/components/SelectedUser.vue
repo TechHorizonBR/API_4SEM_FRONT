@@ -1,24 +1,33 @@
 <template>
     <div :class="isDark ? 'selected-user-dark' : 'selected-user-light'" class="selected-user">
-        <p id="iniciais" :style="{backgroundColor: props.cicleColor, color: 'black'}">{{ workingOnName.iniciais }}</p>
+        <p id="iniciais" :style="{backgroundColor: props.cicleColor, color: 'white'}">{{ workingOnName.iniciais }}</p>
         <p class="name">{{ workingOnName.name }}</p>
-        <button @click="removeUser">X</button>
+        <div class="buttons-options">
+          <font-awesome-icon :icon="['fas', 'trash']" class="icones-buttons" title="Remove User" @click="removeUser"/>
+          <font-awesome-icon :icon="['fas', 'map']" class="icones-buttons" title="See location history" @click="showHistoryPanelFunction"/>
+         
+        </div>
     </div>
 
 </template>
 
 <script lang="ts" setup>
-import type { Color } from '@maptiler/sdk';
-import { computed } from 'vue';
-
+import { computed, ref } from 'vue';
+import { showComponents } from '@/stores/showComponents';
 
  const props = defineProps<{
     nameUser: string,
     isDark: boolean,
-    cicleColor: string
+    cicleColor: string, 
+    idUser: string
  }>();
+ const showComponentsMode = showComponents();
 
- const emit = defineEmits(['removeUser']);
+ const showHistoryPanelFunction = () => {
+  emit('sendId', props.idUser);
+  showComponentsMode.showHistory();
+ }
+ const emit = defineEmits(['removeUser', 'sendId']);
 
  const removeUser = () => {
     emit('removeUser', props.nameUser)
@@ -38,43 +47,49 @@ import { computed } from 'vue';
 
 <style scoped>
  .selected-user-dark{
-    color: white;
-    background-color: #383838;
+  color: white;
+   background-color: #383838;
  }
  .selected-user-light{
-    color: black;
-    background-color: white;
+   background-color: white;
  }
  .selected-user{
-    display: flex;
-    justify-content: space-evenly;   
-    border-radius: 1em; 
-    margin: 0 0 3% 0;
- }
- button{
-    cursor: pointer;
-    border: none;
-    
+   display: flex;
+   justify-content: space-evenly;   
+   border-radius: 1em; 
+   margin: 0 0 3% 0;
  }
  .selected-user-dark > button{
-    background-color: #383838;
-    color: white
+   background-color: #383838;
+   color: white
  }
  .selected-user-light > button{
-    background-color: white;
+   background-color: white;
+ }
+ .buttons-options{
+  display: flex;
+  align-items: center;
+  font-size: 1.2em;
+ }
+ .icones-buttons{
+  margin: 0 15%;
+ }
+ .icones-buttons:hover{
+  cursor: pointer;
+  color: #35005d;
  }
  .name{
-    font-size: 1em;
-    max-width: 130px;
-    min-width: 130px;
-    text-align: left;
-    white-space: nowrap;       /* Evita que o texto quebre a linha */
-  overflow: hidden;          /* Esconde o texto que ultrapassar o limite */
-  text-overflow: ellipsis;
+   font-size: 1em;
+   max-width: 130px;
+   min-width: 130px;
+   text-align: left;
+   white-space: nowrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
  }
  #iniciais{
    background: blue;
-   padding: 0.1em;
+   padding: 0.2em;
    border-radius: 50%;
    width: 20px;
    text-align: center;
