@@ -17,8 +17,9 @@
 
     <div class="data-list"  v-if="demarcations.length > 0">
       <BlockDemarcacao v-for="demarcation of demarcations" 
-      :isDark="isDark" :name="demarcation.nome" :id="demarcation.id"
-      @updateList="getDemarcationsByUser"/>
+      :isDark="isDark" :name="demarcation.nome" :id="demarcation.id" :coordinates="demarcation.coordinate"
+      @updateList="updateDemarcations"
+      @sendCoordinates="setPolygon"/>
     </div>
     <div class="title2" :class="{'title2-Dark': isDark, 'title2-Light': !isDark}" >
     </div>
@@ -75,6 +76,18 @@ const showMessage = ref<boolean>(false);
 const messageAlert = ref<string>('');
 const demarcations = ref<[]>([]);
 const draw = ref(null);
+
+const emit = defineEmits(['mapEmit', 'deleteEmit']);
+
+
+const setPolygon = (coordinates: [], user_id: number) =>{
+  emit('mapEmit', coordinates, user_id);
+}
+
+const updateDemarcations = (user_id: number) =>{
+  emit('deleteEmit', user_id);
+  getDemarcationsByUser();
+}
 
 interface Device {
     fullName: string;
@@ -152,6 +165,8 @@ const getDemarcationsByUser = async () => {
     showAlert("Something is wrong. Please, try again later.");    
   }
 }
+
+
 
 const showAlert = (message : string) => {
   showMessage.value = true;

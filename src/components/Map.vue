@@ -17,7 +17,7 @@
                 alt="Loading..."
             />
 
-            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" :isDark="mapModeStore.isDarkMode" :map="map" v-if="map" />
+            <Nav @toggleFilter="toggleFilter" @resetMap="resetMap" @setPolygon="plotPolygon" @deleteArea="deletePolygon" :isDark="mapModeStore.isDarkMode" :map="map" v-if="map" />
 
 
             <transition
@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { Map, MapStyle, config, Marker } from "@maptiler/sdk";
-import { shallowRef, onMounted, onUnmounted, markRaw, watch, ref } from "vue";
+import { shallowRef, onMounted, onUnmounted, markRaw, watch, ref, toRaw } from "vue";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import LightDarkToggle from "./LightDarkToggle.vue";
 import Filter from "./Filter.vue";
@@ -255,7 +255,6 @@ function inicializarMapa() {
         );
 
 
-    //fix conytrols style
     const drawControls = document.querySelectorAll(".mapboxgl-ctrl-group.mapboxgl-ctrl");
     drawControls.forEach((elem) => {
         elem.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group');
@@ -274,6 +273,57 @@ const resetMap = () => {
         });
     }
 };
+
+function plotPolygon(coordinates: number[][], user_id: number) {
+    const sourceId = `area_${user_id}`;
+    const layer = map.value?.getLayer(sourceId);
+
+    if (layer) {
+        const currentVisibility = map.value?.getLayoutProperty(sourceId, 'visibility');
+        const newVisibility = currentVisibility === 'visible' ? 'none' : 'visible';
+        map.value?.setLayoutProperty(sourceId, 'visibility', newVisibility);
+    } else {
+        const filtredCoordinates = toRaw(coordinates) as number[][];
+
+        map.value?.addSource(sourceId, {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [filtredCoordinates]
+                },
+                'properties': {}
+            }
+        });
+
+        map.value?.addLayer({
+            'id': sourceId,
+            'type': 'fill',
+            'source': sourceId,
+            'layout': {
+                'visibility': 'visible'
+            },
+            'paint': {
+                'fill-color': '#ff0000',
+                'fill-opacity': 0.5
+            }
+        });
+    }
+}
+
+function deletePolygon(user_id: number) {
+    const sourceId = `area_${user_id}`;
+
+    if (map.value?.getLayer(sourceId)) {
+        map.value?.removeLayer(sourceId);
+    }
+
+    if (map.value?.getSource(sourceId)) {
+        map.value?.removeSource(sourceId);
+    }
+}
+
 
 async function plotPontos(
     allPoints: any,
@@ -486,7 +536,7 @@ watch(
             const controlElements =
                 document.getElementsByClassName("maplibregl-ctrl");
             for (let element of controlElements) {
-                const htmlElement = element as HTMLElement; // Asserção de tipo para HTMLElement
+                const htmlElement = element as HTMLElement;
                 if (isDarkMode) {
                     htmlElement.style.backgroundColor = "#0a0012e3";
                     htmlElement.style.color = "#fff";
