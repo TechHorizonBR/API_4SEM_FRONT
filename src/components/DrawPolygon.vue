@@ -57,6 +57,7 @@ function drawInit() {
   props.map.addControl(draw.value);
 
   const drawControls = document.querySelectorAll('.mapboxgl-ctrl-group.mapboxgl-ctrl');
+
   drawControls.forEach((elem) => {
     elem.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group');
   });
@@ -75,4 +76,22 @@ onMounted(() => drawInit());
 onBeforeUnmount(() => drawEnd());
 </script>
 
-<style scoped></style>
+<style scoped>
+/* Estilo para o grupo de controles */
+.mapboxgl-ctrl-group {
+  background-color: #f0f0f0 !important;  /* Cor de fundo */
+  border-radius: 5px;  /* Borda arredondada */
+  padding: 10px; /* Espaçamento interno */
+}
+
+/* Estilo para o controle específico de desenho (polygon) */
+.mapboxgl-ctrl-polygon {
+  background-color: #ff5733 !important;  /* Cor de fundo específica */
+  color: white;  /* Cor do texto */
+}
+
+/* Estilo para o controle de lixo (trash) */
+.mapboxgl-ctrl-trash {
+  background-color: #d9534f !important;  /* Cor de fundo específica */
+  color: white;  /* Cor do texto */
+}</style>

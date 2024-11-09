@@ -367,9 +367,8 @@ async function plotPontos(
                 "line-cap": "round",
             },
             paint: {
-                "line-color": "#000",
-                "line-width": 2,
-                "line-dasharray": [1, 1],
+                "line-color": "#0f53ff",
+                "line-width": 4,
             },
         });
 
