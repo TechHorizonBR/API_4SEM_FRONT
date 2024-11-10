@@ -29,7 +29,7 @@
 
     <div class="buttons-filters">
       <button @click="triggerSearch">Search</button>
-      <button @click="cleanFields">Clean</button>
+      <button @click="cleanFields">Clear</button>
     </div>
     <Alerts :message="message" :show="showMessage" class="alert-popup" />
 
