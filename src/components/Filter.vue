@@ -24,7 +24,8 @@
     <DateFilters 
       :isDark="isDark"
       @updatePeriod="handleUpdatePeriod"
-      @resetDateFilters="handleResetDateFilters" 
+      @resetDateFilters="handleResetDateFilters"
+      ref="dateFilterVariavel" 
     />
 
     <div class="buttons-filters">
@@ -84,6 +85,7 @@
     cicleColor: string,
     userCode: string
   }>>([]);
+  const dateFilterVariavel = ref<InstanceType<typeof DateFilters> | null>(null);
   const showMessage = ref<boolean>(false); // Variável de controle para exibir a mensagem
   const message = ref<string>(''); // Variável que armazena a mensagem a ser exibida
   const dateRangePicker = ref<HTMLInputElement | null>(null);
@@ -180,11 +182,8 @@
 
         handleResetDateFilters();
 
-        fullName.value = '';
-        codeDevice.value = '';
-        userCode.value = '';
-        periods.value.dataInicio = null;
-        periods.value.dataFim = null;
+        cleanFields();
+
         if (dateRangePicker.value) {
           const picker = flatpickr(dateRangePicker.value);
           picker.clear();
@@ -220,6 +219,7 @@
     userCode.value = '';
     periods.value.dataInicio = null;
     periods.value.dataFim = null;
+    dateFilterVariavel.value?.clearField();
     if (dateRangePicker.value) {
       const picker = flatpickr(dateRangePicker.value);
       picker.clear();

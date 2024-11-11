@@ -28,12 +28,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { ref, watch, defineExpose } from "vue";
 
 const props = defineProps<{
   isDark: boolean;
 }>();
 const emit = defineEmits(["updatePeriod", "resetDateFilters"]);
+defineExpose({ clearField: () => {
+    value.value = undefined;
+  } })
 const value = ref<string | undefined>(undefined);
 const dataInicio = ref<string | null>(null);
 const dataFim = ref<string | null>(null);
@@ -60,6 +63,7 @@ const updatePeriod = () => {
     dataFim: dataFim.value,
   });
 };
+
 
 // Escuta o evento de reset e redefine o valor do rádio
 watch(() => emit('resetDateFilters'), () => {
