@@ -185,12 +185,12 @@ const getPoints = async (searchParams: SearchParams) => {
             transformData(firstReq.registers, 0, allPages, searchParams);
             map.value?.fitBounds([
                 [
-                    firstReq.maxMinCoordinates.minLongitude - 1,
-                    firstReq.maxMinCoordinates.minLatitude - 1,
+                    firstReq.maxMinCoordinates.minLongitude - 0.05,
+                    firstReq.maxMinCoordinates.minLatitude - 0.05,
                 ],
                 [
-                    firstReq.maxMinCoordinates.maxLongitude + 1,
-                    firstReq.maxMinCoordinates.maxLatitude + 1,
+                    firstReq.maxMinCoordinates.maxLongitude + 0.05,
+                    firstReq.maxMinCoordinates.maxLatitude + 0.05,
                 ],
             ]);
             addSelectedUsersStore(firstReq.registers, searchParams.userCode, searchParams.fullName);   
@@ -451,7 +451,7 @@ function createPin(color: string, name: string, isStopped: boolean) {
 
     if (name == "START" || name == "FINISH") {
         user_pin.style.borderRadius = "3px";
-        user_pin.style.height = `10px`;
+        user_pin.style.height = `13px`;
         user_pin.style.paddingInline = "5px";
         user_pin.style.paddingBlock = "2px";
         user_pin.style.zIndex = "5";
@@ -470,9 +470,11 @@ function createPin(color: string, name: string, isStopped: boolean) {
     user_pin.style.justifyContent = "center";
     user_pin.style.fontWeight = "bold";
     user_pin.innerHTML = name;
+    user_pin.style.border  = "1px solid black"
 
     if (isStopped) {
         user_pin.style.backgroundColor = "yellow";
+        user_pin.style.color = "black";
     }
 
     return user_pin;
