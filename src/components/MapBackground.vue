@@ -15,18 +15,20 @@ const map = shallowRef(null);
 onMounted(() => {
   config.apiKey = 'tF1lf7jSig6Ou8IuaLtw';
 
-  const initialState = { lng: 139.753, lat: 35.6844, zoom: 14 };
+  const initialState = { lng: -20, lat: 0, zoom: 2 };
 
   map.value = markRaw(new Map({
     container: mapContainer.value,
-    style: MapStyle.STREETS,
+    style: MapStyle.SATELLITE,
     center: [initialState.lng, initialState.lat],
-    zoom: initialState.zoom
+    zoom: initialState.zoom,
+    navigationControl: false,
+    geolocateControl: false,
+    logoPosition: 'top-right',
+    interactive: false
   }));
 
-  new Marker({color: "#FF0000"})
-  .setLngLat([139.7525,35.6846])
-  .addTo(map.value);
+  map.value.removeControl();
 
 }),
 onUnmounted(() => {
@@ -38,12 +40,13 @@ onUnmounted(() => {
 .map-wrap {
   position: relative;
   width: 100%;
-  height: calc(100vh - 77px); /* calculate height of the screen minus the heading */
+  height: 100vh;
 }
 
 .map {
   position: absolute;
   width: 100%;
   height: 100%;
+  z-index: 1;
 }
 </style>
