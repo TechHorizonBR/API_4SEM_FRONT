@@ -1,10 +1,11 @@
 <script setup>
 import { ref } from "vue";
 import MapView from "./views/MapView.vue";
+import LoginView from "./views/LoginView.vue";
 </script>
 
 <template>
-  <MapView />
+  <RouterView></RouterView>
 </template>
 
 <style>
