@@ -309,6 +309,19 @@ function plotPolygon(coordinates: number[][], user_id: number) {
                 'fill-opacity': 0.5
             }
         });
+
+   
+        
+        map.value?.fitBounds([
+                [
+                filtredCoordinates[0][0] - 0.05,
+                filtredCoordinates[1][1] - 0.05,
+                ],
+                [
+                filtredCoordinates[0][0] + 0.05,
+                filtredCoordinates[1][1] + 0.05,
+                ],
+            ]);
     }
 }
 
