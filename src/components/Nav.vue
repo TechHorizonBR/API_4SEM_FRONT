@@ -30,7 +30,7 @@
       </li>
       <li class="navbar-item">
         <button
-          @click="addUser"
+          @click="goToAddUser"
           :class="{ 'dark-button': isDark, 'light-button': !isDark }"
         >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
@@ -59,13 +59,14 @@
   </div>
   <transition
   name="fade">
-  <MapMarker @mapEmit="sendPolygon" @deleteEmit="deletePolygon" v-if="showComponentsMode.mapMarker" :isDark="isDark" :map="$props.map" />
+    <MapMarker @mapEmit="sendPolygon" @deleteEmit="deletePolygon" v-if="showComponentsMode.mapMarker" :isDark="isDark" :map="$props.map" />
   </transition>
 </template>
 
 <script lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import MapMarker from './MapMarker.vue';
+import AddUser from './AddUser.vue'
 import { showComponents } from '@/stores/showComponents';
 
 
@@ -84,6 +85,7 @@ export default {
   components: {
     FontAwesomeIcon,
     MapMarker,
+    AddUser,
   },
   emits: [
     'toggleFilter',
@@ -112,8 +114,12 @@ export default {
         this.showComponentsMode.showMapMaker();
       }
     },
-    addUser() {
-      // Lógica para adicionar um usuário
+    goToAddUser() {
+      if (this.showComponentsMode.addUser) {
+        this.showComponentsMode.esconderComponents();
+      } else {
+        this.showComponentsMode.showAddUser();
+      }
     },
     signInOut() {
       // Lógica para sign in/out
