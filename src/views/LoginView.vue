@@ -1,11 +1,15 @@
 <template>
-<div class="gray-background"></div>
-      <MapBackground></MapBackground>
+  
+  <div class="gray-background">
+    <Login/>
+  </div>
+  <MapBackground/>
   
 </template> 
 
 <script setup lang="ts">
 import MapBackground from '@/components/MapBackground.vue';
+import Login from '@/components/Login.vue';
 
 </script>
 
@@ -17,7 +21,7 @@ import MapBackground from '@/components/MapBackground.vue';
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2;
   position: absolute;
 }
 </style>
