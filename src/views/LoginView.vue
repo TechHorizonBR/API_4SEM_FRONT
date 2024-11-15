@@ -18,9 +18,6 @@ import Login from '@/components/Login.vue';
   background-color: rgba(0, 0, 0, 0.4);
   width: 100%;
   height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: 2;
   position: absolute;
 }

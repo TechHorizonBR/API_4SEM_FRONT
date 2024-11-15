@@ -1,13 +1,14 @@
 <template>
+  <div class="body-content">
+  <div class="header">
+    <img src="@/assets/logo-techhorizon.png" alt="Logo techHorizon"/>
+  </div>
   <div class="login-content">
     <div class="input-group">
       <div class="image-input">
         <img src="@/assets/logo_escrita.png" alt="Logo LocalTracket" />
       </div>
-
     </div>
-
-
     <div class="input-group">
       <div class="image-input">
       </div>
@@ -18,12 +19,11 @@
         <input type="password"class="inputs" placeholder="Password"></input>
       </div>
     </div>
-
     <div>
-
       <button class="login-button">GET STARTED</button>
     </div>
   </div>
+</div>
 </template>
 
 <script setup lang="ts">
@@ -31,6 +31,29 @@
 </script>
 
 <style>
+body {
+  overflow: hidden;
+}
+
+.body-content{
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center; 
+  height: 100vh; 
+  width: 100%;
+  position: relative;
+}
+.header{
+  position: absolute;
+  top: -20px; 
+  left: 20px;
+}
+.header img {
+  width: 100px;
+  height: auto;
+
+}
 .login-content {
   width: 450px;
   height: auto;
@@ -56,6 +79,9 @@
   color: #fff;
   font-weight: 250;
   font-size: medium;
+  padding: 5px;
+  border: none;
+  outline-color: #4b0076;
 }
 .image-input img {
   width: 250px; 
@@ -79,12 +105,12 @@
 }
 
 .login-button:hover {
-  background-color: #26003c; /* Muda a cor ao passar o mouse */
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* Aumenta a sombra */
+  background-color: #26003c;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
 }
 
 .login-button:active {
-  transform: scale(0.97); /* Dá um efeito de "clique" */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Reduz a sombra */
+  transform: scale(0.97);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
 }
 </style>
