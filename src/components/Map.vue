@@ -38,6 +38,11 @@
             name="fade">
             <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showComponentsMode.history" :id="idUsuario" />
         </transition>
+
+        <transition
+            name="fade">
+            <AddUser v-if="showComponentsMode.addUser"/>
+        </transition>
     </div>
 </template>
 
@@ -54,6 +59,7 @@ import { type User, type Coordinate, type Location } from '../interfaces/types';
 import { selectedUsers } from "@/stores/selectedUsers";
 import HistoricoLocalicao from "./HistoricoLocalicao.vue";
 import { showComponents } from "@/stores/showComponents";
+import AddUser from "./AddUser.vue";
 
 const showComponentsMode = showComponents();
 const mapContainer = shallowRef(null);
