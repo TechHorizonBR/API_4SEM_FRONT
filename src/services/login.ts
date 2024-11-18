@@ -6,8 +6,12 @@ class LoginService{
     senha: string
   ){
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         `http://localhost:8080/auth`,
+        {
+          username: "usuario",
+          password: "senha"
+        }
       );
       return response.data;
       

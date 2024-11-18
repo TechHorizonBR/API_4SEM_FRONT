@@ -13,20 +13,38 @@
       <div class="image-input">
       </div>
       <div class="input-login">
-        <input type="text" id="username" class="inputs" placeholder="Username"></input>
+        <input type="text" id="username" class="inputs" placeholder="Username" v-model="usuario"></input>
       </div>
       <div class="input-login">
-        <input type="password"class="inputs" placeholder="Password"></input>
+        <input type="password"class="inputs" placeholder="Password" v-model="senha"></input>
       </div>
     </div>
     <div>
-      <button class="login-button">GET STARTED</button>
+      <button class="login-button" @click="fetchLogin">GET STARTED</button>
     </div>
   </div>
 </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
+import LoginService from '@/services/login';
+
+
+const usuario = ref<string>("");
+const senha = ref<string>("");
+
+
+const fetchLogin = async () => { 
+  try {
+      console.log(usuario.value, senha.value);
+      const response = LoginService.autenticarUsuario("admin", "12345");
+      console.log(response);
+    } catch (error) {
+    
+      console.error("Erro ao realizar login: ", error);
+    }
+  };
 
 </script>
 
@@ -92,10 +110,11 @@ body {
 
 .login-button {
   width: 290px;
+  height: 50px;
   background-color: #4b0076;
   color: #fff; 
   border: none; 
-  border-radius: 10px;
+  border-radius: 20px;
   padding: 10px 20px;
   font-size: 16px;
   font-weight: bold;
