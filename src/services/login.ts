@@ -18,12 +18,10 @@ class LoginService{
           },
         }
       );
-      
-      return response.data;
+      return response;
       
     } catch (error) {
-      console.error("Falha para autenticar:", error);
-      throw error;
+      
     }
   }
 

@@ -1,52 +1,84 @@
 <template>
   <div class="body-content">
-  <div class="header">
-    <img src="@/assets/logo-techhorizon.png" alt="Logo techHorizon"/>
+    <div class="header">
+      <img src="@/assets/logo-techhorizon.png" alt="Logo techHorizon" />
+    </div>
+    <div class="login-content" @keydown.enter="fetchLogin">
+      <div class="input-group">
+        <div class="image-input">
+          <img src="@/assets/logo_escrita.png" alt="Logo LocalTracket" />
+        </div>
+      </div>
+      <div class="input-group">
+        <div class="image-input"></div>
+        <div class="input-login">
+          <input
+            type="text"
+            id="username"
+            class="inputs"
+            placeholder="Username"
+            v-model="usuario"
+          />
+        </div>
+        <div class="input-login">
+          <input
+            type="password"
+            class="inputs"
+            placeholder="Password"
+            v-model="senha"
+          />
+        </div>
+      </div>
+      <div>
+        <button class="login-button" @click="fetchLogin">GET STARTED</button>
+      </div>
+    </div>
+    <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
   </div>
-  <div class="login-content">
-    <div class="input-group">
-      <div class="image-input">
-        <img src="@/assets/logo_escrita.png" alt="Logo LocalTracket" />
-      </div>
-    </div>
-    <div class="input-group">
-      <div class="image-input">
-      </div>
-      <div class="input-login">
-        <input type="text" id="username" class="inputs" placeholder="Username" v-model="usuario"></input>
-      </div>
-      <div class="input-login">
-        <input type="password"class="inputs" placeholder="Password" v-model="senha"></input>
-      </div>
-    </div>
-    <div>
-      <button class="login-button" @click="fetchLogin">GET STARTED</button>
-    </div>
-  </div>
-</div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
 import LoginService from '@/services/login';
-
+import Alerts from './Alerts.vue';
 
 const usuario = ref<string>("");
 const senha = ref<string>("");
+const messageAlert = ref<string>('');
+const showMessage = ref<boolean>(false);
 
-
-const fetchLogin = async () => { 
+const fetchLogin = async () => {
   try {
-      console.log(usuario.value, senha.value);
-      const response = LoginService.autenticarUsuario(usuario.value, senha.value);
-      console.log(response);
-    } catch (error) {
-    
-      console.error("Erro ao realizar login: ", error);
+    if(usuario.value === ''){
+      showAlert("Please enter the username.");
+      return;
     }
-  };
 
+    if(senha.value === ''){
+      showAlert("Please enter the password.");
+      return;
+    }
+
+    const response = await LoginService.autenticarUsuario(usuario.value, senha.value);
+    if (response.status === 200) {
+      showAlert("Login realizado com sucesso!");
+    }
+  } catch (error) {
+    showAlert("Credenciais inválidas.");
+  }
+};
+
+const showAlert = (message: string) => {
+  showMessage.value = true;
+  messageAlert.value = message;
+
+  setTimeout(() => {
+    showMessage.value = false;
+    messageAlert.value = '';
+  }, 3000);
+};
 </script>
+
 
 <style>
 body {
