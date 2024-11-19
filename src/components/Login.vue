@@ -38,7 +38,7 @@ const senha = ref<string>("");
 const fetchLogin = async () => { 
   try {
       console.log(usuario.value, senha.value);
-      const response = LoginService.autenticarUsuario("admin", "12345");
+      const response = LoginService.autenticarUsuario(usuario.value, senha.value);
       console.log(response);
     } catch (error) {
     

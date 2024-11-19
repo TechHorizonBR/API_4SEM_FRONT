@@ -9,10 +9,16 @@ class LoginService{
       const response = await axios.post(
         `http://localhost:8080/auth`,
         {
-          username: usuario,
-          password: senha,
+          "username": usuario,
+          "password": senha,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
+      
       return response.data;
       
     } catch (error) {
