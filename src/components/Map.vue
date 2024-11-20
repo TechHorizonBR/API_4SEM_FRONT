@@ -106,7 +106,7 @@ const addSelectedUsersStore = (registers: any, userCode: number, fullName : stri
     const coordenada = ref<Coordinate>({
       lat: register.latitude,
       lng: register.longitude,
-      data: register.dataHora
+      data: arrayToDate(register.dataHora)
     });
     user.value.coordenadas.push(coordenada.value);
   }
@@ -121,13 +121,29 @@ const addCoordenadasSelectedUsersStore = (coordenadas : any, userCode: number) =
     const coordenada = ref<Coordinate>({
       lat: register.latitude,
       lng: register.longitude,
-      data: register.dataHora
+      data: arrayToDate(register.dataHora)
     });
     registersToAdd.value.push(coordenada.value);
   }
   selectedUsersStore.addCoordenadas(userCode, registersToAdd.value);
 };
 
+function arrayToDate(dateArray: number[]){
+  if (dateArray.length !== 5) {
+    return null;
+  }
+
+  const [year, month, day, hour, minute] = dateArray;
+  const adjustedMonth = month - 1;
+  const date = new Date(year, adjustedMonth, day, hour, minute);
+
+  if (isNaN(date.getTime())) {
+    console.error("Os valores fornecidos não geraram uma data válida.");
+    return null;
+  }
+
+  return date;
+}
 
 
 onMounted(() => {

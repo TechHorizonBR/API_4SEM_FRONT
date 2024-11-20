@@ -68,7 +68,7 @@ const fetchLogin = async () => {
       router.push({path: "/map"});
     }
   } catch (error) {
-    showAlert("Credenciais inválidas.");
+    showAlert("Credênciais inválidas.");
   }
 };
 
