@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const token = defineStore("token", {
+export const tokenStore = defineStore("tokenStore", {
     state: () =>({
         token: ''
     }),

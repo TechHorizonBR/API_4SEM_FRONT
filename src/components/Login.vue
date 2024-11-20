@@ -41,12 +41,15 @@
 import { ref } from 'vue';
 import LoginService from '@/services/login';
 import Alerts from './Alerts.vue';
+import { tokenStore } from '@/stores/token';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const usuario = ref<string>("");
 const senha = ref<string>("");
 const messageAlert = ref<string>('');
 const showMessage = ref<boolean>(false);
-
+const tokenStr = tokenStore();
 const fetchLogin = async () => {
   try {
     if(usuario.value === ''){
@@ -61,7 +64,8 @@ const fetchLogin = async () => {
 
     const response = await LoginService.autenticarUsuario(usuario.value, senha.value);
     if (response.status === 200) {
-      showAlert("Login realizado com sucesso!");
+      tokenStr.setToken(response.data.token);
+      router.push({path: "/map"});
     }
   } catch (error) {
     showAlert("Credenciais inválidas.");

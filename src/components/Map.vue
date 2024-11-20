@@ -60,7 +60,12 @@ import { selectedUsers } from "@/stores/selectedUsers";
 import HistoricoLocalicao from "./HistoricoLocalicao.vue";
 import { showComponents } from "@/stores/showComponents";
 import AddUser from "./AddUser.vue";
+import { useRouter } from "vue-router";
+import { tokenStore } from "@/stores/token";
+import path from "path";
 
+const router = useRouter();
+const tokenStr = tokenStore();
 const showComponentsMode = showComponents();
 const mapContainer = shallowRef(null);
 const map = shallowRef<Map | null>(null);
@@ -126,6 +131,9 @@ const addCoordenadasSelectedUsersStore = (coordenadas : any, userCode: number) =
 
 
 onMounted(() => {
+    if(tokenStr.token === ''){
+        router.push({path: "/"});
+    }
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
     inicializarMapa();
 
