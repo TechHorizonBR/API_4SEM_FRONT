@@ -68,6 +68,8 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import MapMarker from './MapMarker.vue';
 import AddUser from './AddUser.vue'
 import { showComponents } from '@/stores/showComponents';
+import { useRouter } from 'vue-router';
+import { tokenStore } from '@/stores/token';
 
 
 export default {
@@ -122,13 +124,16 @@ export default {
       }
     },
     signInOut() {
-      // Lógica para sign in/out
+      this.tokenStr.setToken("");
+      this.router.push("/");
     },
   },
   data() {
   return {
     showMapMarker: false,
-    showComponentsMode: showComponents()
+    showComponentsMode: showComponents(),
+    router: useRouter(),
+    tokenStr: tokenStore()
     };
   },
 };
