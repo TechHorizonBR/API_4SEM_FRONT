@@ -7,6 +7,7 @@
         <div class="block1">
           <button @click="findUser" class="sidebar-button">Find By Username</button>
           <button @click="createUser" class="sidebar-button">Create User</button>
+          <button @click="updateUser" class="sidebar-button">Update User</button>
           <button @click="closeAddUser" class="sidebar-button" id="bClose">Close</button>
         </div>
 
@@ -78,6 +79,38 @@ export default {
     },
     createUser() {
       // Função para criar usuário
+    },
+    updateUser() {
+      // Função para atualizar usuário
+      if (this.user.password !== this.confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
+
+      // Update the user by sending a PUT request to the backend
+      fetch(`http://localhost:8080/usuarios${this.user.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(this.user)
+      })
+        .then(response => response.json())
+        .then(updatedUser => {
+          // Update the user in the users list
+          const index = this.users.findIndex(user => user.id === updatedUser.id);
+          this.users[index] = updatedUser;
+
+          // Reset form fields after update
+          this.user = { id: null, username: "", password: "", role: "", createdAt: null, modifiedAt: null };
+          this.confirmPassword = "";
+
+          alert("User updated successfully!");
+        })
+        .catch(error => {
+          console.error("Error updating user:", error);
+          alert("Failed to update user.");
+        });
     },
     closeAddUser() {
 
