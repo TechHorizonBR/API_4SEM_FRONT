@@ -1,4 +1,5 @@
-import axios from "axios";
+import apiClient from '@/services/axiosConfig';
+import { useRouter } from 'vue-router';
 
 class RegistrosService {
   async getRegistros(
@@ -7,14 +8,17 @@ class RegistrosService {
     dataInicio: string,
     dataFim: string,
   ) {
+  const router = useRouter();
     try {
-      const response = await axios.get(
-        `http://localhost:8080/registros/filtros/${dataInicio}/${dataFim}/${id}/${page}`,
+      const response = await apiClient.get(
+        `/registros/filtros/${dataInicio}/${dataFim}/${id}/${page}`,
       );
       return response.data;
-    } catch (error) {
-      console.error("Erro ao buscar os registros:", error);
-      throw error;
+    } catch (error : any) {
+      if(error.status === 401){
+        alert("Session expired! Please log in again.");
+        router.push({path: '/'});
+    }
     }
   }
 }

@@ -32,6 +32,7 @@
       <div>
         <button class="login-button" @click="fetchLogin">GET STARTED</button>
       </div>
+      <p class="rights-reserved">© Copyright - All Rights Reserved - Tech Horizon 2024</p>
     </div>
     <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
   </div>
@@ -41,12 +42,15 @@
 import { ref } from 'vue';
 import LoginService from '@/services/login';
 import Alerts from './Alerts.vue';
+import { tokenStore } from '@/stores/token';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const usuario = ref<string>("");
 const senha = ref<string>("");
 const messageAlert = ref<string>('');
 const showMessage = ref<boolean>(false);
-
+const tokenStr = tokenStore();
 const fetchLogin = async () => {
   try {
     if(usuario.value === ''){
@@ -61,10 +65,11 @@ const fetchLogin = async () => {
 
     const response = await LoginService.autenticarUsuario(usuario.value, senha.value);
     if (response.status === 200) {
-      showAlert("Login realizado com sucesso!");
+      tokenStr.setToken(response.data.token);
+      router.push({path: "/map"});
     }
   } catch (error) {
-    showAlert("Credenciais inválidas.");
+    showAlert("Credênciais inválidas.");
   }
 };
 
@@ -90,7 +95,7 @@ body {
   flex-direction: column;
   justify-content: center; 
   align-items: center; 
-  height: 100vh; 
+  height: 80vh; 
   width: 100%;
   position: relative;
 }
@@ -107,13 +112,19 @@ body {
 .login-content {
   width: 450px;
   height: auto;
-  background-color: rgba(75, 0, 118, 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+.rights-reserved{
+  color: rgb(111, 111, 111);
+  font-size: 0.7em;
+  margin: 30px 0 0 0;
+}
 
-
+.inputs::placeholder{
+  color: white;
+}
 .input-group{
   padding-bottom: 16px;
   display: flex;
@@ -129,7 +140,7 @@ body {
   color: #fff;
   font-weight: 250;
   font-size: medium;
-  padding: 5px;
+  padding: 10px;
   border: none;
   outline-color: #4b0076;
 }
