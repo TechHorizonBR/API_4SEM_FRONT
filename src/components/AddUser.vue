@@ -1,3 +1,7 @@
+Entrar
+
+Cadastrar
+Você disse:
 <template>
   <div class="container">
     <div class="box">
@@ -16,7 +20,7 @@
             <div class="fline1">
               <div class="case1">
                 <label for="username">Username:</label>
-                <input type="text" id="username" placeholder="Type the username" />
+                <input type="text" id="username" placeholder="Type the username"  v-model="user.username"/>
               </div>
               <div class="case2">
                 <label for="role">Role:</label>
@@ -30,11 +34,11 @@
             <div class="fline2">
               <div class="case3">
                 <label for="password">Password:</label>
-                <input type="password" id="password" placeholder="Type the password" />
+                <input type="password" id="password" placeholder="Type the password" v-model="user.password"/>
               </div>
               <div class="case3">
                 <label for="confirm-password">Confirm the Password:</label>
-                <input type="password" id="confirm-password" placeholder="Confirm the password" />
+                <input type="password" id="confirm-password" placeholder="Confirm the password" v-model="confirmPassword" />
               </div>
             </div>
           </div>
@@ -51,13 +55,15 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Exemplo 1</td>
-                <td>Exemplo 2</td>
-                <td>Exemplo 3</td>
-                <td>00.00.00</td>
-                <td>00.00.00</td>
-                <td>Editar/Remover</td>
+              <tr v-for="user in users" :key="user.username">
+                <td>{{ user.username }}</td>
+                <td>{{ user.password }}</td>
+                <td>{{ user.role }}</td>
+                <td>{{ user.createdAt }}</td>
+                <td>{{ user.modifiedAt }}</td>
+                <td>
+                  <button @click="updateUser(user)">Atualizar</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -67,11 +73,18 @@
     </div>
   </div>
 </template>
-
 <script>
 export default {
-  props: {
-    isVisible: Boolean
+  data() {
+    return {
+      user: {
+        username: '',
+        password: '',
+        role: '',
+      },
+      confirmPassword: '',
+      users: [] // Lista de usuários
+    };
   },
   methods: {
     findUser() {
@@ -87,8 +100,7 @@ export default {
         return;
       }
 
-      // Update the user by sending a PUT request to the backend
-      fetch(`http://localhost:8080/usuarios${this.user.id}`, {
+      fetch(`http://localhost:8080/usuarios${this.user.username}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
@@ -98,7 +110,7 @@ export default {
         .then(response => response.json())
         .then(updatedUser => {
           // Update the user in the users list
-          const index = this.users.findIndex(user => user.id === updatedUser.id);
+          const index = this.users.findIndex(user => user.username === updatedUser.username);
           this.users[index] = updatedUser;
 
           // Reset form fields after update
