@@ -122,7 +122,9 @@ body {
   margin: 30px 0 0 0;
 }
 
-
+.inputs::placeholder{
+  color: white;
+}
 .input-group{
   padding-bottom: 16px;
   display: flex;

@@ -10,11 +10,13 @@ class DevicesService {
       );
 
       if (response.status == 401) {
+        alert("Session expired! Please log in again.");
         router.push({ path: "/" });
       }
       return response.data;
     } catch (error: any) {
       if (error.status === 401) {
+        alert("Session expired! Please log in again.");
         router.push({ path: '/' });
       }
 
