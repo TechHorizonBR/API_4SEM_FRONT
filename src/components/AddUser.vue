@@ -1,7 +1,3 @@
-Entrar
-
-Cadastrar
-Você disse:
 <template>
   <div class="container">
     <div class="box">
@@ -24,10 +20,11 @@ Você disse:
               </div>
               <div class="case2">
                 <label for="role">Role:</label>
-                <select id="role">
+                <select id="role" v-model="user.role">
                   <option disabled selected>Select one role</option>
-                  <!-- Add role options here -->
-                </select>
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
+                </select >
               </div>
             </div>
 
@@ -73,11 +70,16 @@ Você disse:
     </div>
   </div>
 </template>
+
 <script>
+import apiClient from '@/services/axiosConfig.ts'; 
+import { selectedUsers } from '@/stores/selectedUsers';
+
 export default {
   data() {
     return {
       user: {
+        id:'',
         username: '',
         password: '',
         role: '',
@@ -94,27 +96,34 @@ export default {
       // Função para criar usuário
     },
     updateUser() {
-      // Função para atualizar usuário
       if (this.user.password !== this.confirmPassword) {
         alert("Passwords do not match!");
         return;
       }
+      
 
-      fetch(`http://localhost:8080/usuarios${this.user.username}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(this.user)
-      })
-        .then(response => response.json())
-        .then(updatedUser => {
-          // Update the user in the users list
+      const userId = selectedUsers.id;
+
+      // Dados a serem enviados para o backend
+      const userUpdateData = {
+        id: userId,
+        username: this.user.username,
+        password: this.user.password,
+        role: this.user.role
+      };
+
+      apiClient.patch(`/usuarios/update-user/`, userUpdateData)
+        .then(response => {
+          const updatedUser = response.data; // A resposta do backend normalmente estará no corpo da resposta
+
+          // Atualiza a lista de usuários no frontend
           const index = this.users.findIndex(user => user.username === updatedUser.username);
-          this.users[index] = updatedUser;
+          if (index !== -1) {
+            this.users[index] = updatedUser;
+          }
 
-          // Reset form fields after update
-          this.user = { id: null, username: "", password: "", role: "", createdAt: null, modifiedAt: null };
+          // Limpa o formulário após a atualização
+          this.user = { id:null, username: "", password: "", role: "" };
           this.confirmPassword = "";
 
           alert("User updated successfully!");
@@ -125,7 +134,7 @@ export default {
         });
     },
     closeAddUser() {
-
+      // Função para fechar a adição de usuário
     }
   }
 };

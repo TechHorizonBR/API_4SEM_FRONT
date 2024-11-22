@@ -68,6 +68,10 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import MapMarker from './MapMarker.vue';
 import AddUser from './AddUser.vue'
 import { showComponents } from '@/stores/showComponents';
+import { useRouter } from 'vue-router';
+import { tokenStore } from '@/stores/token';
+import { decodeToken } from '@/services/decode';
+import RegistroService from '@/services/registros';
 
 
 export default {
@@ -122,15 +126,31 @@ export default {
       }
     },
     signInOut() {
-      // Lógica para sign in/out
+      this.tokenStr.setToken("");
+      this.router.push("/");
     },
   },
   data() {
   return {
     showMapMarker: false,
-    showComponentsMode: showComponents()
+    showComponentsMode: showComponents(),
+    router: useRouter(),
+    tokenStr: tokenStore()
     };
   },
+  mounted(){
+    const tkn = tokenStore();
+    const nome = (decodeToken(tkn.token)?.sub) as string;
+    const fetchUser = async () => {
+    try {
+        const user = await RegistroService.getUserByName(nome);
+        console.log(user);
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+      }
+    };
+    fetchUser();
+  }
 };
 </script>
 
