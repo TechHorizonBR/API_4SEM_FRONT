@@ -1,6 +1,6 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
-import { type User, type Coordinate } from '../interfaces/types';
+import { type User, type Coordinate } from "../interfaces/types";
 
 export const selectedUsers = defineStore("selectedUser", {
   state: () => ({
@@ -11,23 +11,22 @@ export const selectedUsers = defineStore("selectedUser", {
       this.users.push(user);
     },
     removeUser(id: number) {
-      const index = this.users.findIndex(user => user.id === id);
+      const index = this.users.findIndex((user) => user.id === id);
       if (index !== -1) {
         this.users.splice(index, 1);
       }
     },
-    addCoordenadas(idUser : number, coordenadas : Coordinate[]){
-      const user = this.users.find(user => user.id == idUser);
+    addCoordenadas(idUser: number, coordenadas: Coordinate[]) {
+      const user = this.users.find((user) => user.id == idUser);
 
-      if(user){
-        for(let coordenada of coordenadas){
+      if (user) {
+        for (let coordenada of coordenadas) {
           user.coordenadas.push(coordenada);
         }
       }
     },
-    findById(idUser : number){
-      return this.users.find(user => user.id == idUser);
-    }
-    
+    findById(idUser: number) {
+      return this.users.find((user) => user.id == idUser);
+    },
   },
 });

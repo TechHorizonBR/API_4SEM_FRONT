@@ -1,5 +1,5 @@
-import apiClient from '@/services/axiosConfig';
-import { useRouter } from 'vue-router';
+import apiClient from "@/services/axiosConfig";
+import { useRouter } from "vue-router";
 
 class Demarcacoes {
   async deleteById(id: number) {
@@ -18,12 +18,12 @@ class Demarcacoes {
     } catch (error: any) {
       if (error.status === 401) {
         alert("Session expired! Please log in again.");
-        router.push({ path: '/' });
+        router.push({ path: "/" });
       }
     }
   }
 
-  async create(data: { nome: string, usuarioId: number, coordinates: [] }) {
+  async create(data: { nome: string; usuarioId: number; coordinates: [] }) {
     const router = useRouter();
     try {
       const response = await apiClient.post("/demarcacoes", data);
@@ -39,7 +39,7 @@ class Demarcacoes {
     } catch (error: any) {
       if (error.status === 401) {
         alert("Session expired! Please log in again.");
-        router.push({ path: '/' });
+        router.push({ path: "/" });
       }
     }
   }
@@ -60,7 +60,7 @@ class Demarcacoes {
     } catch (error: any) {
       if (error.status === 401) {
         alert("Session expired! Please log in again.");
-        router.push({ path: '/' });
+        router.push({ path: "/" });
       }
     }
   }

@@ -3,11 +3,16 @@
     <div class="box">
       <h1 class="title">User System Manager</h1>
       <div class="block0">
-
         <div class="block1">
-          <button @click="findUser" class="sidebar-button">Find By Username</button>
-          <button @click="createUser" class="sidebar-button">Create User</button>
-          <button @click="closeAddUser" class="sidebar-button" id="bClose">Close</button>
+          <button @click="findUser" class="sidebar-button">
+            Find By Username
+          </button>
+          <button @click="createUser" class="sidebar-button">
+            Create User
+          </button>
+          <button @click="closeAddUser" class="sidebar-button" id="bClose">
+            Close
+          </button>
         </div>
 
         <div class="block2">
@@ -15,12 +20,16 @@
             <div class="fline1">
               <div class="case1">
                 <label for="username">Username:</label>
-                <input type="text" id="username" placeholder="Type the username" />
+                <input
+                  type="text"
+                  id="username"
+                  placeholder="Type the username"
+                />
               </div>
               <div class="case2">
                 <label for="role">Role:</label>
                 <select id="role">
-                  <option disabled selected>Select one role</option>
+                  <option selected>Teste</option>
                   <!-- Add role options here -->
                 </select>
               </div>
@@ -29,38 +38,46 @@
             <div class="fline2">
               <div class="case3">
                 <label for="password">Password:</label>
-                <input type="password" id="password" placeholder="Type the password" />
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Type the password"
+                />
               </div>
               <div class="case3">
                 <label for="confirm-password">Confirm the Password:</label>
-                <input type="password" id="confirm-password" placeholder="Confirm the password" />
+                <input
+                  type="password"
+                  id="confirm-password"
+                  placeholder="Confirm the password"
+                />
               </div>
             </div>
           </div>
           <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Password</th>
-                <th>Role</th>
-                <th>CreatedAt</th>
-                <th>ModifiedAt</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Exemplo 1</td>
-                <td>Exemplo 2</td>
-                <td>Exemplo 3</td>
-                <td>00.00.00</td>
-                <td>00.00.00</td>
-                <td>Editar/Remover</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Password</th>
+                  <th>Role</th>
+                  <th>CreatedAt</th>
+                  <th>ModifiedAt</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Exemplo 1</td>
+                  <td>Exemplo 2</td>
+                  <td>Exemplo 3</td>
+                  <td>00.00.00</td>
+                  <td>00.00.00</td>
+                  <td>Editar/Remover</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -68,24 +85,52 @@
 </template>
 
 <script>
+import apiClient from '@/services/axiosConfig.ts';
 export default {
   props: {
-    isVisible: Boolean
+    isVisible: Boolean,
+  },
+  data() {
+    return {
+      user: {
+        username: "",
+        password: "",
+        role: "",
+      },
+      confirmPassword: "",
+    };
   },
   methods: {
     findUser() {
       // Função para buscar usuário
     },
-    createUser() {
-      // Função para criar usuário
-    },
-    closeAddUser() {
+    async createUser() {
+      if (this.user.password !== this.confirmPassword) {
+        alert("Passwords do not match!");
+        return;
+      }
 
-    }
-  }
+      try {
+        const response = await apiClient.post("/usersys/create", this.user);
+        alert("User created successfully!");
+        this.resetForm();
+      } catch (error) {
+        console.error("Error creating user:", error);
+        alert("Failed to create user. Please try again.");
+      }
+    },
+    resetForm() {
+      this.user = {
+        username: "",
+        password: "",
+        role: "",
+      };
+      this.confirmPassword = "";
+    },
+    closeAddUser() {},
+  },
 };
 </script>
-
 <style scoped>
 /* Estilos para centralizar o retângulo */
 .container {
@@ -99,7 +144,8 @@ export default {
   align-items: center;
 }
 
-.fline1, .fline2{
+.fline1,
+.fline2 {
   display: grid;
   grid-template-columns: 2fr 2fr;
   gap: 2rem;
@@ -116,7 +162,9 @@ export default {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
   top: 28px;
-  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15) 
+  box-shadow:
+    0 1px 2px rgba(60, 64, 67, 0.3),
+    0 2px 6px 2px rgba(60, 64, 67, 0.15);
 }
 
 /* Título no canto superior esquerdo */
@@ -125,14 +173,14 @@ export default {
   margin: 0;
 }
 
-.block0{
+.block0 {
   display: flex;
   flex-direction: row;
   width: 102%;
   height: 98%;
 }
 
-.block1{
+.block1 {
   width: 20%;
   margin-top: 2%;
 }
@@ -144,27 +192,27 @@ export default {
   width: 67%;
 }
 
-.case1{
+.case1 {
   display: flex;
   flex-direction: column;
 }
 
-.case2{
+.case2 {
   display: flex;
   flex-direction: column;
 }
 
-.case3{
+.case3 {
   display: flex;
   flex-direction: column;
 }
 
-.case4{
+.case4 {
   display: flex;
   flex-direction: column;
 }
 
-.blockForm{
+.blockForm {
   margin-bottom: 15px;
 }
 
@@ -191,28 +239,29 @@ label {
   margin-bottom: 5px;
 }
 
-input, select {
+input,
+select {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid rgb(156, 156, 156);
 }
 
 table {
-        width: 100%;
-        border-collapse: collapse;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-    th {
-        background-color: #000;
-        border: 1px solid #fff;
-        padding: 8px;
-        text-align: left;
-        color: white;
-    }
-    td {
-        padding: 8px;
-        text-align: left;
-    }
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+th {
+  background-color: #000;
+  border: 1px solid #fff;
+  padding: 8px;
+  text-align: left;
+  color: white;
+}
+td {
+  padding: 8px;
+  text-align: left;
+}
 
 #bClose {
   margin-top: 135%;

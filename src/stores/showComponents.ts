@@ -33,7 +33,8 @@ export const showComponents = defineStore("showComponents", {
         this.history = true;
       }, 500);
     },
-    showAddUser() { // Adicionando ação para mostrar o addUser
+    showAddUser() {
+      // Adicionando ação para mostrar o addUser
       this.filter = false;
       this.history = false;
       this.mapMarker = false;
@@ -46,6 +47,6 @@ export const showComponents = defineStore("showComponents", {
       this.history = false;
       this.mapMarker = false;
       this.addUser = false; // Garantir que addUser esteja fechado
-    }
-  }
+    },
+  },
 });
