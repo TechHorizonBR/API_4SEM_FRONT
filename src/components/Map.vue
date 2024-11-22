@@ -41,7 +41,7 @@
 
         <transition
             name="fade">
-            <AddUser v-if="showComponentsMode.addUser"/>
+            <AddUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.addUser"/>
         </transition>
     </div>
 </template>

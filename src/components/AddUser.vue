@@ -1,13 +1,13 @@
 <template>
   <div class="container">
-    <div class="box">
+    <div class="box" :class="{'containerDark':isDark, 'containerLight':!isDark}">
       <h1 class="title">User System Manager</h1>
       <div class="block0">
 
         <div class="block1">
-          <button @click="findUser" class="sidebar-button">Find By Username</button>
-          <button @click="createUser" class="sidebar-button">Create User</button>
-          <button @click="closeAddUser" class="sidebar-button" id="bClose">Close</button>
+          <button class="sidebar-button">Find By Username</button>
+          <button class="sidebar-button">Create User</button>
+          <button class="sidebar-button" id="bClose">Close</button>
         </div>
 
         <div class="block2">
@@ -67,23 +67,12 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    isVisible: Boolean
-  },
-  methods: {
-    findUser() {
-      // Função para buscar usuário
-    },
-    createUser() {
-      // Função para criar usuário
-    },
-    closeAddUser() {
+<script setup lang="ts">
 
-    }
-  }
-};
+const props = defineProps<{
+  isDark: boolean
+}>();
+
 </script>
 
 <style scoped>
@@ -99,6 +88,15 @@ export default {
   align-items: center;
 }
 
+.containerDark {
+  background: #0a0012e3;
+  color:white
+}
+
+.containerLight {
+  background-color: #f7f7f7cd;
+}
+
 .fline1, .fline2{
   display: grid;
   grid-template-columns: 2fr 2fr;
@@ -110,7 +108,6 @@ export default {
 .box {
   width: 75%;
   height: 72%;
-  background-color: #f7f7f7cd;
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -215,7 +212,7 @@ table {
     }
 
 #bClose {
-  margin-top: 135%;
+  margin-top: 105%;
 }
 
 .fade-enter-active {
