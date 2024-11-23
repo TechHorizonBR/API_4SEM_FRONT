@@ -24,13 +24,15 @@
                   type="text"
                   id="username"
                   placeholder="Type the username"
+                  v-model="user.username"
                 />
               </div>
               <div class="case2">
                 <label for="role">Role:</label>
-                <select id="role">
-                  <option selected>Teste</option>
-                  <!-- Add role options here -->
+                <select id="role" v-model="user.role">
+                  <option disabled selected>Select One Role</option>
+                  <option value="admin">Admin</option>
+                  <option value="user">User</option>
                 </select>
               </div>
             </div>
@@ -42,6 +44,7 @@
                   type="password"
                   id="password"
                   placeholder="Type the password"
+                  v-model="user.password"
                 />
               </div>
               <div class="case3">
@@ -50,6 +53,7 @@
                   type="password"
                   id="confirm-password"
                   placeholder="Confirm the password"
+                  v-model="confirmPassword"
                 />
               </div>
             </div>
@@ -67,12 +71,12 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>Exemplo 1</td>
-                  <td>Exemplo 2</td>
-                  <td>Exemplo 3</td>
-                  <td>00.00.00</td>
-                  <td>00.00.00</td>
+                <tr v-for="user in users" :key="user.username">
+                  <td>{{ user.username }}</td>
+                  <td>{{ user.password }}</td>
+                  <td>{{ user.role }}</td>
+                  <td>{{ user.CreatedAt }}</td>
+                  <td>{{ user.ModifiedAt }}</td>
                   <td>Editar/Remover</td>
                 </tr>
               </tbody>
@@ -101,22 +105,30 @@ export default {
     };
   },
   methods: {
-    findUser() {
-      // Função para buscar usuário
-    },
     async createUser() {
       if (this.user.password !== this.confirmPassword) {
         alert("Passwords do not match!");
         return;
       }
 
+      if (!this.user.username || !this.user.password || !this.user.role) {
+        alert("All fields are required!");
+        return;
+      }
+
       try {
         const response = await apiClient.post("/usersys/create", this.user);
         alert("User created successfully!");
+
         this.resetForm();
       } catch (error) {
         console.error("Error creating user:", error);
-        alert("Failed to create user. Please try again.");
+
+        if (error.response && error.response.status === 401) {
+          alert("Unauthorized! Please check your credentials.");
+        } else {
+          alert("Failed to create user. Please try again.");
+        }
       }
     },
     resetForm() {
@@ -127,8 +139,8 @@ export default {
       };
       this.confirmPassword = "";
     },
-    closeAddUser() {},
   },
+    closeAddUser() {},
 };
 </script>
 <style scoped>
