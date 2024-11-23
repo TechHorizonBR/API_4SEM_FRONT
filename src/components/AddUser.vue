@@ -68,6 +68,8 @@
 </template>
 
 <script>
+import registros from '@/services/registros';
+
 export default {
   props: {
     isVisible: Boolean
@@ -82,8 +84,21 @@ export default {
     closeAddUser() {
 
     }
-  }
-};
+  },
+  mounted(){
+    async function getAllUsers() {
+      try{
+       const todosUsuarios = await registros.getAllUsers();
+      }catch(error)
+      {
+        console.error(error);
+
+      }
+     getAllUsers(); 
+    }
+    }}
+  
+
 </script>
 
 <style scoped>
