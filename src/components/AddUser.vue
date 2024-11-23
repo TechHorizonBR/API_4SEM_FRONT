@@ -73,8 +73,13 @@
 </template>
 
 <script>
+<<<<<<< HEAD
 import apiClient from '@/services/axiosConfig.ts'; 
 import { selectedUsers } from '@/stores/selectedUsers';
+=======
+import registros from '@/services/registros';
+const usuarios = ref([]);
+>>>>>>> 480939fbff6e3632b084e7ab32e71fc5bab65a4f
 
 export default {
   data() {
@@ -144,8 +149,22 @@ export default {
     closeAddUser() {
       // Função para fechar a adição de usuário
     }
+  },
+  mounted(){
+    async function getAllUsers() {
+      try{
+       const todosUsuarios = await registros.getAllUsers();
+       usuarios.value = todosUsuarios;
+      }catch(error)
+      {
+        console.error(error);
+
+      }
+     getAllUsers(); 
   }
-};
+    }}
+  
+
 </script>
 
 <style scoped>
