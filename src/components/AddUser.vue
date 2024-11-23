@@ -14,15 +14,19 @@
         <div class="block2">
           <div class="blockForm">
             <div class="fline1">
-              <div class="case1">
+                <div class="case1">
                 <label for="username">Username:</label>
-                <Autocomplete
-                :input type="text" id="username" placeholder="Type the username"  v-model="user.username"/>
+                <select id="username" v-model="usuario">
+                  <option disabled value="">Selecione um usuário</option>
+                  <option v-for="usuario in usuarios" :key="usuario.id" :value="usuario">
+                    {{ usuario.name }}
+                  </option>
+                </select>
               </div>
               <div class="case2">
                 <label for="role">Role:</label>
                 <select id="role" v-model="user.role">
-                  <option disabled selected>Select one role</option>
+                  <option disabled value="">Select one role</option>
                   <option value="admin">Admin</option>
                   <option value="user">User</option>
                 </select >
@@ -60,7 +64,7 @@
                 <td>{{ user.createdAt }}</td>
                 <td>{{ user.modifiedAt }}</td>
                 <td>
-                  <button @click="updateUser(user)">Atualizar</button>
+                  <button @click="updateUser(usuario)">Atualizar</button>
                 </td>
               </tr>
             </tbody>
@@ -73,28 +77,37 @@
 </template>
 
 <script>
-<<<<<<< HEAD
-import apiClient from '@/services/axiosConfig.ts'; 
-import { selectedUsers } from '@/stores/selectedUsers';
-=======
 import registros from '@/services/registros';
-const usuarios = ref([]);
->>>>>>> 480939fbff6e3632b084e7ab32e71fc5bab65a4f
+import apiClient from '@/services/axiosConfig';
+import { ref } from 'vue';
 
 export default {
   data() {
     return {
+      usuarios: [],
+      usuario: "",
       user: {
         id:'',
         username: '',
         password: '',
-        role: '',
+        role: "",
       },
       confirmPassword: '',
       users: [] // Lista de usuários
     };
   },
   methods: {
+
+    async getAllUsers() {
+      try {
+        const todosUsuarios = await registros.getAllUsers();
+        this.usuarios = todosUsuarios;
+        console.log(this.usuarios);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
     findUser() {
       // Função para buscar usuário
     },
@@ -110,7 +123,7 @@ export default {
       }
       
 
-      const userId = selectedUsers.id;
+      const userId = this.usuario.id;
 
       // Dados a serem enviados para o backend
       const userUpdateData = {
@@ -121,7 +134,7 @@ export default {
       };
 
       const userData={
-        name: this.user.username,
+        name: this.usuario.name,
         role: this.user.role
       }
 
@@ -151,17 +164,7 @@ export default {
     }
   },
   mounted(){
-    async function getAllUsers() {
-      try{
-       const todosUsuarios = await registros.getAllUsers();
-       usuarios.value = todosUsuarios;
-      }catch(error)
-      {
-        console.error(error);
-
-      }
-     getAllUsers(); 
-  }
+    this.getAllUsers(); 
     }}
   
 
