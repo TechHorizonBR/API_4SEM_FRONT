@@ -77,7 +77,7 @@
                   <td>{{ user.role }}</td>
                   <td>{{ user.CreatedAt }}</td>
                   <td>{{ user.ModifiedAt }}</td>
-                  <td>Editar/Remover</td>
+                  <td><button @click="deleteUser(user.username)">Remover</button></td>
                 </tr>
               </tbody>
             </table>
@@ -105,6 +105,28 @@ export default {
     };
   },
   methods: {
+    async deleteUser(username) {
+      if (!confirm(`Are you sure you want to remove user "${username}"?`)) {
+        return;
+      }
+
+      try {
+        await apiClient.delete(`/usersys/delete/${username}`);
+        alert(`User "${username}" removed successfully!`);
+
+        this.users = this.users.filter((user) => user.username !== username);
+      } catch (error) {
+        console.error("Error deleting user:", error);
+
+        if (error.response && error.response.status === 401) {
+          alert("Unauthorized! Please check your credentials.");
+        } else if (error.response && error.response.status === 404) {
+          alert(`User "${username}" not found.`);
+        } else {
+          alert("Failed to delete user. Please try again.");
+        }
+      }
+    },
     async createUser() {
       if (this.user.password !== this.confirmPassword) {
         alert("Passwords do not match!");
