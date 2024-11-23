@@ -69,6 +69,7 @@
 
 <script>
 import registros from '@/services/registros';
+const usuarios = ref([]);
 
 export default {
   props: {
@@ -89,6 +90,7 @@ export default {
     async function getAllUsers() {
       try{
        const todosUsuarios = await registros.getAllUsers();
+       usuarios.value = todosUsuarios;
       }catch(error)
       {
         console.error(error);
