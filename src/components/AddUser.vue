@@ -16,7 +16,8 @@
             <div class="fline1">
               <div class="case1">
                 <label for="username">Username:</label>
-                <input type="text" id="username" placeholder="Type the username"  v-model="user.username"/>
+                <Autocomplete
+                :input type="text" id="username" placeholder="Type the username"  v-model="user.username"/>
               </div>
               <div class="case2">
                 <label for="role">Role:</label>
@@ -96,6 +97,8 @@ export default {
       // Função para criar usuário
     },
     updateUser() {
+
+      
       if (this.user.password !== this.confirmPassword) {
         alert("Passwords do not match!");
         return;
@@ -112,9 +115,14 @@ export default {
         role: this.user.role
       };
 
-      apiClient.patch(`/usuarios/update-user/`, userUpdateData)
+      const userData={
+        name: this.user.username,
+        role: this.user.role
+      }
+
+      apiClient.patch(`/usuarios/update-user?id=${userUpdateData.id}`, userData)
         .then(response => {
-          const updatedUser = response.data; // A resposta do backend normalmente estará no corpo da resposta
+          const updatedUser = response.data;
 
           // Atualiza a lista de usuários no frontend
           const index = this.users.findIndex(user => user.username === updatedUser.username);
