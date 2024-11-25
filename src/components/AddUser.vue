@@ -3,7 +3,6 @@
     <div class="box">
       <h1 class="title">User System Manager</h1>
       <div class="block0">
-
         <div class="block1">
           <button @click="findUser" class="sidebar-button">Find By Username</button>
           <button @click="createUser" class="sidebar-button">Create User</button>
@@ -38,34 +37,37 @@
             </div>
           </div>
           <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Username</th>
-                <th>Password</th>
-                <th>Role</th>
-                <th>CreatedAt</th>
-                <th>ModifiedAt</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for=" usuario in usuarios ">
-                <td>{{ usuario.name }}</td>
-                <td>Exemplo 2</td>
-                <td>Exemplo 3</td>
-                <td>00.00.00</td>
-                <td>00.00.00</td>
-                <td>Editar/Remover</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Password</th>
+                  <th>Role</th>
+                  <th>CreatedAt</th>
+                  <th>ModifiedAt</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="usuario in usuarios" :key="usuario.id">
+                  <td>{{ usuario.username }}</td>
+                  <td>{{ usuario.password }}</td>
+                  <td>{{ usuario.role }}</td>
+                  <td>{{ usuario.createdAt }}</td>
+                  <td>{{ usuario.modifiedAt }}</td>
+                  <td>
+                  <button @click="findUser" class="sidebar-button">Editar</button>
+                  <button @click="findUser" class="sidebar-button">Remover</button>
+                </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</template>
+</template> 
 
 <script>
 import registros from '@/services/registros';
@@ -76,6 +78,24 @@ export default {
   props: {
     isVisible: Boolean
   },
+  setup() {
+    const usuarios = ref([]); // Declara 'usuarios'
+
+    async function getAllUsers() {
+      try {
+        const todosUsuarios = await registros.getAllUsers();
+        console.log(todosUsuarios);
+        usuarios.value = todosUsuarios; // Atribui os usuários
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    getAllUsers();
+
+    return {
+      usuarios 
+    };
+  },
   methods: {
     findUser() {
       // Função para buscar usuário
@@ -84,7 +104,7 @@ export default {
       // Função para criar usuário
     },
     closeAddUser() {
-
+      // Função para fechar o modal de adicionar usuário
     }
   },
   mounted(){
@@ -116,6 +136,13 @@ export default {
   top: 0vh;
   align-items: center;
 }
+
+.table-container{
+  width: 500px;
+  height: 300px;
+  overflow: auto;
+}
+
 
 .fline1, .fline2{
   display: grid;
@@ -216,7 +243,7 @@ input, select {
 }
 
 table {
-        width: 100%;
+        /* width: 100%; */
         border-collapse: collapse;
         border: 1px solid rgba(0, 0, 0, 0.05);
     }
