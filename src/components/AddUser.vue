@@ -4,10 +4,11 @@
       <h1 class="title">User System Manager</h1>
       <div class="block0">
 
-        <div class="block1">
-          <button class="sidebar-button" @click="toogleIsVisibleFindUser">Find By Username</button>
-          <button class="sidebar-button" @click="toogleIsVisibleCreateUser">Create User</button>
-          <button class="sidebar-button" id="bClose">Close</button>
+        <div class="block1" :class="{ 'block1Dark': isDark, 'block1Light': !isDark }">
+          <a class="sidebar-button" @click="toogleIsVisibleFindUser">+ Find By Username</a>
+          <a class="sidebar-button" @click="toogleIsVisibleCreateUser">+ Create User</a>
+          <a class="sidebar-button" @click="toogleIsVisibleAllUsers">+ See all users</a>
+          <!-- <button class="sidebar-button" id="bClose">Close</button> -->
         </div>
 
         
@@ -103,10 +104,18 @@ const toogleIsVisibleFindUser = () => {
   isVisibleCreateUser.value = false;
   isVisibleFindByUser.value = true;
 }
+
+const toogleIsVisibleAllUsers = () => {
+  isVisibleCreateUser.value = false;
+  isVisibleFindByUser.value = false;
+}
 </script>
 
 <style scoped>
 /* Estilos para centralizar o retângulo */
+.block1Dark{
+  color: white !important;
+}
 .container {
   display: flex;
   justify-content: center;
@@ -209,14 +218,10 @@ const toogleIsVisibleFindUser = () => {
 .sidebar-button {
   width: 100%;
   padding: 10px;
-  margin-bottom: 25%;
   border: none;
   cursor: pointer;
   font-size: 14px;
-  margin-top: 12%;
   display: block;
-  background-color: #35005d;
-  color: white;
   border-radius: 8px;
   cursor: pointer;
 }
