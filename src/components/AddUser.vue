@@ -50,8 +50,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Exemplo 1</td>
+              <tr v-for=" usuario in usuarios ">
+                <td>{{ usuario.name }}</td>
                 <td>Exemplo 2</td>
                 <td>Exemplo 3</td>
                 <td>00.00.00</td>
@@ -69,6 +69,7 @@
 
 <script>
 import registros from '@/services/registros';
+import { ref } from 'vue';
 const usuarios = ref([]);
 
 export default {
@@ -90,14 +91,14 @@ export default {
     async function getAllUsers() {
       try{
        const todosUsuarios = await registros.getAllUsers();
+       console.log(todosUsuarios);
        usuarios.value = todosUsuarios;
       }catch(error)
       {
         console.error(error);
-
       }
-     getAllUsers(); 
     }
+    getAllUsers(); 
     }}
   
 
