@@ -69,7 +69,7 @@ const fetchLogin = async () => {
       router.push({path: "/map"});
     }
   } catch (error) {
-    showAlert("Credênciais inválidas.");
+    showAlert("Invalid username or password.");
   }
 };
 
