@@ -66,7 +66,7 @@
 <script lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import MapMarker from './MapMarker.vue';
-import AddUser from './AddUser.vue'
+import AddUser from '@/components/AddUser.vue'
 import { showComponents } from '@/stores/showComponents';
 import { useRouter } from 'vue-router';
 import { tokenStore } from '@/stores/token';

@@ -45,7 +45,6 @@
         <button @click="initDraw">Create New Area</button>
         <button @click="saveDemarcation">Save Area</button>
         <button @click="getDemarcationsByUser">Search By User</button>
- 
 
       </div>
       <DrawPolygon v-if="showDraw" :map="map" ref="drawPolygon" @enviarCoordenadas="recebeCoordenadas"/>
