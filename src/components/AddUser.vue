@@ -27,8 +27,8 @@
                 <label for="role">Role:</label>
                 <select id="role" v-model="user.role">
                   <option disabled value="">Select one role</option>
-                  <option value="admin">Admin</option>
-                  <option value="user">User</option>
+                  <option value="ROLE_ADMIN">Admin</option>
+                  <option value="ROLE_CLIENTE">User</option>
                 </select >
               </div>
             </div>
@@ -134,6 +134,7 @@ export default {
       };
 
       const userData={
+        id: this.usuario.id,
         name: this.usuario.name,
         role: this.user.role
       }
