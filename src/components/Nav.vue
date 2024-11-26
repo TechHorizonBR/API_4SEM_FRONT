@@ -34,7 +34,7 @@
           :class="{ 'dark-button': isDark, 'light-button': !isDark }"
         >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
-          Add User
+          {{isAdmin ? "Add User" : "Show Information"}}
         </button>
       </li>
       <li class="navbar-item">
@@ -137,6 +137,7 @@ export default {
     router: useRouter(),
     tokenStr: tokenStore(),
     userStr: userStore(),
+    isAdmin: false,
     };
   },
   mounted(){
@@ -144,6 +145,9 @@ export default {
     const fetchUser = async () => {
     try {
         const user = await RegistroService.getUserByName(nome);
+        if(user.role == "ROLE_ADMIN"){
+          this.isAdmin = true;
+        }
         this.userStr.setUser(user);
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
