@@ -136,17 +136,15 @@ export default {
     showComponentsMode: showComponents(),
     router: useRouter(),
     tokenStr: tokenStore(),
-    userStr: userStore()
+    userStr: userStore(),
     };
   },
   mounted(){
-    const tkn = tokenStore();
-    const usr = userStore();
-    const nome = (decodeToken(tkn.token)?.sub) as string;
+    const nome = (decodeToken(this.tokenStr.token)?.sub) as string;
     const fetchUser = async () => {
     try {
         const user = await RegistroService.getUserByName(nome);
-        usr.setUser(user);
+        this.userStr.setUser(user);
       } catch (error) {
         console.error("Erro ao buscar usuário:", error);
       }

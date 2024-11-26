@@ -86,18 +86,7 @@ export default {
     }
   },
   mounted(){
-    const getUsuarios = async() =>{
-      try{
-        const allUsers = await RegistroService.getAllUsers();
-        console.log("USUARIOS:", allUsers);
-      }catch(error){
-        console.error("Erro:", error);
-      }
-    }
 
-    getUsuarios();
-
-    console.log(userStore().user);
   }
 };
 </script>
