@@ -1,11 +1,17 @@
 <template>
   <div class="container">
     <div class="box" :class="{ 'containerDark': isDark, 'containerLight': !isDark }">
-      <h1 class="title">User System Manager</h1>
+      
       <div class="block0">
 
         <div class="block1" :class="{ 'block1Dark': isDark, 'block1Light': !isDark }">
-          <a class="sidebar-button" @click="toogleIsVisibleFindUser">+ Find By Username</a>
+            <div class="container-admin">
+              <div class="quadrante-admin">
+              ADMIN
+            </div>
+            <h1 class="title">User System Manager</h1>
+          </div>
+          
           <a class="sidebar-button" @click="toogleIsVisibleCreateUser">+ Create User</a>
           <a class="sidebar-button" @click="toogleIsVisibleAllUsers">+ See all users</a>
           <!-- <button class="sidebar-button" id="bClose">Close</button> -->
@@ -16,7 +22,7 @@
 
         <div class="block2">
 
-          <div class="blockForm" v-if="isVisibleFindByUser">
+          <div class="blockForm" v-if="isVisibleAllUsers">
           <div class="fline1" :class="{ 'blockDark': isDark, 'blockLight': !isDark }">
             <div class="case1">
               <label for="username">Username:</label>
@@ -54,7 +60,7 @@
               </div>
             </div>
           </div>
-          <div class="table-container">
+          <div class="table-container" v-if="isVisibleAllUsers">
             <table :class="{ 'tableDark': isDark, 'tableLight': !isDark }">
               <thead>
                 <tr>
@@ -92,27 +98,38 @@ const props = defineProps<{
   isDark: boolean
 }>();
 
-const isVisibleFindByUser = ref<boolean>(false);
+
 const isVisibleCreateUser = ref<boolean>(false);
+const isVisibleAllUsers = ref<boolean>(true);
 
 
 const toogleIsVisibleCreateUser = () => {
-  isVisibleFindByUser.value = false;
+  isVisibleAllUsers.value = false;
   isVisibleCreateUser.value = true;
 }
-const toogleIsVisibleFindUser = () => {
-  isVisibleCreateUser.value = false;
-  isVisibleFindByUser.value = true;
-}
+
 
 const toogleIsVisibleAllUsers = () => {
   isVisibleCreateUser.value = false;
-  isVisibleFindByUser.value = false;
+  isVisibleAllUsers.value = true;
 }
+
 </script>
 
 <style scoped>
 /* Estilos para centralizar o retângulo */
+.container-admin{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.quadrante-admin{
+  background-color: #5c0ea3;
+  color: white;
+  padding: 10px;
+  border-radius: 3px;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
+}
 .block1Dark{
   color: white !important;
 }
@@ -164,7 +181,7 @@ const toogleIsVisibleAllUsers = () => {
 
 /* Título no canto superior esquerdo */
 .title {
-  font-size: 1.2em;
+  font-size: 1em;
   margin: 0;
 }
 
@@ -177,7 +194,6 @@ const toogleIsVisibleAllUsers = () => {
 
 .block1 {
   width: 20%;
-  margin-top: 2%;
 }
 
 .block2 {
