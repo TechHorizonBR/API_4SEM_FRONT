@@ -16,7 +16,12 @@
             <div class="fline1" :class="{'blockDark':isDark, 'blockLight':!isDark}">
               <div class="case1">
                 <label for="username">Username:</label>
-                <input type="text" id="username" placeholder="Type the username"  v-model="user.username"/>
+                <select id="username" v-model="usuario">
+                  <option disabled value="">Selecione um usuário</option>
+                  <option v-for="usuario in usuarios" :key="usuario.id" :value="usuario">
+                    {{ usuario.name }}
+                  </option>
+                </select>
               </div>
               
               <div class="case2">
@@ -24,7 +29,7 @@
                 <select :class="{'usernameDark':isDark, 'usernameLight':!isDark}" id="role" v-model="user.role">
                   <option disabled value="">Select one role</option>
                   <option value="ROLE_ADMIN">Admin</option>
-                  <option value="ROLE_CLIENTE">User</option>
+                  <option value="1">User</option>
                 </select >
               </div>
             </div>
@@ -96,7 +101,7 @@ export default {
 
     async getAllUsers() {
       try {
-        const todosUsuarios = await registros.getAllUsers();
+        const todosUsuarios = await RegistroService.getAllUsers();
         this.usuarios = todosUsuarios;
         console.log(this.usuarios);
       } catch (error) {
@@ -110,7 +115,7 @@ export default {
     createUser() {
       // Função para criar usuário
     },
-    updateUser() {
+    async updateUser() {
 
       
       if (this.user.password !== this.confirmPassword) {
@@ -131,11 +136,11 @@ export default {
 
       const userData={
         id: this.usuario.id,
-        name: this.user.username,
+        name: this.usuario.name,
         role: this.user.role
       }
 
-      apiClient.patch(`/usuarios/update-user?id=${userUpdateData.id}`, userData)
+      apiClient.patch(`/usersys/update-user?id=${userUpdateData.id}`, userData)
         .then(response => {
           const updatedUser = response.data;
 
