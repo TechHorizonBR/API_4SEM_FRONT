@@ -25,12 +25,12 @@
 
             <div class="time">
                 <span>Select time:</span>
-                <select id="time-selector" class="selector" v-model.number="animationSpeed">
-                    <option :value="0.5">10 seconds</option>
-                    <option :value="0.5">30 seconds</option>
-                    <option :value="1">1 minute</option>
-                    <option :value="1.25">1.25 minutes</option>
-                    <option :value="2">2 minutes</option>
+                <select id="time-selector" class="selector" v-model.number="videoDuration">
+                    <option :value="10">10 seconds</option>
+                    <option :value="30">30 seconds</option>
+                    <option :value="100">1 minute</option>
+                    <option :value="125">1.25 minutes</option>
+                    <option :value="200">2 minutes</option>
                 </select>
             </div>
             
@@ -111,14 +111,13 @@ watch(animationSpeed, (newSpeed) => {
     align-items: center;
     gap: 10px;
 }
-.velocidade{
+.velocidade, .time{
     display: flex;
     gap: 10px;
     align-items: center;
+    margin: 5px 0 0 0;
 }
-.time{
-    display: flex
-}
+
 
 #play-pause-btn {
     border: none;
@@ -140,7 +139,7 @@ watch(animationSpeed, (newSpeed) => {
     border: none;
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
-    width: 100px;
+    width: 150px;
     text-align: center
 }
 
