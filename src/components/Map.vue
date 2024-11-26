@@ -43,6 +43,8 @@
             name="fade">
             <AddUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.addUser"/>
         </transition>
+
+        <PlayRoute />
     </div>
 </template>
 
@@ -63,6 +65,7 @@ import AddUser from "./AddUser.vue";
 import { useRouter } from "vue-router";
 import { tokenStore } from "@/stores/token";
 import path from "path";
+import PlayRoute from "./PlayRoute.vue";
 
 const router = useRouter();
 const tokenStr = tokenStore();
