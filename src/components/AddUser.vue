@@ -16,14 +16,16 @@
             <div class="fline1" :class="{'blockDark':isDark, 'blockLight':!isDark}">
               <div class="case1">
                 <label for="username">Username:</label>
-                <input type="text" id="username" :class="{'usernameDark':isDark, 'usernameLight':!isDark}" placeholder="Type the username" />
+                <input type="text" id="username" placeholder="Type the username"  v-model="user.username"/>
               </div>
+              
               <div class="case2">
                 <label for="role">Role:</label>
-                <select :class="{'usernameDark':isDark, 'usernameLight':!isDark}" id="role">
-                  <option disabled selected>Select one role</option>
-                  <!-- Add role options here -->
-                </select>
+                <select :class="{'usernameDark':isDark, 'usernameLight':!isDark}" id="role" v-model="user.role">
+                  <option disabled value="">Select one role</option>
+                  <option value="ROLE_ADMIN">Admin</option>
+                  <option value="ROLE_CLIENTE">User</option>
+                </select >
               </div>
             </div>
 
@@ -71,8 +73,9 @@
 </template>
 
 <script>
+  import apiClient from '@/services/axiosConfig'; 
   import RegistroService from '@/services/registros';
-import { userStore } from '@/stores/token';
+  import { userStore } from '@/stores/token';
 
 export default {
   data() {
@@ -116,7 +119,7 @@ export default {
       }
       
 
-      const userId = this.usuario.id;
+      const userId = userStore().user.id;
 
       // Dados a serem enviados para o backend
       const userUpdateData = {
@@ -128,7 +131,7 @@ export default {
 
       const userData={
         id: this.usuario.id,
-        name: this.usuario.name,
+        name: this.user.username,
         role: this.user.role
       }
 
@@ -170,6 +173,7 @@ export default {
     getUsuarios();
 
     console.log(userStore().user);
+    this.getAllUsers();
   }
 };
 </script>
