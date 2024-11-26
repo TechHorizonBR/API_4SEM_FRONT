@@ -140,7 +140,7 @@ export default {
         role: this.user.role
       }
 
-      apiClient.patch(`/usersys/update-user?id=${userUpdateData.id}`, userData)
+      apiClient.put(`/usersys/update-user?id=${userUpdateData.id}`, userData)
         .then(response => {
           const updatedUser = response.data;
 
