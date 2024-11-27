@@ -1,59 +1,16 @@
 <template>
   <div class="container">
-    <div class="box" :class="{ 'containerDark': props.isDark, 'containerLight': !props.isDark }">
+    <div class="box" :class="{ 'containerDark': isDark, 'containerLight': !isDark }">
       <h1 class="title">User System Manager</h1>
       <div class="block0">
-
         <div class="block1" :class="{ 'block1Dark': isDark, 'block1Light': !isDark }">
           <a class="sidebar-button" @click="toogleIsVisibleFindUser">+ Find By Username</a>
           <a class="sidebar-button" @click="toogleIsVisibleCreateUser">+ Create User</a>
           <a class="sidebar-button" @click="toogleIsVisibleAllUsers">+ See all users</a>
-          <!-- <button class="sidebar-button" id="bClose">Close</button> -->
         </div>
-
-        
-
 
         <div class="block2">
-
-          <div class="blockForm" v-if="isVisibleFindByUser">
-          <div class="fline1" :class="{ 'blockDark': isDark, 'blockLight': !isDark }">
-            <div class="case1">
-              <label for="username">Username:</label>
-              <input type="text" id="username" :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }"
-                placeholder="Type the username" />
-            </div>
-          </div>
-        </div>
-          <div class="blockForm" v-if="isVisibleCreateUser">
-            <div class="fline1" :class="{ 'blockDark': isDark, 'blockLight': !isDark }">
-              <div class="case1">
-                <label for="username">Username:</label>
-                <input type="text" id="username" :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }"
-                  placeholder="Type the username" />
-              </div>
-              <div class="case2">
-                <label for="role">Role:</label>
-                <select :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }" id="role">
-                  <option disabled selected>Select one role</option>
-                  <!-- Add role options here -->
-                </select>
-              </div>
-            </div>
-
-            <div class="fline2">
-              <div class="case3">
-                <label for="password">Password:</label>
-                <input type="password" id="password" :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }"
-                  placeholder="Type the password" />
-              </div>
-              <div class="case3">
-                <label for="confirm-password">Confirm the Password:</label>
-                <input type="password" id="confirm-password" :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }"
-                  placeholder="Confirm the password" />
-              </div>
-            </div>
-          </div>
+          <!-- Tabela de Usuários -->
           <div class="table-container">
             <table :class="{ 'tableDark': isDark, 'tableLight': !isDark }">
               <thead>
@@ -67,16 +24,50 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="usuario in usuarios" :key="usuario.id">
-                  <td>{{ usuario.username }}</td>
-                  <td>{{ usuario.password }}</td>
-                  <td>{{ usuario.role }}</td>
+                <tr v-for="(usuario, index) in usuarios" :key="usuario.id">
+                  <td>
+                    <input 
+                      v-if="usuario.isEditing" 
+                      v-model="usuario.username" 
+                      :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }"
+                    />
+                    <span v-else>{{ usuario.username }}</span>
+                  </td>
+                  <td>
+                    <input 
+                      v-if="usuario.isEditing" 
+                      v-model="usuario.password" 
+                      :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }" 
+                      type="password"
+                    />
+                    <span v-else>{{ usuario.password }}</span>
+                  </td>
+                  <td>
+                    <select 
+                      v-if="usuario.isEditing" 
+                      v-model="usuario.role" 
+                      :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }">
+                      <option disabled selected>Select one role</option>
+                      <option>Admin</option>
+                      <option>User</option>
+                    </select>
+                    <span v-else>{{ usuario.role }}</span>
+                  </td>
                   <td>{{ usuario.createdAt }}</td>
                   <td>{{ usuario.modifiedAt }}</td>
                   <td>
-                  <button @click="findUser" class="sidebar-button">Editar</button>
-                  <button @click="findUser" class="sidebar-button">Remover</button>
-                </td>
+                    <button 
+                      v-if="usuario.isEditing" 
+                      @click="saveUser(usuario)" 
+                      class="sidebar-button">Save</button>
+                    <button 
+                      v-else 
+                      @click="editUser(usuario)" 
+                      class="sidebar-button">Edit</button>
+                    <button 
+                      @click="removeUser(usuario)" 
+                      class="sidebar-button">Remove</button>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -85,114 +76,146 @@
       </div>
     </div>
   </div>
-</template> 
+</template>
 
-<script>
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import registros from '@/services/registros';
-import { ref } from 'vue';
-const usuarios = ref([]);
+import apiClient from '@/services/axiosConfig';
 
-export default {
-  props: {
-    isDark: boolean
-  },
-  data(){
-    return {
-      isVisibleFindByUser: false,
-      isVisibleCreateUser: false
-    }
-  },
-  setup() {
-    const usuarios = ref([]); // Declara 'usuarios'
+const props = defineProps<{
+  isDark: boolean
+}>();
 
-    async function getAllUsers() {
-      try {
-        const todosUsuarios = await registros.getAllUsers();
-        console.log(todosUsuarios);
-        usuarios.value = todosUsuarios; // Atribui os usuários
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    getAllUsers();
+const isVisibleFindByUser = ref<boolean>(false);
+const isVisibleCreateUser = ref<boolean>(false);
+const usuarios = ref<any[]>([]);
 
-    return {
-      usuarios 
-    };
-  },
-  methods: {
-    findUser() {
-      // Função para buscar usuário
-    },
-    createUser() {
-      // Função para criar usuário
-    },
-    closeAddUser() {
-      // Função para fechar o modal de adicionar usuário
-    },
-    toogleIsVisibleCreateUser(){
-      isVisibleFindByUser.value = false;
-      isVisibleCreateUser.value = true;
-    },
-    toogleIsVisibleFindUser(){
-      isVisibleCreateUser.value = false;
-      isVisibleFindByUser.value = true;
-    },
-    toogleIsVisibleAllUsers(){
-      isVisibleCreateUser.value = false;
-      isVisibleFindByUser.value = false;
+const toogleIsVisibleCreateUser = () => {
+  isVisibleFindByUser.value = false;
+  isVisibleCreateUser.value = true;
+};
+
+const toogleIsVisibleFindUser = () => {
+  isVisibleCreateUser.value = false;
+  isVisibleFindByUser.value = true;
+};
+
+const toogleIsVisibleAllUsers = () => {
+  isVisibleCreateUser.value = false;
+  isVisibleFindByUser.value = false;
+};
+
+// Carregar todos os usuários
+const getAllUsers = async () => {
+  try {
+    const todosUsuarios = await registros.getAllUsers();
+    usuarios.value = todosUsuarios.map((usuario: any) => ({
+      ...usuario,
+      isEditing: false,  // Adicionando isEditing a todos os usuários ao carregar
+    }));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const editUser = (usuario: any) => {
+  usuario.isEditing = true; // Ativar modo de edição
+};
+
+const saveUser = async (usuario: any) => {
+  try {
+    const response = await apiClient.put(`/usuarios/${usuario.id}`, {
+      username: usuario.username,
+      password: usuario.password,
+      role: usuario.role,
+    });
+
+    if (response.status === 200) {
+      usuario.isEditing = false; // Desativar modo de edição
+      alert('Usuário editado com sucesso');
+    } else {
+      alert('Erro ao editar o usuário');
     }
-  },
-  mounted(){
-    async function getAllUsers() {
-      try{
-       const todosUsuarios = await registros.getAllUsers();
-       console.log(todosUsuarios);
-       usuarios.value = todosUsuarios;
-      }catch(error)
-      {
-        console.error(error);
-      }
+  } catch (error) {
+    console.error("Erro ao editar o usuário:", error);
+    alert('Erro ao tentar editar o usuário');
+  }
+};
+
+const removeUser = async (usuario: any) => {
+  try {
+    const response = await apiClient.delete(`/usuarios/${usuario.id}`);
+    if (response.status === 204) {
+      usuarios.value = usuarios.value.filter(u => u.id !== usuario.id);
+      alert('Usuário removido com sucesso');
     }
-    getAllUsers(); 
-    }}
-  
+  } catch (error) {
+    console.error("Erro ao remover o usuário:", error);
+    alert('Erro ao tentar remover o usuário');
+  }
+};
+
+onMounted(() => {
+  getAllUsers();
+});
 </script>
+
 <style scoped>
-/* Estilos para centralizar o retângulo */
-.block1Dark{
-  color: white !important;
-}
+
 .container {
   display: flex;
   justify-content: center;
-  height: 89%;
+  height: 100%;
   width: 100%;
   position: absolute;
   z-index: 10000;
-  top: 0vh;
-  align-items: center;
+  top: 0;
+  align-items: flex-start;
 }
 
-.table-container{
-  width: 500px;
-  height: 300px;
-  overflow: auto;
+.box {
+  display: flex; /* Usando flexbox para dividir em colunas */
+  width: 75%;
+  height: 72%;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  top: 28px;
 }
 
-
-.fline1, .fline2{
 .containerDark {
-  background: #0a0012e3;
-  color: white
+  background-color: #5c0ea3;
 }
 
 .containerLight {
-  background-color: #f7f7f7cd;
+  background-color: #fff;
 }
 
-.fline1,
-.fline2 {
+.block0 {
+  display: flex;
+  width: 100%;
+}
+
+.block1 {
+  flex: 1 1 250px; /* Tornando o bloco dos botões flexível, com largura mínima de 250px */
+  padding-right: 20px; /* Espaço entre os botões e a tabela */
+}
+
+.block2 {
+  flex: 3; /* O bloco da tabela ocupa o restante do espaço */
+}
+
+.table-container {
+  width: 90%;
+  max-height: 300px; /* Altura máxima para a tabela */
+  overflow: auto; /* Permite rolagem quando o conteúdo ultrapassar o tamanho */
+  border-radius: 10px;
+  margin-top: 20px; /* Espaçamento acima da tabela */
+}
+
+.fline1, .fline2 {
   display: grid;
   grid-template-columns: 2fr 2fr;
   gap: 2rem;
@@ -206,78 +229,18 @@ export default {
   border: 1px solid rgb(41, 41, 41);
 }
 
-.box {
-  width: 75%;
-  height: 72%;
-  border-radius: 20px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  position: relative;
-  top: 28px;
-  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15)
-}
-
-/* Título no canto superior esquerdo */
-.title {
-  font-size: 1.2em;
-  margin: 0;
-}
-
-.block0 {
-  display: flex;
-  flex-direction: row;
-  width: 102%;
-  height: 98%;
-}
-
-.block1 {
-  width: 20%;
-  margin-top: 2%;
-}
-
-.block2 {
-  display: flex;
-  flex-direction: column;
-  margin-left: 8%;
-  width: 67%;
-}
-
-.case1 {
-  display: flex;
-  flex-direction: column;
-}
-
-.case2 {
-  display: flex;
-  flex-direction: column;
-}
-
-.case3 {
-  display: flex;
-  flex-direction: column;
-}
-
-.case4 {
-  display: flex;
-  flex-direction: column;
-}
-
-.blockForm {
-  margin-bottom: 15px;
-}
-
-.tableDark {
-  border: 1px solid rgba(211, 210, 210, 0.703);
-}
-
 .sidebar-button {
   width: 100%;
   padding: 10px;
+  margin-bottom: 25%;
   border: none;
   cursor: pointer;
   font-size: 14px;
+  margin-top: 12%;
   display: block;
   border-radius: 8px;
+  background-color: #5c0ea3;
+  color: white;
   cursor: pointer;
 }
 
@@ -285,36 +248,14 @@ export default {
   background-color: #5c0ea3;
 }
 
-label {
-  margin-bottom: 5px;
-}
-
-input,
-select {
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid rgb(156, 156, 156);
-}
-
 table {
-        /* width: 100%; */
-        border-collapse: collapse;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-    th {
-        background-color: #000;
-        border: 1px solid #fff;
-        padding: 8px;
-        text-align: left;
-        color: white;
-    }
-    td {
-        padding: 8px;
-        text-align: left;
-    }
   width: 100%;
   border-collapse: collapse;
   border: 1px solid rgba(0, 0, 0, 0.265);
+}
+
+label{
+  margin-bottom: 5px;
 }
 
 th {
@@ -330,39 +271,18 @@ td {
   text-align: left;
 }
 
-#bClose {
-  margin-top: 105%;
+/* Estilos específicos para o botão "Editar" */
+.edit-button {
+  width: auto; /* Ajusta automaticamente o tamanho do botão */
+  padding: 6px 12px; /* Ajuste do padding (menor que o padrão) */
+  font-size: 12px; /* Ajuste do tamanho da fonte */
+  background-color: #5c0ea3; /* Cor de fundo diferente */
 }
 
-.fade-enter-active {
-  animation: fadeInUp 0.3s ease-out;
-}
-
-.fade-leave-active {
-  animation: fadeOutDown 0.3s ease-in forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeOutDown {
-  from {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  to {
-    opacity: 0;
-    transform: translateY(20px);
-  }
+.edit-button:hover {
+  background-color: #5c0ea3; /* Cor de hover diferente */
 }
 </style>
+
+
+
