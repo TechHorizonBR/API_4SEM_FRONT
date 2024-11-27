@@ -30,7 +30,7 @@
       </li>
       <li class="navbar-item">
         <button
-          @click="goToAddUser"
+          @click="isAdmin ? goToAddUser : goToShowUser"
           :class="{ 'dark-button': isDark, 'light-button': !isDark }"
         >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
@@ -125,6 +125,13 @@ export default {
         this.showComponentsMode.showAddUser();
       }
     },
+    goToShowUser() {
+      if (this.showComponentsMode.showUser) {
+        this.showComponentsMode.esconderComponents();
+      } else {
+        this.showComponentsMode.showShowUser(); //mds que nome é esse
+      }
+    },
     signInOut() {
       this.tokenStr.setToken("");
       this.router.push("/");
@@ -141,19 +148,7 @@ export default {
     };
   },
   mounted(){
-    const nome = (decodeToken(this.tokenStr.token)?.sub) as string;
-    const fetchUser = async () => {
-    try {
-        const user = await RegistroService.getUserByName(nome);
-        if(user.role == "ROLE_ADMIN"){
-          this.isAdmin = true;
-        }
-        this.userStr.setUser(user);
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-    fetchUser();
+    
   }
 };
 </script>

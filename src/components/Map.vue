@@ -43,7 +43,12 @@
             name="fade">
             <AddUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.addUser"/>
         </transition>
-    </div>
+
+        <transition
+            name="fade">
+            <ShowUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.showUser"/>
+        </transition>
+            </div>
 </template>
 
 <script setup lang="ts">
@@ -60,12 +65,15 @@ import { selectedUsers } from "@/stores/selectedUsers";
 import HistoricoLocalicao from "./HistoricoLocalicao.vue";
 import { showComponents } from "@/stores/showComponents";
 import AddUser from "./AddUser.vue";
+import ShowUser from "./ShowUser.vue"
 import { useRouter } from "vue-router";
-import { tokenStore } from "@/stores/token";
+import { tokenStore, userStore } from "@/stores/token";
 import path from "path";
+import { decodeToken } from "@/services/decode";
 
 const router = useRouter();
 const tokenStr = tokenStore();
+const userStr = userStore();
 const showComponentsMode = showComponents();
 const mapContainer = shallowRef(null);
 const map = shallowRef<Map | null>(null);
@@ -80,6 +88,7 @@ const showMessageEmpty = shallowRef(false);
 const locations = ref<Location[]>([]);
 const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
 const idUsuario = ref<string>('');
+const isAdmin = ref<boolean>(false);
 
 interface SearchParams {
     fullName: string;
@@ -149,6 +158,20 @@ function arrayToDate(dateArray: number[]){
 onMounted(() => {
     if(tokenStr.token === ''){
         router.push({path: "/"});
+        }else{
+            const nome = (decodeToken(tokenStr.token)?.sub) as string;
+            const fetchUser = async () => {
+            try {
+                const user = await RegistrosService.getUserByName(nome);
+                if(user.role == "ROLE_ADMIN"){
+                isAdmin.value = true;
+                }
+                userStr.setUser(user);
+            } catch (error) {
+                console.error("Erro ao buscar usuário:", error);
+            }
+        };
+        fetchUser();
     }
     config.apiKey = "tF1lf7jSig6Ou8IuaLtw";
     inicializarMapa();
