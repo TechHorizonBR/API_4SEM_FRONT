@@ -31,6 +31,7 @@
                     :isDark="mapModeStore.isDarkMode"
                     :messageEmpty="messageEmpty"
                     :showMessageEmpty="showMessageEmpty"
+                    :map="map"
                 />
             </transition>
         </div>
@@ -44,7 +45,11 @@
             <AddUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.addUser"/>
         </transition>
 
-        <PlayRoute />
+        <transition 
+            name="fade">
+            <PlayRoute :map="map" :isDark="mapModeStore.isDarkMode" :userCode="idUsuario"/>
+        </transition>
+
     </div>
 </template>
 
@@ -64,7 +69,6 @@ import { showComponents } from "@/stores/showComponents";
 import AddUser from "./AddUser.vue";
 import { useRouter } from "vue-router";
 import { tokenStore } from "@/stores/token";
-import path from "path";
 import PlayRoute from "./PlayRoute.vue";
 
 const router = useRouter();

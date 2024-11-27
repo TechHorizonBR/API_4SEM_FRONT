@@ -45,11 +45,12 @@
         :cicle-color="user.cicleColor"
         @removeUser="handleRemoveUser" 
         @send-id="receiveId"
-        :idUser="user.userCode"/>
+        :idUser="user.userCode" />
       </div>
     </div>
     <Alerts :message="messageEmpty" :show="showMessageEmpty" class="alert-popup" />
 
+   
   </div>
 </template>
 
@@ -63,19 +64,22 @@
   import SelectedUser from './SelectedUser.vue';
   import Alerts from './Alerts.vue';
   import { selectedUsers as selectedUserStore} from '@/stores/selectedUsers';
+  import { showComponents } from '@/stores/showComponents';
+  import PlayRoute from './PlayRoute.vue';
   // VARIAVEIS
   interface Device {
     fullName: string;
     codeDevice: string;
     userCode: string;
   }
+  const showComponentsStore = showComponents();
   const devices = ref<Device[]>([]);
   const fullName = ref<string>('');
   const codeDevice = ref<string>('');
   const userCode = ref<string>('');
   const showAutocompleteFilter = ref<boolean>(true);
   const emit = defineEmits(['search', 'removeUser', 'resetDateFilters', 'sendId']);
-  const props = defineProps<{isDark : boolean, messageEmpty: string, showMessageEmpty: boolean}>();
+  const props = defineProps<{isDark : boolean, messageEmpty: string, showMessageEmpty: boolean, map: any}>();
   const periods = ref<{ dataInicio: string | null, dataFim: string | null }>({
     dataInicio: null,
     dataFim: null
