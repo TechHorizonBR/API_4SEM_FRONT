@@ -85,7 +85,7 @@ const actualUser = ref(0);
 const messageEmpty = shallowRef('');
 const showMessageEmpty = shallowRef(false);
 const locations = ref<Location[]>([]);
-const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
+const initialState = { lng: 0, lat: 15, zoom: 1.6 };
 const idUsuario = ref<string>('');
 
 interface SearchParams {
@@ -277,7 +277,7 @@ onUnmounted(() => {
 });
 
 function inicializarMapa() {
-    const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
+    
 
     if (mapContainer.value) {
         map.value = markRaw(
@@ -479,22 +479,6 @@ async function plotPontos(
         changeLoading();
     }
 }
-
-// function walkPoints(allPoints) {
-//     allPoints.forEach((point, index) => {
-//         let el_point = createMarkerElement(
-//             elementData.fullName,
-//             createPin("#000", ":)", false)
-//         );
-//         const defaultMark = new Marker({ element: el_point })
-//             .setLngLat([point.longitude, point.latitude])
-//             .addTo(map.value);
-//         all_markers.value[actualUser.value].push(defaultMark);
-//         setTimeout(()=>{
-
-//         },1000);
-//     });
-// }
 
 function createPin(color: string, name: string, isStopped: boolean) {
     let user_pin = document.createElement("div");
