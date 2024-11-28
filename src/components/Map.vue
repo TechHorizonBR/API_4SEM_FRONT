@@ -198,6 +198,10 @@ const handleDelete = (deleteParams: number, idUser: number) => {
         map.value.removeLayer(routeId);
     }
 
+    if(map.value?.getLayer("line-animation")){
+        map.value.removeLayer("line-animation")
+    }
+
     if (map.value?.getSource(routeId)) {
         map.value.removeSource(routeId);
     }
