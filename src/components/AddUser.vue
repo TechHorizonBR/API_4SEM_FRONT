@@ -7,7 +7,7 @@
           <a class="sidebar-button" @click="toggleIsVisibleFindUser">+ Find By Username</a>
           <a class="sidebar-button" @click="toggleIsVisibleCreateUser">+ Create User</a>
           <a class="sidebar-button" @click="toggleIsVisibleAllUsers">+ See all users</a>
-          <a class="sidebar-button" @click="closeAddUser"  id="bClose">+ Close</a>
+          <a class="sidebar-button" @click="closeAddUser"  id="bClose"> Close</a>
         </div>
 
         <div class="block2">
@@ -16,12 +16,8 @@
             <table :class="{ 'tableDark': isDark, 'tableLight': !isDark }">
               <thead>
                 <tr>
-                  <th>Username</th>
-                  <th>Password</th>
+                  <th>Name</th>
                   <th>Role</th>
-                  <th>CreatedAt</th>
-                  <th>ModifiedAt</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -35,35 +31,16 @@
                     <span v-else>{{ usuario.name }}</span>
                   </td>
                   <td>
-                    <input 
-                      v-if="usuario.isEditing" 
-                      v-model="usuario.username" 
-                      :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }"
-                    />
-                    <span v-else>{{ usuario.username }}</span>
-                  </td>
-                  <td>
-                    <input 
-                      v-if="usuario.isEditing" 
-                      v-model="usuario.password" 
-                      :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }" 
-                      type="password"
-                    />
-                    <span v-else>{{ usuario.password }}</span>
-                  </td>
-                  <td>
                     <select 
                       v-if="usuario.isEditing" 
                       v-model="usuario.role" 
                       :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }">
                       <option disabled selected>Select one role</option>
                       <option value="ROLE_ADMIN">Admin</option>
-                      <option value="1">User</option>
+                      <option value="ROLE_CLIENTE">User</option>
                     </select>
                     <span v-else>{{ usuario.role }}</span>
                   </td>
-                  <td>{{ usuario.createdAt }}</td>
-                  <td>{{ usuario.modifiedAt }}</td>
                   <td>
                     <button 
                       v-if="usuario.isEditing" 
@@ -90,6 +67,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import registros from '@/services/registros';
+import UserSysService from '@/services/UserSys';
 import apiClient from '@/services/axiosConfig';
 import { userStore } from '@/stores/token';
 import { off } from 'process';
@@ -123,6 +101,29 @@ import { off } from 'process';
       id: userId
   };
 
+  const createUser = async () => {
+  if (usuario.value.password !== confirmPassword.value) {
+    alert("Passwords do not match!");
+    return;
+  }
+
+  if (!usuario.value.username || !usuario.value.password || !usuario.value.role) {
+    alert("All fields are required!");
+    return;
+  }
+
+  try {
+    const response = await UserSysService.createUser(usuario.value);
+    
+    if (response) {
+      alert("User created successfully!");
+      resetForm(); // Reseta o formulário após sucesso
+    }
+  } catch (error) {
+    console.error("Error creating user:", error);
+    // O tratamento de erro já é feito no serviço
+  }
+};
 
   const getAllUsersSys = async () => {
     try {
@@ -140,26 +141,21 @@ import { off } from 'process';
     usuario.isEditing = true; // Ativar modo de edição
   };
 
-  const saveUser = async (usuario:any) => {
-
-    
-    // Dados a serem enviados para o backend
-    
+    const saveUser = async (usuario: any) => {
     try {
-      // Envia os dados atualizados do usuário para a API
-      const response = await apiClient.put(`/usersys/update-user?id=${userUpdateData.id}`, {
-        id:usuario.id,
-        name:usuario.name,
-        role: usuario.role
-      });
+      // Envia os dados atualizados
+      const userData = {
+        id: usuario.id,
+        name: usuario.name,
+        role: usuario.role,
+      };
+      
+      const updatedUser = await UserSysService.updateUser(userUpdateData.id, userData);
 
-      if (response.status === 200 || response.status === 204) {
-        usuario.isEditing = false; // Desativa o modo de edição
+      if (updatedUser) {
+        usuario.isEditing = false;  // Desativa o modo de edição
         alert('Usuário editado com sucesso');
-        // Atualiza a lista de usuários com o novo valor
-        getAllUsersSys(); // Recarrega a lista de usuários
-      } else {
-        alert('Erro ao editar o usuário');
+        getAllUsersSys();  // Recarrega os usuários após atualização
       }
     } catch (error) {
       console.error("Erro ao editar o usuário:", error);
@@ -169,20 +165,26 @@ import { off } from 'process';
 
 
   const removeUser = async (usuario: any) => {
-    try {
-      const response = await apiClient.delete(`/usersys/${usuario.id}`);
-      if (response.status === 204) {
-        usuarios.value = usuarios.value.filter(u => u.id !== usuario.id); // Remove o usuário da lista local
-        alert('Usuário removido com sucesso');
-      } else {
-        alert('Erro ao tentar remover o usuário');
-      }
-    } catch (error) {
-      console.error("Erro ao remover o usuário:", error);
-      alert('Erro ao tentar remover o usuário');
-    }
-  };
+  if (!confirm(`Are you sure you want to remove user "${usuario.username}"?`)) {
+    return;
+  }
+  try {
+    await UserSysService.removeUser(usuario.username);
 
+    usuarios.value = usuarios.value.filter(u => u.username !== usuario.username);
+    alert(`User "${usuario.username}" removed successfully!`);
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    alert('Erro ao tentar remover o usuário');
+  }
+};
+
+    const resetForm = () => {
+      //usuario.value.username = '';
+      //user.value.password = '';
+      //user.value.role = '';
+      //confirmPassword.value = '';
+    };
 
 
   onMounted(() => {
@@ -254,7 +256,7 @@ import { off } from 'process';
 
 .table-container {
   width: 90%;
-  max-height: 450px; /* Altura máxima para a tabela */
+  max-height: 300px; /* Altura máxima para a tabela */
   overflow: auto; /* Permite rolagem quando o conteúdo ultrapassar o tamanho */
   border-radius: 10px;
   margin-top: 20px; /* Espaçamento acima da tabela */
