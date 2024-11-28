@@ -30,7 +30,7 @@
       </li>
       <li class="navbar-item">
         <button
-          @click="isAdmin ? goToAddUser : goToShowUser"
+          @click="isAdmin ? goToAddUser() : goToShowUser()"
           :class="{ 'dark-button': isDark, 'light-button': !isDark }"
         >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
@@ -134,6 +134,7 @@ export default {
     },
     signInOut() {
       this.tokenStr.setToken("");
+      // this.userStr.setUser(null);
       this.router.push("/");
     },
   },
@@ -148,7 +149,10 @@ export default {
     };
   },
   mounted(){
-    
+    console.log(this.userStr.user);
+    if(this.userStr.user.role == "ROLE_ADMIN"){
+      this.isAdmin = true;
+    }
   }
 };
 </script>
