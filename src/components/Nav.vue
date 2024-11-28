@@ -69,7 +69,9 @@ import MapMarker from './MapMarker.vue';
 import AddUser from '@/components/AddUser.vue'
 import { showComponents } from '@/stores/showComponents';
 import { useRouter } from 'vue-router';
-import { tokenStore } from '@/stores/token';
+import { tokenStore, userStore } from '@/stores/token';
+import { decodeToken } from '@/services/decode';
+import RegistroService from '@/services/registros';
 
 
 export default {
@@ -133,9 +135,24 @@ export default {
     showMapMarker: false,
     showComponentsMode: showComponents(),
     router: useRouter(),
-    tokenStr: tokenStore()
+    tokenStr: tokenStore(),
+    userStr: userStore()
     };
   },
+  mounted(){
+    const tkn = tokenStore();
+    const usr = userStore();
+    const nome = (decodeToken(tkn.token)?.sub) as string;
+    const fetchUser = async () => {
+    try {
+        const user = await RegistroService.getUserByName(nome);
+        usr.setUser(user);
+      } catch (error) {
+        console.error("Erro ao buscar usuário:", error);
+      }
+    };
+    fetchUser();
+  }
 };
 </script>
 

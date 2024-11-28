@@ -10,3 +10,14 @@ export const tokenStore = defineStore("tokenStore", {
         }
     }
 })
+
+export const userStore = defineStore("userStore", {
+    state: () => ({
+        user: {}
+    }),
+    actions: {
+        setUser(user: Object){
+            this.user = user;
+        }
+    }
+})
