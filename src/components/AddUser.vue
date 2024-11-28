@@ -4,9 +4,9 @@
       <h1 class="title">User System Manager</h1>
       <div class="block0">
         <div class="block1" :class="{ 'block1Dark': isDark, 'block1Light': !isDark }">
-          <a class="sidebar-button" @click="toogleIsVisibleFindUser">+ Find By Username</a>
-          <a class="sidebar-button" @click="toogleIsVisibleCreateUser">+ Create User</a>
-          <a class="sidebar-button" @click="toogleIsVisibleAllUsers">+ See all users</a>
+          <a class="sidebar-button" @click="toggleIsVisibleFindUser">+ Find By Username</a>
+          <a class="sidebar-button" @click="toggleIsVisibleCreateUser">+ Create User</a>
+          <a class="sidebar-button" @click="toggleIsVisibleAllUsers">+ See all users</a>
         </div>
 
         <div class="block2">
@@ -49,7 +49,7 @@
                       :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }">
                       <option disabled selected>Select one role</option>
                       <option>Admin</option>
-                      <option>User</option>
+                      <option value="ROLE_USER">User</option>
                     </select>
                     <span v-else>{{ usuario.role }}</span>
                   </td>
@@ -91,25 +91,24 @@ const isVisibleFindByUser = ref<boolean>(false);
 const isVisibleCreateUser = ref<boolean>(false);
 const usuarios = ref<any[]>([]);
 
-const toogleIsVisibleCreateUser = () => {
+const toggleIsVisibleCreateUser = () => {
   isVisibleFindByUser.value = false;
   isVisibleCreateUser.value = true;
 };
 
-const toogleIsVisibleFindUser = () => {
+const toggleIsVisibleFindUser = () => {
   isVisibleCreateUser.value = false;
   isVisibleFindByUser.value = true;
 };
 
-const toogleIsVisibleAllUsers = () => {
+const toggleIsVisibleAllUsers = () => {
   isVisibleCreateUser.value = false;
   isVisibleFindByUser.value = false;
 };
 
-// Carregar todos os usuários
-const getAllUsers = async () => {
+const getAllUsersSys = async () => {
   try {
-    const todosUsuarios = await registros.getAllUsers();
+    const todosUsuarios = await registros.getAllUserSys();
     usuarios.value = todosUsuarios.map((usuario: any) => ({
       ...usuario,
       isEditing: false,  // Adicionando isEditing a todos os usuários ao carregar
@@ -125,15 +124,18 @@ const editUser = (usuario: any) => {
 
 const saveUser = async (usuario: any) => {
   try {
-    const response = await apiClient.put(`/usuarios/${usuario.id}`, {
+    // Envia os dados atualizados do usuário para a API
+    const response = await apiClient.put(`/usersys/update-user`, {
       username: usuario.username,
       password: usuario.password,
       role: usuario.role,
     });
 
-    if (response.status === 200) {
-      usuario.isEditing = false; // Desativar modo de edição
+    if (response.status === 200 || response.status === 204) {
+      usuario.isEditing = false; // Desativa o modo de edição
       alert('Usuário editado com sucesso');
+      // Atualiza a lista de usuários com o novo valor
+      getAllUsersSys(); // Recarrega a lista de usuários
     } else {
       alert('Erro ao editar o usuário');
     }
@@ -143,12 +145,15 @@ const saveUser = async (usuario: any) => {
   }
 };
 
+
 const removeUser = async (usuario: any) => {
   try {
-    const response = await apiClient.delete(`/usuarios/${usuario.id}`);
+    const response = await apiClient.delete(`/usersys/${usuario.id}`);
     if (response.status === 204) {
-      usuarios.value = usuarios.value.filter(u => u.id !== usuario.id);
+      usuarios.value = usuarios.value.filter(u => u.id !== usuario.id); // Remove o usuário da lista local
       alert('Usuário removido com sucesso');
+    } else {
+      alert('Erro ao tentar remover o usuário');
     }
   } catch (error) {
     console.error("Erro ao remover o usuário:", error);
@@ -156,8 +161,10 @@ const removeUser = async (usuario: any) => {
   }
 };
 
+
+
 onMounted(() => {
-  getAllUsers();
+  getAllUsersSys();
 });
 </script>
 
