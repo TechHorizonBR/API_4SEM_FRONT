@@ -67,12 +67,28 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script>
+  import RegistroService from '@/services/registros';
+import { userStore } from '@/stores/token';
+export default {
+  props: {
+    isVisible: Boolean
+  },
+  methods: {
+    findUser() {
+      // Função para buscar usuário
+    },
+    createUser() {
+      // Função para criar usuário
+    },
+    closeAddUser() {
 
-const props = defineProps<{
-  isDark: boolean
-}>();
+    }
+  },
+  mounted(){
 
+  }
+};
 </script>
 
 <style scoped>
