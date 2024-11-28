@@ -47,7 +47,8 @@
 
         <transition 
             name="fade">
-            <PlayRoute :map="map" :isDark="mapModeStore.isDarkMode" :userCode="idUsuario"/>
+            <PlayRoute :map="map" :isDark="mapModeStore.isDarkMode" :userCode="idUsuario" v-if="showComponentsMode.playRouter"
+            @remove-route="handleDeleteJustRoute"/>
         </transition>
 
     </div>
@@ -205,6 +206,18 @@ const handleDelete = (deleteParams: number, idUser: number) => {
         actualUser.value--;
     } else if (actualUser.value === deleteParams) {
         actualUser.value = Math.max(0, actualUser.value - 1);
+    }
+};
+
+const handleDeleteJustRoute = (idUser: number) => {
+    const routeId = `route${idUser}`;
+
+    if (map.value?.getLayer(routeId)) {
+        map.value.removeLayer(routeId);
+    }
+
+    if (map.value?.getSource(routeId)) {
+        map.value.removeSource(routeId);
     }
 };
 

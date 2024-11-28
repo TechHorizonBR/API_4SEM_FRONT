@@ -1,9 +1,9 @@
 export interface User {
     id: number,
     nome: string, 
-    coordenadas: Coordinate[]
+    coordenadas: Coordinate
 }
-export interface Coordinate {
+export interface Coordinate{
     lat: number;
     lng: number;
   }

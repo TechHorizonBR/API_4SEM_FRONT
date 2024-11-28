@@ -1,12 +1,10 @@
 <template>
   <div>
     <div id="map"></div>
-
-    <div class="close">
-      <font-awesome-icon :icon="['fas', 'xmark']" class="icone-button-close" @click="voltarFilter" />
-    </div>
-
     <div class="player-container">
+      <div class="close">
+        <font-awesome-icon :icon="['fas', 'xmark']" class="icone-button-close" @click="voltarFilter" />
+      </div>
       <div class="controls">
         <button id="play-pause-btn" @click="togglePlayPause">
           <font-awesome-icon :icon="['fas', 'stop']" v-if="isPlaying" />
@@ -16,10 +14,9 @@
           <input
             type="range"
             id="progress-bar"
-            min="0"
-            :max="videoDuration"
+            :min="minValue"
+            :max="maxValue"
             v-model.number="currentTime"
-            @input="onSeek"
           />
         </div>
       </div>
@@ -34,41 +31,34 @@
             <option :value="2">2x</option>
           </select>
         </div>
-
-        <div class="time">
-          <span>Select time:</span>
-          <select id="time-selector" class="selector" v-model.number="videoDuration">
-            <option :value="10">10 seconds</option>
-            <option :value="30">30 seconds</option>
-            <option :value="100">1 minute</option>
-            <option :value="125">1.25 minutes</option>
-            <option :value="200">2 minutes</option>
-          </select>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { selectedUsers } from "@/stores/selectedUsers";
 import { showComponents } from "@/stores/showComponents";
-import { ref, watch, onUnmounted } from "vue";
+import { ref, watch, onUnmounted, onMounted } from "vue";
 
-// Props to receive the map from parent component
 const props = defineProps<{
   isDark: boolean;
-  map: any;  // Expecting a map object to be passed from the parent
+  map: any;
   userCode: string;
 }>();
 
 const isPlaying = ref(false);
 const animationSpeed = ref<number>(1);
-const videoDuration = ref<number>(100);
 const currentTime = ref<number>(0);
+const minValue = ref(0);
+const maxValue = ref(100);
 const showComponentsMode = showComponents();
+const coordinates = ref<[number, number][]>([]);
+const emit = defineEmits(["removeRoute"]);
 
 let animationFrameId: number | null = null;
 let startTime = 0;
+
 const geojson = ref({
   type: "FeatureCollection",
   features: [
@@ -76,7 +66,7 @@ const geojson = ref({
       type: "Feature",
       geometry: {
         type: "LineString",
-        coordinates: [[0, 0]],
+        coordinates: [],
       },
     },
   ],
@@ -93,54 +83,50 @@ const togglePlayPause = (): void => {
 
 const setupMap = (): void => {
   if (props.map) {
-    props.map.on("load", () => {
-      console.log("Mapa carregado");
-        props.map.addSource("line", {
-          type: "geojson",
-          data: geojson.value,
-        });
-
-        props.map.addLayer({
-          id: "line-animation",
-          type: "line",
-          source: "line",
-          layout: {
-            "line-cap": "round",
-            "line-join": "round",
-          },
-          paint: {
-            "line-color": "#ed6498",
-            "line-width": 5,
-            "line-opacity": 0.8,
-          },
-        });
-    });
-  } else {
-    console.log("Mapa não encontrado");
-  }
+    if (!props.map.getSource("line")) {
+      props.map.addSource("line", {
+        type: "geojson",
+        data: geojson.value,
+      });
+    }
+    if (!props.map.getLayer("line-animation")) {
+      props.map.addLayer({
+        id: "line-animation",
+        type: "line",
+        source: "line",
+        layout: {
+          "line-cap": "round",
+          "line-join": "round",
+        },
+        paint: {
+          "line-color": "#0f53ff",
+          "line-width": 5,
+          "line-opacity": 0.8,
+        },
+      });
+    }
+  } 
 };
 
 const startAnimation = (): void => {
+  let index = 0;
+
   const updateTime = (timestamp: number): void => {
-    if (!isPlaying.value) return;
+    if (!isPlaying.value || !coordinates.value?.length) return;
 
-    // Calcula o progresso baseado na velocidade de reprodução
-    currentTime.value += animationSpeed.value / 60;
+    const step = animationSpeed.value / 60;
+    index = Math.min(index + step, coordinates.value.length - 1);
+    geojson.value.features[0].geometry.coordinates = coordinates.value.slice(0, Math.floor(index) + 1);
+    currentTime.value = (index / (coordinates.value.length - 1)) * maxValue.value;
 
-    // Reinicia a animação ao atingir a duração máxima
-    if (currentTime.value >= videoDuration.value) {
-      currentTime.value = 0;
-      geojson.value.features[0].geometry.coordinates = [[0, 0]]; // Resetando as coordenadas
-    } else {
-      const x = currentTime.value;
-      const y = Math.sin((x * Math.PI) / 90) * 40; // Senoide para o trajeto
-      geojson.value.features[0].geometry.coordinates.push([x, y]);
-    }
-
-    // Verifique se o mapa tem a fonte e atualize a camada
-    const source = props.map.getSource("line");
+    const source = props.map.getSource("line") as any;
     if (source) {
       source.setData({ ...geojson.value });
+    }
+
+    if (index >= coordinates.value.length - 1) {
+      stopAnimation();
+      return;
     }
 
     animationFrameId = requestAnimationFrame(updateTime);
@@ -156,26 +142,31 @@ const stopAnimation = (): void => {
   }
 };
 
-const onSeek = (): void => {
-  console.log(`Novo tempo: ${currentTime.value}s`);
+onMounted(() => {
+  emit("removeRoute", Number(props.userCode));
+  setupMap();
+  loadUserCoordinates();
+});
+
+const loadUserCoordinates = (): void => {
+  const userStore = selectedUsers();
+  const user = userStore.findById(Number(props.userCode));
+  if (user?.coordenadas) {
+    coordinates.value = user.coordenadas.map((element: { lat: number; lng: number }) => [
+      element.lng,
+      element.lat,
+    ]);
+  }
 };
-
-
-setupMap();
 
 onUnmounted(() => {
   stopAnimation();
 });
 
-watch(animationSpeed, (newSpeed) => {
-  console.log(`Nova velocidade de reprodução: ${newSpeed}x`);
-});
-
-const voltarFilter = () => {
+const voltarFilter = (): void => {
   showComponentsMode.showFilter();
 };
 </script>
-
 
 <style scoped>
 .player-container {
@@ -268,6 +259,7 @@ const voltarFilter = () => {
 .close {
   display: flex;
   flex-direction: row-reverse;
+  color: black;
 }
 
 .icone-button-close:hover {
