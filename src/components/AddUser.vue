@@ -150,7 +150,7 @@ import { off } from 'process';
         role: usuario.role,
       };
       
-      const updatedUser = await UserSysService.updateUser(userUpdateData.id, userData);
+      const updatedUser = await UserSysService.updateUser(userData);
 
       if (updatedUser) {
         usuario.isEditing = false;  // Desativa o modo de edição

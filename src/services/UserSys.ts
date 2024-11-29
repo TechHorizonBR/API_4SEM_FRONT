@@ -2,14 +2,12 @@ import apiClient from '@/services/axiosConfig';
 import { useRouter } from 'vue-router';
 
 class UserSysService{
-    async updateUser(userId: number, userData: { name: string; role: string }) {
+    async updateUser(userData: { id: number ,name: string; role: string }) {
         const router = useRouter();
         try {
-          const response = await apiClient.put(
-            `/usersys/update-user?id=${userId}`,
-            userData
-          );
-          return response.data; // Retorna os dados atualizados ou algum outro retorno conforme necessário
+          const response = await apiClient.patch('/usersys/update-user',userData);
+          console.log(response);
+          return response.data;
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             alert("Session expired! Please log in again.");
@@ -25,7 +23,7 @@ class UserSysService{
         const router = useRouter();
         try {
           const response = await apiClient.post('/usersys/create', userData);
-          return response.data; // Retorna os dados do usuário criado, ou qualquer outra resposta conforme necessário
+          return response.data;
         } catch (error: any) {
           if (error.response && error.response.status === 401) {
             alert("Unauthorized! Please check your credentials.");
