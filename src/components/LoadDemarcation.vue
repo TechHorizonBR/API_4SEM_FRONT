@@ -1,5 +1,5 @@
 <template>
-  <div class="load-container">
+  <div class="load-container" :class="{'dark-load-container': isDark, 'light-load-container': !isDark }">
     <label>Demarcations</label>
     <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
   </div>
@@ -59,7 +59,7 @@ const showAlert = (message : string) => {
 <style>
 .load-container {
   position: absolute;
-  top: 22vh;
+  top: 26vh;
   left: 3vw;
   padding: 15px 25px;
   background-color: #f7f7f7cd;
@@ -70,4 +70,8 @@ const showAlert = (message : string) => {
   height: 25vw;
 }
 
+.dark-load-container{
+  background-color: #0a0012e3;
+  color: white;
+}
 </style>
