@@ -231,7 +231,7 @@ const voltarFilter = (): void => {
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  font-size: 18px;
+  font-size: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
