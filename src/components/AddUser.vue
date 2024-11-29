@@ -16,15 +16,20 @@
             <table :class="{ 'tableDark': isDark, 'tableLight': !isDark }">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Name</th>
+                  <th>Username</th>
                   <th>Role</th>
+                  <th>Created At</th>
+                  <th>Modified At</th>
+                  <th>Created By</th>
+                  <th>Modified By</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(usuario, index) in usuarios" :key="usuario.id">
-                  <td>{{ usuario.username }}</td>
-
-                  <!-- Campo para edição do Nome -->
+                  <td>{{usuario.id}}</td>
                   <td>
                     <input 
                       v-if="usuario.isEditing" 
@@ -33,6 +38,7 @@
                     />
                     <span v-else>{{ usuario.name }}</span>
                   </td>
+                  <td>{{usuario.username}}</td>
                   <td>
                     <select 
                       v-if="usuario.isEditing" 
@@ -44,6 +50,10 @@
                     </select>
                     <span v-else>{{ usuario.role }}</span>
                   </td>
+                  <td>{{usuario.createdAt}}</td>
+                  <td>{{usuario.modifiedAt}}</td>
+                  <td>{{usuario.createdBy}}</td>
+                  <td>{{usuario.modifiedBy}}</td>
                   <td>
                     <button 
                       v-if="usuario.isEditing" 
@@ -72,6 +82,7 @@ import { ref, onMounted } from 'vue';
 import registros from '@/services/registros';
 import UserSysService from '@/services/UserSys';
 import apiClient from '@/services/axiosConfig';
+import { userStore } from '@/stores/token';
 
 const props = defineProps<{
   isDark: boolean
@@ -80,6 +91,12 @@ const props = defineProps<{
 const isVisibleFindByUser = ref<boolean>(false);
 const isVisibleCreateUser = ref<boolean>(false);
 const usuarios = ref<any[]>([]);
+const usuario = ref({
+  username: '',
+  password: '',
+  confirmPassword: '',
+  role: ''
+});
 
 const toggleIsVisibleCreateUser = () => {
   isVisibleFindByUser.value = false;
@@ -91,22 +108,23 @@ const toggleIsVisibleFindUser = () => {
   isVisibleFindByUser.value = true;
 };
 
-  const toggleIsVisibleAllUsers = () => {
-    isVisibleCreateUser.value = false;
-    isVisibleFindByUser.value = false;
-  };
+const toggleIsVisibleAllUsers = () => {
+  isVisibleCreateUser.value = false;
+  isVisibleFindByUser.value = false;
+};
   
-  const closeAddUser= () => {
-      // Função para fechar a adição de usuário
-    };
-  const userId = userStore().user.id;
+const closeAddUser = () => {
+  // Função para fechar a adição de usuário
+};
 
-  const userUpdateData = {
-      id: userId
-  };
+const userId = userStore().user.id;
 
-  const createUser = async () => {
-  if (usuario.value.password !== confirmPassword.value) {
+const userUpdateData = {
+  id: userId
+};
+
+const createUser = async () => {
+  if (usuario.value.password !== usuario.value.confirmPassword) {
     alert("Passwords do not match!");
     return;
   }
@@ -132,6 +150,7 @@ const toggleIsVisibleFindUser = () => {
 const getAllUsersSys = async () => {
   try {
     const todosUsuarios = await registros.getAllUserSys();
+    console.log(todosUsuarios);
     usuarios.value = todosUsuarios.map((usuario: any) => ({
       ...usuario,
       isEditing: false,  // Adicionando isEditing a todos os usuários ao carregar
@@ -145,30 +164,29 @@ const editUser = (usuario: any) => {
   usuario.isEditing = true; // Ativar modo de edição
 };
 
-    const saveUser = async (usuario: any) => {
-    try {
-      // Envia os dados atualizados
-      const userData = {
-        id: usuario.id,
-        name: usuario.name,
-        role: usuario.role,
-      };
-      
-      const updatedUser = await UserSysService.updateUser(userUpdateData.id, userData);
+const saveUser = async (usuario: any) => {
+  try {
+    // Envia os dados atualizados
+    const userData = {
+      id: usuario.id,
+      name: usuario.name,
+      role: usuario.role,
+    };
+    
+    const updatedUser = await UserSysService.updateUser(userUpdateData.id, userData);
 
-      if (updatedUser) {
-        usuario.isEditing = false;  // Desativa o modo de edição
-        alert('Usuário editado com sucesso');
-        getAllUsersSys();  // Recarrega os usuários após atualização
-      }
-    } catch (error) {
-      console.error("Erro ao editar o usuário:", error);
-      alert('Erro ao tentar editar o usuário');
+    if (updatedUser) {
+      usuario.isEditing = false;  // Desativa o modo de edição
+      alert('Usuário editado com sucesso');
+      getAllUsersSys();  // Recarrega os usuários após atualização
     }
-  };
+  } catch (error) {
+    console.error("Erro ao editar o usuário:", error);
+    alert('Erro ao tentar editar o usuário');
+  }
+};
 
-
-  const removeUser = async (usuario: any) => {
+const removeUser = async (usuario: any) => {
   if (!confirm(`Are you sure you want to remove user "${usuario.username}"?`)) {
     return;
   }
@@ -183,13 +201,12 @@ const editUser = (usuario: any) => {
   }
 };
 
-    const resetForm = () => {
-      //usuario.value.username = '';
-      //user.value.password = '';
-      //user.value.role = '';
-      //confirmPassword.value = '';
-    };
-
+const resetForm = () => {
+  usuario.value.username = '';
+  usuario.value.password = '';
+  usuario.value.role = '';
+  usuario.value.confirmPassword = '';
+};
 
 onMounted(() => {
   getAllUsersSys();
@@ -212,12 +229,13 @@ onMounted(() => {
 .box {
   display: flex; /* Usando flexbox para dividir em colunas */
   width: 75%;
-  height: 52%;
+  /* height: 52%; */
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
   top: 28px;
+  flex-direction: column;
 }
 
 .containerDark {
@@ -243,8 +261,8 @@ onMounted(() => {
 }
 
 .table-container {
-  width: 90%;
-  max-height: 300px; /* Altura máxima para a tabela */
+  width: 700px;
+  max-height: 400px; /* Altura máxima para a tabela */
   overflow: auto; /* Permite rolagem quando o conteúdo ultrapassar o tamanho */
   border-radius: 10px;
   margin-top: 20px; /* Espaçamento acima da tabela */
@@ -318,10 +336,20 @@ td {
 .edit-button:hover {
   background-color: #5c0ea3; /* Cor de hover diferente */
 }
+
+th {
+  text-align: center;
+  width: 100px;
+ }
+
+ tr {
+  width: 100px;
+ }
+ td{
+  width: 100px;
+  display: flex;
+}
 </style>
 
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 21d4f84871ea430e7a06cc6a65f84f7ced7d860c
