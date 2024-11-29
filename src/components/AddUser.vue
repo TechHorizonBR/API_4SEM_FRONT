@@ -347,7 +347,6 @@ th {
  }
  td{
   width: 100px;
-  display: flex;
 }
 </style>
 
