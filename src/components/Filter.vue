@@ -354,19 +354,6 @@
 .users-scrool::-webkit-scrollbar-track {
   background-color: #f1f1f1;
 }
-.title-filter-dark{
-  color: white;
-}
-.title-filter-light{
-  color: #35005d
-}
-.title-filter{
-  text-align: center;
-  font-family: "Roboto", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-  font-size: 2.3em;
-}
 h1{
   text-align: center;
 }

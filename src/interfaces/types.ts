@@ -1,6 +1,7 @@
 export interface User {
     id: number,
     nome: string, 
+    device: string,
     coordenadas: Coordinate
 }
 export interface Coordinate{

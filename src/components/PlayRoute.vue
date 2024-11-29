@@ -1,9 +1,16 @@
 <template>
   <div>
     <div id="map"></div>
-    <div class="player-container">
+    <div class="player-container" :class="{'dark-player-container': isDark, 'light-player-container': !isDark }">
       <div class="close">
         <font-awesome-icon :icon="['fas', 'xmark']" class="icone-button-close" @click="voltarFilter" />
+      </div>
+      <div class="user-information">
+        <font-awesome-icon :icon="['fas', 'person']" />
+        <label>{{ userSelected?.nome }}</label>
+
+        <font-awesome-icon :icon="['fas', 'mobile']" />
+        <label>{{ userSelected?.device }}</label>
       </div>
       <div class="controls">
         <button id="play-pause-btn" @click="togglePlayPause">
@@ -22,9 +29,12 @@
       </div>
 
       <div class="options">
+        
+
         <div class="velocidade">
-          <span>Select Speed:</span>
-          <select id="speed-selector" class="selector" v-model.number="animationSpeed">
+          <font-awesome-icon :icon="['fas', 'person-running']" />
+          <label>Speed:</label>
+          <select id="speed-selector" class="selector" v-model.number="animationSpeed" :class="{'dark-input-selector': isDark}">
             <option :value="0.5">0.5x</option>
             <option :value="1">1x</option>
             <option :value="1.25">1.25x</option>
@@ -37,6 +47,7 @@
 </template>
 
 <script setup lang="ts">
+import { type User } from "@/interfaces/types";
 import { selectedUsers } from "@/stores/selectedUsers";
 import { showComponents } from "@/stores/showComponents";
 import { ref, watch, onUnmounted, onMounted } from "vue";
@@ -54,6 +65,7 @@ const minValue = ref(0);
 const maxValue = ref(100);
 const showComponentsMode = showComponents();
 const coordinates = ref<[number, number][]>([]);
+const userSelected = ref<User>();
 const emit = defineEmits(["removeRoute"]);
 
 let animationFrameId: number | null = null;
@@ -151,6 +163,12 @@ onMounted(() => {
 const loadUserCoordinates = (): void => {
   const userStore = selectedUsers();
   const user = userStore.findById(Number(props.userCode));
+
+  if(user){
+    userSelected.value = user;
+    userSelected.value.nome = capitalizeWords(userSelected.value.nome)
+  }
+
   if (user?.coordenadas) {
     coordinates.value = user.coordenadas.map((element: { lat: number; lng: number }) => [
       element.lng,
@@ -158,6 +176,13 @@ const loadUserCoordinates = (): void => {
     ]);
   }
 };
+const capitalizeWords = (str: string): string => {
+  return str
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase()); 
+};
+
+
 
 onUnmounted(() => {
   stopAnimation();
@@ -187,19 +212,24 @@ const voltarFilter = (): void => {
   gap: 10px;
 }
 .velocidade,
-.time {
+.time, .user-information {
   display: flex;
   gap: 10px;
   align-items: center;
   margin: 5px 0 0 0;
 }
-
+.velocidade{
+  justify-content: end;
+  margin: 0 !important;
+  color: gray;
+  font-size: 0.8em;
+}
 #play-pause-btn {
   border: none;
   background-color: #35005d;
   color: white;
-  width: 40px;
-  height: 40px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   font-size: 18px;
   display: flex;
@@ -209,17 +239,17 @@ const voltarFilter = (): void => {
 }
 
 .selector {
-  font-size: 16px;
-  padding: 5px;
+  font-size: 0.9em;
+  padding: 3px;
   border: none;
   border-radius: 3px;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
-  width: 150px;
+  width: 60px;
   text-align: center;
 }
 
 .progress-bar-container {
-  width: 80%;
+  width: 100%;
 }
 
 #progress-bar {
@@ -259,11 +289,26 @@ const voltarFilter = (): void => {
 .close {
   display: flex;
   flex-direction: row-reverse;
-  color: black;
 }
 
 .icone-button-close:hover {
   cursor: pointer;
   color: #35005d;
 }
+
+.dark-player-container{
+  background-color: #0a0012e3;
+  color: white;
+}
+.dark-input-selector{
+  background-color: #383838;
+  color: white;
+}
+label{
+  font-size: 1.2
+}
+.user-information{
+  margin: 3px 0 5px 0;
+}
+
 </style>

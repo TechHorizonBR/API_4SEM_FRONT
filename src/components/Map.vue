@@ -102,10 +102,11 @@ interface SearchParams {
 const receiveId = (idUser : string) => {
     idUsuario.value = idUser;
 }
-const addSelectedUsersStore = (registers: any, userCode: number, fullName : string) => {
+const addSelectedUsersStore = (registers: any, userCode: number, fullName : string, device: string) => {
   const selectedUserStore = selectedUsers();
   const user = ref<User>({
     id: userCode,
+    device: device,
     coordenadas: [],
     nome: fullName
   });
@@ -247,7 +248,7 @@ const getPoints = async (searchParams: SearchParams) => {
                     firstReq.maxMinCoordinates.maxLatitude + 0.05,
                 ],
             ]);
-            addSelectedUsersStore(firstReq.registers, searchParams.userCode, searchParams.fullName);   
+            addSelectedUsersStore(firstReq.registers, searchParams.userCode, searchParams.fullName, searchParams.codeDevice);   
 
             for (let page = 1; page <= allPages; page++) {
                 const req = await RegistrosService.getRegistros(
