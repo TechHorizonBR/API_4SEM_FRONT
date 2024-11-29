@@ -31,15 +31,21 @@
             <option :value="2">2x</option>
           </select>
         </div>
+        <div class="demarcacoes">
+          <input type="checkbox" v-model="showDemarcation">
+        </div>
       </div>
     </div>
+  
   </div>
+  <LoadDemarcation v-if="showDemarcation" :userCode="props.userCode" :isDark="props.isDark" :map="props.map"></LoadDemarcation>
 </template>
 
 <script setup lang="ts">
 import { selectedUsers } from "@/stores/selectedUsers";
 import { showComponents } from "@/stores/showComponents";
 import { ref, watch, onUnmounted, onMounted } from "vue";
+import LoadDemarcation from "./LoadDemarcation.vue";
 
 const props = defineProps<{
   isDark: boolean;
@@ -55,6 +61,7 @@ const maxValue = ref(100);
 const showComponentsMode = showComponents();
 const coordinates = ref<[number, number][]>([]);
 const emit = defineEmits(["removeRoute"]);
+const showDemarcation = ref(false);
 
 let animationFrameId: number | null = null;
 let startTime = 0;
