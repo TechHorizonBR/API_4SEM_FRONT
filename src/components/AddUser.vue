@@ -7,6 +7,7 @@
           <a class="sidebar-button" @click="toggleIsVisibleFindUser">+ Find By Username</a>
           <a class="sidebar-button" @click="toggleIsVisibleCreateUser">+ Create User</a>
           <a class="sidebar-button" @click="toggleIsVisibleAllUsers">+ See all users</a>
+          <a class="sidebar-button" @click="closeAddUser"  id="bClose"> Close</a>
         </div>
 
         <div class="block2">
@@ -15,12 +16,8 @@
             <table :class="{ 'tableDark': isDark, 'tableLight': !isDark }">
               <thead>
                 <tr>
-                  <th>Username</th>
                   <th>Name</th>
                   <th>Role</th>
-                  <th>CreatedAt</th>
-                  <th>ModifiedAt</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -36,22 +33,17 @@
                     />
                     <span v-else>{{ usuario.name }}</span>
                   </td>
-
-                  <!-- Campo para edição do Cargo -->
                   <td>
                     <select 
                       v-if="usuario.isEditing" 
                       v-model="usuario.role" 
-                      :class="{ 'roleDark': isDark, 'roleLight': !isDark }"
-                    >
-                      <option value="Admin">Admin</option>
-                      <option value="ROLE_USER">User</option>
+                      :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }">
+                      <option disabled selected>Select one role</option>
+                      <option value="ROLE_ADMIN">Admin</option>
+                      <option value="ROLE_CLIENTE">User</option>
                     </select>
                     <span v-else>{{ usuario.role }}</span>
                   </td>
-
-                  <td>{{ usuario.createdAt }}</td>
-                  <td>{{ usuario.modifiedAt }}</td>
                   <td>
                     <button 
                       v-if="usuario.isEditing" 
@@ -78,6 +70,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import registros from '@/services/registros';
+import UserSysService from '@/services/UserSys';
 import apiClient from '@/services/axiosConfig';
 
 const props = defineProps<{
@@ -98,9 +91,42 @@ const toggleIsVisibleFindUser = () => {
   isVisibleFindByUser.value = true;
 };
 
-const toggleIsVisibleAllUsers = () => {
-  isVisibleCreateUser.value = false;
-  isVisibleFindByUser.value = false;
+  const toggleIsVisibleAllUsers = () => {
+    isVisibleCreateUser.value = false;
+    isVisibleFindByUser.value = false;
+  };
+  
+  const closeAddUser= () => {
+      // Função para fechar a adição de usuário
+    };
+  const userId = userStore().user.id;
+
+  const userUpdateData = {
+      id: userId
+  };
+
+  const createUser = async () => {
+  if (usuario.value.password !== confirmPassword.value) {
+    alert("Passwords do not match!");
+    return;
+  }
+
+  if (!usuario.value.username || !usuario.value.password || !usuario.value.role) {
+    alert("All fields are required!");
+    return;
+  }
+
+  try {
+    const response = await UserSysService.createUser(usuario.value);
+    
+    if (response) {
+      alert("User created successfully!");
+      resetForm(); // Reseta o formulário após sucesso
+    }
+  } catch (error) {
+    console.error("Error creating user:", error);
+    // O tratamento de erro já é feito no serviço
+  }
 };
 
 const getAllUsersSys = async () => {
@@ -119,41 +145,51 @@ const editUser = (usuario: any) => {
   usuario.isEditing = true; // Ativar modo de edição
 };
 
-const saveUser = async (usuario: any) => {
-  try {
-    // Envia os dados atualizados do usuário para a API
-    const response = await apiClient.put(`/usersys/update-user/${usuario.id}`, {
-      name: usuario.name,
-      role: usuario.role,
-    });
+    const saveUser = async (usuario: any) => {
+    try {
+      // Envia os dados atualizados
+      const userData = {
+        id: usuario.id,
+        name: usuario.name,
+        role: usuario.role,
+      };
+      
+      const updatedUser = await UserSysService.updateUser(userUpdateData.id, userData);
 
-    if (response.status === 200 || response.status === 204) {
-      usuario.isEditing = false; // Desativa o modo de edição
-      alert('Usuário editado com sucesso');
-      getAllUsersSys(); // Recarrega a lista de usuários
-    } else {
-      alert('Erro ao editar o usuário');
+      if (updatedUser) {
+        usuario.isEditing = false;  // Desativa o modo de edição
+        alert('Usuário editado com sucesso');
+        getAllUsersSys();  // Recarrega os usuários após atualização
+      }
+    } catch (error) {
+      console.error("Erro ao editar o usuário:", error);
+      alert('Erro ao tentar editar o usuário');
     }
-  } catch (error) {
-    console.error("Erro ao editar o usuário:", error);
-    alert('Erro ao tentar editar o usuário');
+  };
+
+
+  const removeUser = async (usuario: any) => {
+  if (!confirm(`Are you sure you want to remove user "${usuario.username}"?`)) {
+    return;
   }
-};
-
-const removeUser = async (usuario: any) => {
   try {
-    const response = await apiClient.delete(`/usersys`);
-    if (response.status === 204) {
-      usuarios.value = usuarios.value.filter(u => u.id !== usuario.id); // Remove o usuário da lista local
-      alert('Usuário removido com sucesso');
-    } else {
-      alert('Erro ao tentar remover o usuário');
-    }
+    await UserSysService.removeUser(usuario.username);
+
+    usuarios.value = usuarios.value.filter(u => u.username !== usuario.username);
+    alert(`User "${usuario.username}" removed successfully!`);
   } catch (error) {
-    console.error("Erro ao remover o usuário:", error);
+    console.error("Error deleting user:", error);
     alert('Erro ao tentar remover o usuário');
   }
 };
+
+    const resetForm = () => {
+      //usuario.value.username = '';
+      //user.value.password = '';
+      //user.value.role = '';
+      //confirmPassword.value = '';
+    };
+
 
 onMounted(() => {
   getAllUsersSys();
@@ -162,7 +198,68 @@ onMounted(() => {
 
 <style scoped>
 
-.nameDark{
+.container {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  z-index: 10000;
+  top: 0;
+  align-items: flex-start;
+}
+
+.box {
+  display: flex; /* Usando flexbox para dividir em colunas */
+  width: 75%;
+  height: 52%;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  top: 28px;
+}
+
+.containerDark {
+  background-color: #5c0ea3;
+}
+
+.containerLight {
+  background-color: #fff;
+}
+
+.block0 {
+  display: flex;
+  width: 100%;
+}
+
+.block1 {
+  flex: 1 1 250px; /* Tornando o bloco dos botões flexível, com largura mínima de 250px */
+  padding-right: 20px; /* Espaço entre os botões e a tabela */
+}
+
+.block2 {
+  flex: 3; /* O bloco da tabela ocupa o restante do espaço */
+}
+
+.table-container {
+  width: 90%;
+  max-height: 300px; /* Altura máxima para a tabela */
+  overflow: auto; /* Permite rolagem quando o conteúdo ultrapassar o tamanho */
+  border-radius: 10px;
+  margin-top: 20px; /* Espaçamento acima da tabela */
+  margin-left: 30px;
+}
+
+.fline1, .fline2 {
+  display: grid;
+  grid-template-columns: 2fr 2fr;
+  gap: 2rem;
+  margin-bottom: 2%;
+  margin-top: 3%;
+}
+
+.usernameDark {
   background-color: rgb(56, 56, 56);
   color: rgb(255, 255, 255);
   border: 1px solid rgb(41, 41, 41);
