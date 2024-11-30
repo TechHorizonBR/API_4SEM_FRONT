@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div id="map"></div>
     <div class="player-container" :class="{'dark-player-container': isDark, 'light-player-container': !isDark }">
       <div class="close">
@@ -34,8 +34,6 @@
       </div>
 
       <div class="options">
-        
-
         <div class="velocidade">
           <font-awesome-icon :icon="['fas', 'person-running']" />
           <label>Speed:</label>
@@ -51,10 +49,12 @@
           <input type="checkbox" v-model="showDemarcation">
         </div>
       </div>
+
     </div>
-  
+    <LoadDemarcation v-if="showDemarcation" :userCode="props.userCode" :isDark="props.isDark" :map="props.map" v-show="showDemarcation"
+    @updateDemarcations="handleDemarcations"></LoadDemarcation>
   </div>
-  <LoadDemarcation v-if="showDemarcation" :userCode="props.userCode" :isDark="props.isDark" :map="props.map"></LoadDemarcation>
+
 </template>
 
 <script setup lang="ts">
@@ -80,9 +80,14 @@ const coordinates = ref<[number, number][]>([]);
 const userSelected = ref<User>();
 const emit = defineEmits(["removeRoute"]);
 const showDemarcation = ref(false);
+const demarcations = ref([]);
 
 let animationFrameId: number | null = null;
 let startTime = 0;
+
+const handleDemarcations = (data: any) => {
+  demarcations.value = data;
+};
 
 const geojson = ref({
   type: "FeatureCollection",
@@ -153,7 +158,6 @@ const startAnimation = (): void => {
       stopAnimation();
       return;
     }
-
     animationFrameId = requestAnimationFrame(updateTime);
   };
 
@@ -227,13 +231,24 @@ const addCoordenadasInMapUnMounted = () => {
 }
 onUnmounted(() => {
   stopAnimation();
-  console.log("cheguei")
+  removeAllPolygons();
   addCoordenadasInMapUnMounted();
+
 });
 
 const voltarFilter = (): void => {
   showComponentsMode.showFilter();
 };
+
+function removeAllPolygons() {
+  demarcations.value.forEach((_, index) => {
+    const sourceId = `area_${index}`;
+    if (props.map.getLayer(sourceId)) {
+      props.map.removeLayer(sourceId);
+      props.map.removeSource(sourceId);
+    }
+  });
+}
 </script>
 
 <style scoped>

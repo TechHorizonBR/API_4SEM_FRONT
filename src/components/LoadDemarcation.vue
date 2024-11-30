@@ -13,7 +13,7 @@
       Select all
       </label>
       <div class="data-list">
-        <div class="demarcation" v-for="(demarcation, index) of demarcations" :key="index">
+        <div class="demarcation" v-for="(demarcation, index) of demarcations" :key="index" :class="{'demarcation-dark-mode': isDark, 'demarcation-light-mode': !isDark }" >
           <h4>{{ demarcation.nome }}</h4>
           <input type="checkbox" v-model="selectedDemarcations[index]" @change="checkIndividualSelection">
         </div>
@@ -26,35 +26,20 @@
 <script setup lang="ts">
 import { onMounted, ref, toRaw, onUnmounted } from 'vue';
 import DemarcationsServices from '../services/demarcations';
-import { useMapModeStore } from "@/stores/useMapMode";;
-
 
 const showMessage = ref(false);
 const demarcations = ref<demarcation[]>([]);
 const messageAlert = ref<string>('');
-const userCode = ref<string>('');
 const mapComponentRef = ref();
-
+const emit = defineEmits(["updateDemarcations"]);
 const selectAll = ref(false);
 const selectedDemarcations = ref<boolean[]>([]);
 
 
-
-
 onMounted(() => {
   getDemarcationsByUser();
-
-
 });
 
-const executePlotPolygon = (coordinates: number[][], user_id: number) => {
-  plotPolygon(coordinates, user_id);
-};
-
-function setIndex(index:number){
-  console.log(index);
-  executePlotPolygon((demarcations.value)[index].coordinate, index );
-}
 const props = defineProps<{
   userCode: string;
   isDark: boolean;
@@ -68,23 +53,23 @@ interface demarcation {
   coordinate: any;
 }
 
-
-
 const getDemarcationsByUser = async () => {
-  try{
+  try {
     const response = await DemarcationsServices.getDemarcacoesByUsuario(Number(props.userCode));
     
     if(response === "Error") {
       showAlert("Something is wrong. Please, try again later.");
     } else {
       demarcations.value = response;
-      selectedDemarcations.value = new Array(response.length).fill(false); // Inicializa todas como desmarcadas
+      selectedDemarcations.value = new Array(response.length).fill(false);
+      
+      emit('updateDemarcations', demarcations.value);
     }
-
-  }catch(error){ 
+  } catch(error) { 
     showAlert("Something is wrong. Please, try again later.");    
   }
 }
+
 
 function toggleSelectAll() {
   selectedDemarcations.value = selectedDemarcations.value.map(() => selectAll.value);
@@ -118,10 +103,6 @@ function removePolygon(user_id: number) {
   }
 }
 
-
-
-
-
 const showAlert = (message : string) => {
   showMessage.value = true;
   messageAlert.value = message;
@@ -135,7 +116,6 @@ const showAlert = (message : string) => {
 function plotPolygon(coordinates: number[][], user_id: number) {
   const sourceId = `area_${user_id}`;
   
-  // Se o polígono já estiver no mapa, não faz nada
   if (props.map.getLayer(sourceId)) return;
 
   const filtredCoordinates = toRaw(coordinates) as number[][];
@@ -177,23 +157,6 @@ function plotPolygon(coordinates: number[][], user_id: number) {
   ]);
 }
 
-// Adicione o hook onUnmounted
-onUnmounted(() => {
-  removeAllPolygons();
-});
-
-// Função para remover todos os polígonos do mapa
-function removeAllPolygons() {
-  demarcations.value.forEach((demarcation, index) => {
-    const sourceId = `area_${index}`;
-    if (props.map.getLayer(sourceId)) {
-      props.map.removeLayer(sourceId);  // Remove a camada do mapa
-      props.map.removeSource(sourceId); // Remove a fonte de dados associada
-    }
-  });
-}
-
-
 </script>
 <style>
 .load-container {
@@ -207,6 +170,7 @@ function removeAllPolygons() {
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
   min-width: 25vw;
   max-height: 25vw;
+  margin-top: 30px;
 }
 
 .dark-load-container{
@@ -230,11 +194,18 @@ function removeAllPolygons() {
   display: flex;
   justify-content: space-between;   
   border-radius: 1em; 
-  margin: 0 0 3% 0;
+  margin: 10px 0 3% 0;
   padding: 5% 3%;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.174), 0 2px 6px 2px rgba(60, 64, 67, 0.048);
   height: 20px;
-  background-color: rgba(255, 255, 255, 0.9);
+
   align-items: center;
+}
+.demarcation-light-mode{
+  background-color: rgba(255, 255, 255, 0.9);
+}
+.demarcation-dark-mode{
+  background-color: #35005d;
+
 }
 </style>
