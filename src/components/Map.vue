@@ -628,12 +628,6 @@ watch(
     }
 );
 
-<<<<<<< HEAD
-defineExpose({
-  plotPolygon
-});
-=======
->>>>>>> 68c3cf4bba5c2665be277adfd8d3b5a2996141d4
 
 </script>
 

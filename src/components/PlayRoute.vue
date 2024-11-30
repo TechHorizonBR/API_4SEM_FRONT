@@ -47,6 +47,7 @@
           </select>
         </div>
         <div class="demarcacoes">
+          <h3 id="demarcation-label">Include demarcation</h3>
           <input type="checkbox" v-model="showDemarcation">
         </div>
       </div>
@@ -364,4 +365,12 @@ label{
   margin: -16px 0 5px 0;
 }
 
+.demarcacoes{
+  margin-right: 10px;
+  display: flex;
+  justify-content: end;
+  margin: 0 !important;
+  color: gray;
+  font-size: 0.8em;
+}
 </style>

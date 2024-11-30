@@ -8,12 +8,14 @@
       <h3 v-else:class="{'mode-dark-title': isDark, 'mode-light-title': !isDark}" 
       class="title-demarcations">No demarcations available</h3>
     <div class="demarcation-container" v-if="demarcations.length > 0">
-      <label>Select all</label>
-      <input type="checkbox">
+      <label>
+      <input type="checkbox" v-model="selectAll" @change="toggleSelectAll">
+      Select all
+      </label>
       <div class="data-list">
-        <div class="demarcation" v-for="(demarcation, index) of demarcations">
-          <h4> {{ demarcation.nome }}</h4>
-          <input type="checkbox" @click="setIndex(index)">
+        <div class="demarcation" v-for="(demarcation, index) of demarcations" :key="index">
+          <h4>{{ demarcation.nome }}</h4>
+          <input type="checkbox" v-model="selectedDemarcations[index]" @change="checkIndividualSelection">
         </div>
       </div>
     </div>
@@ -22,7 +24,7 @@
 
 </template>
 <script setup lang="ts">
-import { onMounted, ref, toRaw } from 'vue';
+import { onMounted, ref, toRaw, onUnmounted } from 'vue';
 import DemarcationsServices from '../services/demarcations';
 import { useMapModeStore } from "@/stores/useMapMode";;
 
@@ -32,6 +34,10 @@ const demarcations = ref<demarcation[]>([]);
 const messageAlert = ref<string>('');
 const userCode = ref<string>('');
 const mapComponentRef = ref();
+
+const selectAll = ref(false);
+const selectedDemarcations = ref<boolean[]>([]);
+
 
 
 
@@ -68,18 +74,53 @@ const getDemarcationsByUser = async () => {
   try{
     const response = await DemarcationsServices.getDemarcacoesByUsuario(Number(props.userCode));
     
-    if(response === "Error"){
+    if(response === "Error") {
       showAlert("Something is wrong. Please, try again later.");
-    }else{
+    } else {
       demarcations.value = response;
-      if(demarcations.value.length === 0){
-        showAlert("User does not have demarcations.");
-      }
+      selectedDemarcations.value = new Array(response.length).fill(false); // Inicializa todas como desmarcadas
     }
+
   }catch(error){ 
     showAlert("Something is wrong. Please, try again later.");    
   }
 }
+
+function toggleSelectAll() {
+  selectedDemarcations.value = selectedDemarcations.value.map(() => selectAll.value);
+
+  selectedDemarcations.value.forEach((isSelected, index) => {
+    if (isSelected) {
+      plotPolygon(demarcations.value[index].coordinate, index);
+    } else {
+      removePolygon(index);
+    }
+  });
+}
+
+function checkIndividualSelection() {
+  selectAll.value = selectedDemarcations.value.every(val => val);
+
+  selectedDemarcations.value.forEach((isSelected, index) => {
+    if (isSelected) {
+      plotPolygon(demarcations.value[index].coordinate, index);
+    } else {
+      removePolygon(index);
+    }
+  });
+}
+
+function removePolygon(user_id: number) {
+  const sourceId = `area_${user_id}`;
+  if (props.map.getLayer(sourceId)) {
+    props.map.removeLayer(sourceId);
+    props.map.removeSource(sourceId);
+  }
+}
+
+
+
+
 
 const showAlert = (message : string) => {
   showMessage.value = true;
@@ -92,56 +133,66 @@ const showAlert = (message : string) => {
 }
 
 function plotPolygon(coordinates: number[][], user_id: number) {
-  console.log(coordinates);
-    const sourceId = `area_${user_id}`;
-    const layer = props.map.getLayer(sourceId);
+  const sourceId = `area_${user_id}`;
+  
+  // Se o polígono já estiver no mapa, não faz nada
+  if (props.map.getLayer(sourceId)) return;
 
-    if (layer) {
-        const currentVisibility = props.map.getLayoutProperty(sourceId, 'visibility');
-        const newVisibility = currentVisibility === 'visible' ? 'none' : 'visible';
-        props.map.setLayoutProperty(sourceId, 'visibility', newVisibility);
-    } else {
-        const filtredCoordinates = toRaw(coordinates) as number[][];
+  const filtredCoordinates = toRaw(coordinates) as number[][];
 
-        props.map.addSource(sourceId, {
-            'type': 'geojson',
-            'data': {
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Polygon',
-                    'coordinates': [filtredCoordinates]
-                },
-                'properties': {}
-            }
-        });
-
-        props.map.addLayer({
-            'id': sourceId,
-            'type': 'fill',
-            'source': sourceId,
-            'layout': {
-                'visibility': 'visible'
-            },
-            'paint': {
-                'fill-color': '#ff00007c',
-                'fill-opacity': 0.5
-            }
-        });
-
-   
-        
-        props.map.fitBounds([
-                [
-                filtredCoordinates[0][0] - 0.05,
-                filtredCoordinates[1][1] - 0.05,
-                ],
-                [
-                filtredCoordinates[0][0] + 0.05,
-                filtredCoordinates[1][1] + 0.05,
-                ],
-            ]);
+  props.map.addSource(sourceId, {
+    'type': 'geojson',
+    'data': {
+      'type': 'Feature',
+      'geometry': {
+        'type': 'Polygon',
+        'coordinates': [filtredCoordinates]
+      },
+      'properties': {}
     }
+  });
+
+  props.map.addLayer({
+    'id': sourceId,
+    'type': 'fill',
+    'source': sourceId,
+    'layout': {
+      'visibility': 'visible'
+    },
+    'paint': {
+      'fill-color': '#ff00007c',
+      'fill-opacity': 0.5
+    }
+  });
+
+  props.map.fitBounds([
+    [
+      filtredCoordinates[0][0] - 0.05,
+      filtredCoordinates[1][1] - 0.05,
+    ],
+    [
+      filtredCoordinates[0][0] + 0.05,
+      filtredCoordinates[1][1] + 0.05,
+    ],
+  ]);
 }
+
+// Adicione o hook onUnmounted
+onUnmounted(() => {
+  removeAllPolygons();
+});
+
+// Função para remover todos os polígonos do mapa
+function removeAllPolygons() {
+  demarcations.value.forEach((demarcation, index) => {
+    const sourceId = `area_${index}`;
+    if (props.map.getLayer(sourceId)) {
+      props.map.removeLayer(sourceId);  // Remove a camada do mapa
+      props.map.removeSource(sourceId); // Remove a fonte de dados associada
+    }
+  });
+}
+
 
 </script>
 <style>
