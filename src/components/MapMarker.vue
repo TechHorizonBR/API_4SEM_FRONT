@@ -273,7 +273,7 @@ button:hover {
 .mode-dark-title{
   color: white;
 }
-.mode-light-tile{
+.mode-light-title{
   color: black;
 }
 

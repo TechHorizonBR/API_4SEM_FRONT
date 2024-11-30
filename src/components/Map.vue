@@ -615,6 +615,10 @@ watch(
     }
 );
 
+defineExpose({
+  plotPolygon
+});
+
 </script>
 
 <style scoped>

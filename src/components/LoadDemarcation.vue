@@ -1,25 +1,54 @@
 <template>
+  <Map ref="mapComponentRef" />
   <div class="load-container" :class="{'dark-load-container': isDark, 'light-load-container': !isDark }">
-    <label>Demarcations</label>
+    <h3
+      v-if="demarcations.length > 0"  
+      :class="{'mode-dark-title': isDark, 'mode-light-title': !isDark}" 
+      class="title-demarcations">Demarcations:</h3>
+      <h3 v-else:class="{'mode-dark-title': isDark, 'mode-light-title': !isDark}" 
+      class="title-demarcations">No demarcations available</h3>
+    <div class="demarcation-container" v-if="demarcations.length > 0">
+      <label>Select all</label>
+      <input type="checkbox">
+      <div class="data-list">
+        <div class="demarcation" v-for="(demarcation, index) of demarcations">
+          <h4> {{ demarcation.nome }}</h4>
+          <input type="checkbox" @click="setIndex(index)">
+        </div>
+      </div>
+    </div>
     <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
   </div>
 
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, toRaw } from 'vue';
 import DemarcationsServices from '../services/demarcations';
 import { useMapModeStore } from "@/stores/useMapMode";;
 
+
 const showMessage = ref(false);
-const demarcations = ref<[]>([]);
+const demarcations = ref<demarcation[]>([]);
 const messageAlert = ref<string>('');
 const userCode = ref<string>('');
+const mapComponentRef = ref();
+
+
 
 onMounted(() => {
   getDemarcationsByUser();
 
+
 });
 
+const executePlotPolygon = (coordinates: number[][], user_id: number) => {
+  plotPolygon(coordinates, user_id);
+};
+
+function setIndex(index:number){
+  console.log(index);
+  executePlotPolygon((demarcations.value)[index].coordinate, index );
+}
 const props = defineProps<{
   userCode: string;
   isDark: boolean;
@@ -27,10 +56,17 @@ const props = defineProps<{
 }>();
 
 
+interface demarcation {
+  id: number;
+  nome: string;
+  coordinate: any;
+}
+
+
 
 const getDemarcationsByUser = async () => {
   try{
-    const response = await DemarcationsServices.getDemarcacoesByUsuario(Number(userCode.value));
+    const response = await DemarcationsServices.getDemarcacoesByUsuario(Number(props.userCode));
     
     if(response === "Error"){
       showAlert("Something is wrong. Please, try again later.");
@@ -55,6 +91,58 @@ const showAlert = (message : string) => {
   }, 3000);
 }
 
+function plotPolygon(coordinates: number[][], user_id: number) {
+  console.log(coordinates);
+    const sourceId = `area_${user_id}`;
+    const layer = props.map.getLayer(sourceId);
+
+    if (layer) {
+        const currentVisibility = props.map.getLayoutProperty(sourceId, 'visibility');
+        const newVisibility = currentVisibility === 'visible' ? 'none' : 'visible';
+        props.map.setLayoutProperty(sourceId, 'visibility', newVisibility);
+    } else {
+        const filtredCoordinates = toRaw(coordinates) as number[][];
+
+        props.map.addSource(sourceId, {
+            'type': 'geojson',
+            'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [filtredCoordinates]
+                },
+                'properties': {}
+            }
+        });
+
+        props.map.addLayer({
+            'id': sourceId,
+            'type': 'fill',
+            'source': sourceId,
+            'layout': {
+                'visibility': 'visible'
+            },
+            'paint': {
+                'fill-color': '#ff00007c',
+                'fill-opacity': 0.5
+            }
+        });
+
+   
+        
+        props.map.fitBounds([
+                [
+                filtredCoordinates[0][0] - 0.05,
+                filtredCoordinates[1][1] - 0.05,
+                ],
+                [
+                filtredCoordinates[0][0] + 0.05,
+                filtredCoordinates[1][1] + 0.05,
+                ],
+            ]);
+    }
+}
+
 </script>
 <style>
 .load-container {
@@ -67,11 +155,35 @@ const showAlert = (message : string) => {
   z-index: 1000;
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.3), 0 2px 6px 2px rgba(60, 64, 67, 0.15);
   min-width: 25vw;
-  height: 25vw;
+  max-height: 25vw;
 }
 
 .dark-load-container{
   background-color: #0a0012e3;
   color: white;
+}
+
+.data-list {
+  max-height: 25vh;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+.mode-dark-title{
+  color: white;
+}
+.mode-light-title{
+  color: black;
+}
+
+.demarcation{
+  display: flex;
+  justify-content: space-between;   
+  border-radius: 1em; 
+  margin: 0 0 3% 0;
+  padding: 5% 3%;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.174), 0 2px 6px 2px rgba(60, 64, 67, 0.048);
+  height: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  align-items: center;
 }
 </style>
