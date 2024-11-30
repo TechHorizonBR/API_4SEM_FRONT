@@ -14,6 +14,14 @@
         <div class="device-user">
           <font-awesome-icon :icon="['fas', 'mobile']" />
           <label>{{ userSelected?.device }}</label>
+          
+          <font-awesome-icon
+            :icon="['fas', 'triangle-exclamation']"
+            style="color: #ff0000;"
+            id="warning-device-out"
+            v-if="isOutOfDemarcation"
+            v-tooltip="'Dispositivo fora da demarcação'"
+          />
         </div>
         
       </div>
@@ -45,8 +53,10 @@
           </select>
         </div>
         <div class="demarcacoes">
-          <h3 id="demarcation-label">Display demarcations</h3>
-          <input type="checkbox" v-model="showDemarcation">
+          <label>
+            Display demarcations
+            <input type="checkbox" v-model="showDemarcation"> 
+          </label>
         </div>
       </div>
 
@@ -82,6 +92,7 @@ const emit = defineEmits(["removeRoute"]);
 const showDemarcation = ref(false);
 const demarcations = ref([]);
 const selectedDemarcations = ref<boolean[]>([]);
+const isOutOfDemarcation = ref<boolean>(false);
 
 let animationFrameId: number | null = null;
 let startTime = 0;
@@ -155,13 +166,11 @@ const startAnimation = (): void => {
       source.setData({ ...geojson.value });
     }
 
-    // Calculando se o ponto atual está dentro das demarcações selecionadas
-    const currentPoint = turf.point(coordinates.value[Math.floor(index)]); // ponto atual da animação
+    const currentPoint = turf.point(coordinates.value[Math.floor(index)]); 
     const isInsideDemarcation = demarcations.value.some((demarcation, i) => {
       const demarcationPolygon = turf.polygon([demarcation.coordinate]);
 
-      // Verifica se o polígono está dentro da área da animação
-      const isSelected = selectedDemarcations.value[i]; // Verifica se o polígono foi selecionado
+      const isSelected = selectedDemarcations.value[i];
       if (isSelected) {
         return turf.booleanPointInPolygon(currentPoint, demarcationPolygon);
       }
@@ -169,9 +178,9 @@ const startAnimation = (): void => {
     });
 
     if (isInsideDemarcation) {
-      console.log(`Ponto ${Math.floor(index)} está dentro das demarcacoes.`);
+      isOutOfDemarcation.value = false;
     } else {
-      console.log(`Ponto ${Math.floor(index)} NÃO está dentro das demarcacoes.`);
+      isOutOfDemarcation.value = true;
     }
 
     if (index >= coordinates.value.length - 1) {
@@ -195,6 +204,7 @@ onMounted(() => {
   emit("removeRoute", Number(props.userCode));
   setupMap();
   loadUserCoordinates();
+  console.log(Vue.options.directives['tooltip']);
 });
 
 const loadUserCoordinates = (): void => {
@@ -408,4 +418,6 @@ label{
   color: gray;
   font-size: 0.8em;
 }
+
+
 </style>

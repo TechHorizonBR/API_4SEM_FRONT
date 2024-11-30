@@ -80,8 +80,6 @@ function toggleSelectAll() {
       removePolygon(index);
     }
   });
-
-  // Emitindo o selectedDemarcations atualizado
   emit('updateDemarcations', demarcations.value, selectedDemarcations.value);
 }
 
@@ -212,6 +210,5 @@ function plotPolygon(coordinates: number[][], user_id: number) {
 }
 .demarcation-dark-mode{
   background-color: #35005d;
-
 }
 </style>
