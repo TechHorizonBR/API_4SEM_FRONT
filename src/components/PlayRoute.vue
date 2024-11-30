@@ -54,7 +54,6 @@
     <LoadDemarcation v-if="showDemarcation" :userCode="props.userCode" :isDark="props.isDark" :map="props.map" v-show="showDemarcation"
     @updateDemarcations="handleDemarcations"></LoadDemarcation>
   </div>
-
 </template>
 
 <script setup lang="ts">
@@ -82,12 +81,14 @@ const userSelected = ref<User>();
 const emit = defineEmits(["removeRoute"]);
 const showDemarcation = ref(false);
 const demarcations = ref([]);
+const selectedDemarcations = ref<boolean[]>([]);
 
 let animationFrameId: number | null = null;
 let startTime = 0;
 
-const handleDemarcations = (data: any) => {
+const handleDemarcations = (data: any, selectedData: boolean[]) => {
   demarcations.value = data;
+  selectedDemarcations.value = selectedData;
 };
 
 const geojson = ref({
@@ -138,7 +139,6 @@ const setupMap = (): void => {
     }
   } 
 };
-
 const startAnimation = (): void => {
   let index = 0;
 
@@ -155,17 +155,23 @@ const startAnimation = (): void => {
       source.setData({ ...geojson.value });
     }
 
-    // Calculando se o ponto atual está dentro das demarcações
+    // Calculando se o ponto atual está dentro das demarcações selecionadas
     const currentPoint = turf.point(coordinates.value[Math.floor(index)]); // ponto atual da animação
-    const isInsideDemarcation = demarcations.value.some(demarcation => {
-    const demarcationPolygon = turf.polygon([demarcation.coordinate]);
-      return turf.booleanPointInPolygon(currentPoint, demarcationPolygon);
+    const isInsideDemarcation = demarcations.value.some((demarcation, i) => {
+      const demarcationPolygon = turf.polygon([demarcation.coordinate]);
+
+      // Verifica se o polígono está dentro da área da animação
+      const isSelected = selectedDemarcations.value[i]; // Verifica se o polígono foi selecionado
+      if (isSelected) {
+        return turf.booleanPointInPolygon(currentPoint, demarcationPolygon);
+      }
+      return false;
     });
 
     if (isInsideDemarcation) {
-      console.log(`Ponto ${Math.floor(index)} está dentro das demarcações.`);
+      console.log(`Ponto ${Math.floor(index)} está dentro das demarcacoes.`);
     } else {
-      console.log(`Ponto ${Math.floor(index)} NÃO está dentro das demarcações.`);
+      console.log(`Ponto ${Math.floor(index)} NÃO está dentro das demarcacoes.`);
     }
 
     if (index >= coordinates.value.length - 1) {

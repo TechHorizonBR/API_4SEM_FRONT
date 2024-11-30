@@ -70,7 +70,6 @@ const getDemarcationsByUser = async () => {
   }
 }
 
-
 function toggleSelectAll() {
   selectedDemarcations.value = selectedDemarcations.value.map(() => selectAll.value);
 
@@ -81,6 +80,9 @@ function toggleSelectAll() {
       removePolygon(index);
     }
   });
+
+  // Emitindo o selectedDemarcations atualizado
+  emit('updateDemarcations', demarcations.value, selectedDemarcations.value);
 }
 
 function checkIndividualSelection() {
@@ -93,7 +95,11 @@ function checkIndividualSelection() {
       removePolygon(index);
     }
   });
+
+  // Emitindo o selectedDemarcations atualizado
+  emit('updateDemarcations', demarcations.value, selectedDemarcations.value);
 }
+
 
 function removePolygon(user_id: number) {
   const sourceId = `area_${user_id}`;
