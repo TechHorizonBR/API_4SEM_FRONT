@@ -1,25 +1,25 @@
 import apiClient from "@/services/axiosConfig";
 import { useRouter } from "vue-router";
 
-class UserSysService {
-  async updateUser(userId: number, userData: { name: string; role: string }) {
-    const router = useRouter();
-    try {
-      const response = await apiClient.put(
-        `/usersys/update-user?id=${userId}`,
-        userData,
-      );
-      return response.data; // Retorna os dados atualizados ou algum outro retorno conforme necessário
-    } catch (error: any) {
-      if (error.response && error.response.status === 401) {
-        alert("Session expired! Please log in again.");
-        router.push({ path: "/" });
-      } else {
-        console.error("Error updating user:", error);
-        alert("Error updating user");
+class UserSysService{
+    async updateUser(userId: number, userData: { name: string; role: string }) {
+        const router = useRouter();
+        try {
+          const response = await apiClient.put(
+            `/usersys/update-user?id=${userId}`,
+            userData
+          );
+          return response.data; // Retorna os dados atualizados ou algum outro retorno conforme necessário
+        } catch (error: any) {
+          if (error.response && error.response.status === 401) {
+            alert("Session expired! Please log in again.");
+            router.push({ path: '/' });
+          } else {
+            console.error("Error updating user:", error);
+            alert('Error updating user');
+          }
+        }
       }
-    }
-  }
 
   async createUser(userData: {
     name: string;

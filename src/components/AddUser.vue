@@ -198,19 +198,16 @@ const editUser = (usuario: any) => {
   usuario.isEditing = true; // Ativar modo de edição
 };
 
-const saveUser = async (usuario: any) => {
-  try {
-    // Envia os dados atualizados
-    const userData = {
-      id: usuario.id,
-      name: usuario.name,
-      role: usuario.role,
-    };
-
-    const updatedUser = await UserSysService.updateUser(
-      userUpdateData.id,
-      userData,
-    );
+    const saveUser = async (usuario: any) => {
+    try {
+      // Envia os dados atualizados
+      const userData = {
+        id: usuario.id,
+        name: usuario.name,
+        role: usuario.role,
+      };
+      
+      const updatedUser = await UserSysService.updateUser(userData);
 
     if (updatedUser) {
       usuario.isEditing = false; // Desativa o modo de edição
