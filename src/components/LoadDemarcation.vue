@@ -38,7 +38,7 @@
 
 </template>
 <script setup lang="ts">
-import { onMounted, ref, toRaw, onUnmounted } from 'vue';
+import { onMounted, ref, toRaw } from 'vue';
 import DemarcationsServices from '../services/demarcations';
 
 const showMessage = ref(false);
@@ -242,6 +242,5 @@ function plotPolygon(coordinates: number[][], user_id: number) {
   color: gray;
   font-size: 0.8em;
 }
-
 
 </style>
