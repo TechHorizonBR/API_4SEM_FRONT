@@ -90,30 +90,28 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref } from 'vue';
+<script>
+  import RegistroService from '@/services/registros';
+import { userStore } from '@/stores/token';
+export default {
+  props: {
+    isVisible: Boolean
+  },
+  methods: {
+    findUser() {
+      // Função para buscar usuário
+    },
+    createUser() {
+      // Função para criar usuário
+    },
+    closeAddUser() {
 
+    }
+  },
+  mounted(){
 
-const props = defineProps<{
-  isDark: boolean
-}>();
-
-
-const isVisibleCreateUser = ref<boolean>(false);
-const isVisibleAllUsers = ref<boolean>(true);
-
-
-const toogleIsVisibleCreateUser = () => {
-  isVisibleAllUsers.value = false;
-  isVisibleCreateUser.value = true;
-}
-
-
-const toogleIsVisibleAllUsers = () => {
-  isVisibleCreateUser.value = false;
-  isVisibleAllUsers.value = true;
-}
-
+  }
+};
 </script>
 
 <style scoped>

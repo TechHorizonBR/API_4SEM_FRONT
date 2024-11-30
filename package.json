@@ -22,6 +22,7 @@
     "axios": "^1.7.7",
     "com.techhorizon": "file:",
     "flatpickr": "^4.6.13",
+    "jwt-decode": "^4.0.0",
     "mapbox-gl": "^3.7.0",
     "pinia": "^2.1.7",
     "v-tooltip": "^2.1.3",
