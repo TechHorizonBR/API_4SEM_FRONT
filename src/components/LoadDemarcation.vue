@@ -4,13 +4,14 @@
     <h3
       v-if="demarcations.length > 0"  
       :class="{'mode-dark-title': isDark, 'mode-light-title': !isDark}" 
-      class="title-demarcations">Demarcations:</h3>
+      class="title-demarcations">Demarcations</h3>
       <h3 v-else:class="{'mode-dark-title': isDark, 'mode-light-title': !isDark}" 
       class="title-demarcations">No demarcations available</h3>
     <div class="demarcation-container" v-if="demarcations.length > 0">
-      <label>
-      <input type="checkbox" v-model="selectAll" @change="toggleSelectAll">
-      Select all
+
+      <label class="checkbox-label">
+        <input type="checkbox" v-model="selectAll" @change="toggleSelectAll">
+        Select all
       </label>
       <div class="data-list">
 
@@ -181,6 +182,7 @@ function plotPolygon(coordinates: number[][], user_id: number) {
 
 </script>
 <style>
+
 .load-container {
   position: absolute;
   top: 26vh;
@@ -207,11 +209,12 @@ function plotPolygon(coordinates: number[][], user_id: number) {
 }
 .mode-dark-title{
   color: white;
+  padding: 0;
 }
 .mode-light-title{
   color: black;
+  margin-top: 0;
 }
-
 .demarcation{
   display: flex;
   justify-content: space-between;   
@@ -229,4 +232,16 @@ function plotPolygon(coordinates: number[][], user_id: number) {
 .demarcation-dark-mode{
   background-color: #35005d;
 }
+
+.checkbox-label{
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 8px;
+  margin-right: 22px;
+  margin: 0 !important;
+  color: gray;
+  font-size: 0.8em;
+}
+
+
 </style>
