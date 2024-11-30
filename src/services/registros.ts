@@ -54,6 +54,34 @@ class RegistrosService {
     }
   }
 
+  async resetPassword(data: { id: number; password: string; passwordConfirmation: string }) {
+    const router = useRouter();
+    try {
+      const response = await apiClient.patch(`/reset-senha?id=${data.id}`, {
+        id: data.id,
+        password: data.password,
+        passwordConfirmation: data.passwordConfirmation,
+      });
+      if (response.status === 200) {
+        return "Password has been reset successfully.";
+      } else if (response.status == 401) {
+        alert("Session expired! Please log in again.");
+        const router = useRouter();
+        router.push({ path: "/" });
+      } else {
+        return "Unable to reset password.";
+      }
+    } catch (error: any) {
+      if (error.response && error.response.status === 401) {
+        alert("Session expired! Please log in again.");
+        router.push({ path: "/" });
+      } else {
+        console.error("An unexpected error occurred:", error);
+        return "An unexpected error occurred while resetting the password.";
+      }
+    }
+  }
+
 }
 
 export default new RegistrosService();

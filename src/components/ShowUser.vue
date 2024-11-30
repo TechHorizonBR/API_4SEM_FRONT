@@ -11,9 +11,6 @@
                         <button class="sidebar-button" @click="swapIsReset()">
                             Reset Password
                         </button>
-                        <button class="sidebar-button" id="bClose">
-                            Close
-                        </button>
                     </div>
 
                     <div class="block2">
@@ -139,15 +136,6 @@
                                 </span>
                                 <span
                                     :class="
-                                        strongRules.maxChar
-                                            ? 'icon-error'
-                                            : 'icon-check'
-                                    "
-                                >
-                                    Maximum 20 characters
-                                </span>
-                                <span
-                                    :class="
                                         strongRules.lowerCase
                                             ? 'icon-check'
                                             : 'icon-error'
@@ -193,6 +181,8 @@
 
 <script>
 import { userStore } from "@/stores/token";
+import RegistrosService from "@/services/registros";
+
 export default {
     props: {
         isVisible: Boolean,
@@ -205,7 +195,6 @@ export default {
             confirmPassword: "",
             strongRules: {
                 minChar: false,
-                maxChar: false,
                 lowerCase: false,
                 upperCase: false,
                 number: false,
@@ -222,7 +211,6 @@ export default {
             const password = this.password;
 
             this.strongRules.minChar = password.length >= 8;
-            this.strongRules.maxChar = password.length > 20;
             this.strongRules.lowerCase = /[a-z]/.test(password);
             this.strongRules.upperCase = /[A-Z]/.test(password);
             this.strongRules.number = /[0-9]/.test(password);
@@ -230,12 +218,11 @@ export default {
                 password
             );
 
-            const rulesWithoutMaxChar = { ...this.strongRules, maxChar: true };
-            this.isStrong = Object.values(rulesWithoutMaxChar).every(
+            this.isStrong = Object.values(this.strongRules).every(
                 (rule) => rule === true
             );
         },
-        changePassword() {
+        async changePassword() {
             if (this.password !== this.confirmPassword) {
                 alert("Passwords aren't the same");
                 return;
@@ -246,10 +233,23 @@ export default {
                 return;
             }
 
+            const dataPass = {
+                id: (this.userStr).user?.id,
+                password: this.password,
+                passwordConfirmation: this.confirmPassword
+            }
             //fazer requisicao
+            try {
+                const changed = await RegistrosService.resetPassword(dataPass);
+                console.log(changed);
+            } catch (error) {
+                console.error("Error resetting password:", error);
+            }
         },
     },
-    mounted() {},
+    mounted() {
+        // console.log("STORE:", (this.userStr).user?.id);
+    },
 };
 </script>
 
@@ -279,6 +279,8 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    margin-bottom: 15px;
+    width: 80%;
 }
 
 .fline1,
@@ -363,7 +365,7 @@ export default {
 }
 
 .block2_pass {
-    /* display: flex; */
+    display: flex;
     flex-direction: row;
     margin-left: 100px;
     width: 90%;
@@ -389,10 +391,6 @@ export default {
 .case4 {
     display: flex;
     flex-direction: column;
-}
-
-.blockForm {
-    margin-bottom: 15px;
 }
 
 .tableDark {

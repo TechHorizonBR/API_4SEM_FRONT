@@ -69,7 +69,7 @@ const fetchLogin = async () => {
     }
 
     const response = await LoginService.autenticarUsuario(usuario.value, senha.value);
-    if (response.status === 200) {
+    if (response?.status === 200) {
       tokenStr.setToken(response.data.token);
       const nome = (decodeToken(tokenStr.token)?.sub) as string;
         try {
