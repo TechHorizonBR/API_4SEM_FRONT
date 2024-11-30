@@ -20,7 +20,6 @@
             style="color: #ff0000;"
             id="warning-device-out"
             v-if="isOutOfDemarcation"
-            v-tooltip="'Dispositivo fora da demarcação'"
           />
         </div>
         
@@ -204,7 +203,6 @@ onMounted(() => {
   emit("removeRoute", Number(props.userCode));
   setupMap();
   loadUserCoordinates();
-  console.log(Vue.options.directives['tooltip']);
 });
 
 const loadUserCoordinates = (): void => {
