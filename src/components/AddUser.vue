@@ -4,7 +4,6 @@
       <h1 class="title">User System Manager</h1>
       <div class="block0">
         <div class="block1" :class="{ 'block1Dark': isDark, 'block1Light': !isDark }">
-          <a class="sidebar-button" @click="toggleIsVisibleFindUser">+ Find By Username</a>
           <a class="sidebar-button" @click="toggleIsVisibleCreateUser">+ Create User</a>
           <a class="sidebar-button" @click="toggleIsVisibleAllUsers">+ See all users</a>
           <a class="sidebar-button" @click="closeAddUser"  id="bClose"> Close</a>
@@ -56,24 +55,33 @@
             <a class="create-button" @click="createUser">Cadastrar</a>
           </div>
           <!-- Tabela de Usuários -->
-          <div class="table-container">
+          <div class="table-container" v-if="isVisibleAllUsers">
             <table :class="{ 'tableDark': isDark, 'tableLight': !isDark }">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Name</th>
+                  <th>Username</th>
                   <th>Role</th>
+                  <th>Created At</th>
+                  <th>Modified At</th>
+                  <th>Created By</th>
+                  <th>Modified By</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(usuario, index) in usuarios" :key="usuario.id">
+                  <td>{{usuario.id}}</td>
                   <td>
                     <input 
                       v-if="usuario.isEditing" 
                       v-model="usuario.name" 
-                      :class="{ 'usernameDark': isDark, 'usernameLight': !isDark }"
+                      :class="{ 'nameDark': isDark, 'nameLight': !isDark }"
                     />
                     <span v-else>{{ usuario.name }}</span>
                   </td>
+                  <td>{{usuario.username}}</td>
                   <td>
                     <select 
                       v-if="usuario.isEditing" 
@@ -85,6 +93,10 @@
                     </select>
                     <span v-else>{{ usuario.role }}</span>
                   </td>
+                  <td>{{usuario.createdAt}}</td>
+                  <td>{{usuario.modifiedAt}}</td>
+                  <td>{{usuario.createdBy}}</td>
+                  <td>{{usuario.modifiedBy}}</td>
                   <td>
                     <button 
                       v-if="usuario.isEditing" 
@@ -106,6 +118,7 @@
       </div>
     </div>
   </div>
+  <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
 </template>
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
@@ -113,10 +126,13 @@ import registros from "@/services/registros";
 import UserSysService from "@/services/UserSys";
 import apiClient from "@/services/axiosConfig";
 import { userStore } from "@/stores/token";
-import { off } from "process";
+import Alerts from "./Alerts.vue";
+const showMessage = ref<boolean>(false);
+const messageAlert = ref<string>("");
 
-const isVisibleFindByUser = ref<boolean>(false);
+
 const isVisibleCreateUser = ref<boolean>(false);
+const isVisibleAllUsers = ref<boolean>(false)
 const usuarios = ref<any[]>([]);
 
 const usuario = ref({
@@ -129,33 +145,34 @@ const usuario = ref({
 const confirmPassword = ref('');
 
 const toggleIsVisibleCreateUser = () => {
-  isVisibleFindByUser.value = false;
-  isVisibleCreateUser.value = true;
+  isVisibleAllUsers.value = false;
+  isVisibleCreateUser.value = !isVisibleCreateUser.value;
 };
+const showAlert = (message: string) => {
+  showMessage.value = true;
+  messageAlert.value = message;
 
-const toggleIsVisibleFindUser = () => {
-  isVisibleCreateUser.value = false;
-  isVisibleFindByUser.value = true;
+  setTimeout(() => {
+    showMessage.value = false;
+    messageAlert.value = "";
+  }, 3000);
 };
-
 const toggleIsVisibleAllUsers = () => {
   isVisibleCreateUser.value = false;
-  isVisibleFindByUser.value = false;
+  isVisibleAllUsers.value = !isVisibleAllUsers.value;
 };
 
 const closeAddUser = () => {
-  // Função para fechar a adição de usuário
-};
-const userId = userStore().user.id;
-
-const userUpdateData = {
-  id: userId,
+  isVisibleCreateUser.value = false
 };
 
+const props = defineProps<{
+  isDark: boolean
+}>();
 
 const createUser = async () => {
   if (usuario.value.password !== confirmPassword.value) {
-    alert("Passwords do not match!");
+    showAlert("Passwords do not match!");
     return;
   }
 
@@ -164,7 +181,7 @@ const createUser = async () => {
     !usuario.value.password ||
     !usuario.value.role
   ) {
-    alert("All fields are required!");
+    showAlert("All fields are required!");
     return;
   }
 
@@ -172,7 +189,7 @@ const createUser = async () => {
     const response = await UserSysService.createUser(usuario.value);
 
     if (response) {
-      alert("User created successfully!");
+      showAlert("User created successfully!");
       resetForm(); // Reseta o formulário após sucesso
       getAllUsersSys();
     }
@@ -211,12 +228,12 @@ const editUser = (usuario: any) => {
 
     if (updatedUser) {
       usuario.isEditing = false; // Desativa o modo de edição
-      alert("Usuário editado com sucesso");
+      showAlert("User has been changed successfully!");
       getAllUsersSys(); // Recarrega os usuários após atualização
     }
   } catch (error) {
     console.error("Erro ao editar o usuário:", error);
-    alert("Erro ao tentar editar o usuário");
+    showAlert("Erro ao tentar editar o usuário");
   }
 };
 
@@ -230,10 +247,10 @@ const removeUser = async (usuario: any) => {
     usuarios.value = usuarios.value.filter(
       (u) => u.username !== usuario.username,
     );
-    alert(`User "${usuario.username}" removed successfully!`);
+    showAlert(`User "${usuario.username}" removed successfully!`);
   } catch (error) {
     console.error("Error deleting user:", error);
-    alert("Erro ao tentar remover o usuário");
+    showAlert("Erro ao tentar remover o usuário");
   }
 };
 
@@ -278,12 +295,13 @@ onMounted(() => {
 .box {
   display: flex; /* Usando flexbox para dividir em colunas */
   width: 75%;
-  height: 52%;
+  /* height: 52%; */
   border-radius: 20px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
   top: 28px;
+  flex-direction: column;
 }
 .case1 {
   display: flex;
@@ -330,8 +348,8 @@ onMounted(() => {
 }
 
 .table-container {
-  width: 90%;
-  max-height: 300px; /* Altura máxima para a tabela */
+  width: 700px;
+  max-height: 400px; /* Altura máxima para a tabela */
   overflow: auto; /* Permite rolagem quando o conteúdo ultrapassar o tamanho */
   border-radius: 10px;
   margin-top: 20px; /* Espaçamento acima da tabela */
@@ -431,5 +449,17 @@ select {
 
 .edit-button:hover {
   background-color: #5c0ea3; /* Cor de hover diferente */
+}
+
+th {
+  text-align: center;
+  width: 100px;
+ }
+
+ tr {
+  width: 100px;
+ }
+ td{
+  width: 100px;
 }
 </style>

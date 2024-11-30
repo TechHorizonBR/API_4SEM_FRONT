@@ -2,6 +2,17 @@ import apiClient from "@/services/axiosConfig";
 import { useRouter } from "vue-router";
 
 class RegistrosService {
+
+  // Métodos não implementados
+  removeUser(id: any) {
+    throw new Error('Method not implemented.');
+  }
+
+  editUser(id: any, arg1: { username: string; }) {
+    throw new Error('Method not implemented.');
+  }
+
+  // Método para obter registros com parâmetros
   async getRegistros(
     id: number,
     page: number,
@@ -48,7 +59,7 @@ class RegistrosService {
         alert("Session expired! Please log in again.");
         router.push({ path: "/" });
       }
-      console.log("Error to find user:", error);
+      console.log("Error to find users:", error);
     }
   }
 }
