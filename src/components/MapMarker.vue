@@ -130,7 +130,7 @@ async function saveDemarcation() {
     }
 
     if (areaName.value.trim() === "") {
-      showAlert("Please enter the name of the demarcation.");
+      showAlert("Please provide the name of the demarcation");
       return;
     }
 
@@ -151,7 +151,7 @@ async function saveDemarcation() {
     areaName.value = "";
     showDraw.value = false;
   } catch (error) {
-    showAlert("Something is wrong. Please try again later.");
+    showAlert("Something went wrong. Please try again later");
   }
 }
 
@@ -164,7 +164,7 @@ const fetchDevices = async () => {
   try {
     devices.value = await DevicesService.getDevices();
   } catch (error) {
-    console.error("Erro ao buscar dispositivos:", error);
+    console.error("Something went wrong. Please try again later. ", error);
   }
 };
 
@@ -184,15 +184,15 @@ const getDemarcationsByUser = async () => {
     );
 
     if (response === "Error") {
-      showAlert("Something is wrong. Please, try again later.");
+      showAlert("Something went wrong. Please try again later");
     } else {
       demarcations.value = response;
       if (demarcations.value.length === 0) {
-        showAlert("User does not have demarcations.");
+        showAlert("User has no demarcations");
       }
     }
   } catch (error) {
-    showAlert("Something is wrong. Please, try again later.");
+    showAlert("Something went wrong. Please try again later");
   }
 };
 

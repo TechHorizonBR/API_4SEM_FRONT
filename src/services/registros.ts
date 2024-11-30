@@ -27,7 +27,7 @@ class RegistrosService {
       return response.data;
     } catch (error: any) {
       if (error.status === 401) {
-        alert("Session expired! Please log in again.");
+        alert("Your session has expired. Please log in again.");
         router.push({ path: "/" });
       }
     }
@@ -42,7 +42,7 @@ class RegistrosService {
       return response.data;
     } catch (error: any) {
       if (error.status === 401) {
-        alert("Session expired! Please log in again.");
+        alert("Your session has expired. Please log in again.");
         router.push({ path: "/" });
       }
       console.log("Error to find user:", error);
@@ -56,7 +56,7 @@ class RegistrosService {
       return response.data;
     } catch (error: any) {
       if (error.status === 401) {
-        alert("Session expired! Please log in again.");
+        alert("Your session has expired. Please log in again.");
         router.push({ path: "/" });
       }
       console.log("Error to find users:", error);
