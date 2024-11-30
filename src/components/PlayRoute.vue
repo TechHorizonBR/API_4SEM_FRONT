@@ -183,9 +183,39 @@ const capitalizeWords = (str: string): string => {
 };
 
 
+const addCoordenadasInMapUnMounted = () => {
+  const routeId = `route${userSelected.value?.id}`;
 
+        props.map.addSource(routeId, {
+            type: "geojson",
+            data: {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                    type: "LineString",
+                    coordinates: coordinates.value,
+                },
+            },
+        });
+
+        props.map.addLayer({
+            id: routeId,
+            type: "line",
+            source: routeId,
+            layout: {
+                "line-join": "round",
+                "line-cap": "round",
+            },
+            paint: {
+                "line-color": "#0f53ff",
+                "line-width": 4,
+            },
+        });
+}
 onUnmounted(() => {
   stopAnimation();
+  console.log("cheguei")
+  addCoordenadasInMapUnMounted();
 });
 
 const voltarFilter = (): void => {
