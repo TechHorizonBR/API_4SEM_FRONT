@@ -204,7 +204,7 @@ const editUser = (usuario: any) => {
       const userData = {
         id: usuario.id,
         name: usuario.name,
-        role: usuario.role,
+        role: usuario.role
       };
       
       const updatedUser = await UserSysService.updateUser(userData);
