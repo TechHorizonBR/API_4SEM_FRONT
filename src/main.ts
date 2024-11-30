@@ -10,7 +10,7 @@ import { faUser, faBell, faMapMarkerAlt, faFilter, faUserPlus, faSignInAlt, faMa
 import "./styles.css";
 
 // Adiciona os ícones à biblioteca do FontAwesome, incluindo o ícone de filtro (faFilter)
-library.add(faUser, faBell, faMapMarkerAlt, faUserPlus, faSignInAlt, faFilter, faMapPin, faMapLocationDot, faClock, faMobile, faCalendar, faTrash, faMap, faEye, faXmark, faPlay, faStop, faPersonRunning, faPerson);
+library.add(faUser, faBell, faMapMarkerAlt, faUserPlus, faSignInAlt, faFilter, faMapPin, faMapLocationDot, faClock, faMobile, faCalendar, faTrash, faMap, faEye, faXmark, faPlay, faStop, faPersonRunning, faPerson, faCalendar);
 
 // Cria a aplicação
 const app = createApp(App);

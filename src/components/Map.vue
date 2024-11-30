@@ -298,7 +298,8 @@ function inicializarMapa() {
     
 
     if (mapContainer.value) {
-        map.value = markRaw(
+        if(!map.value){
+            map.value = markRaw(
             new Map({
                 container: mapContainer.value,
                 style: mapModeStore.isDarkMode
@@ -308,6 +309,8 @@ function inicializarMapa() {
                 zoom: initialState.zoom,
             })
         );
+        }
+        
 
 
     const drawControls = document.querySelectorAll(".mapboxgl-ctrl-group.mapboxgl-ctrl");
@@ -485,7 +488,7 @@ async function plotPontos(
                 "line-cap": "round",
             },
             paint: {
-                "line-color": "#0f53ff",
+                "line-color":"#ba74f0",
                 "line-width": 4,
             },
         });
@@ -570,54 +573,67 @@ function createMarkerElement(name: string, element: HTMLElement) {
 
     return el;
 }
-
 watch(
     () => mapModeStore.isDarkMode,
     (isDarkMode) => {
         if (map.value) {
+            const savedSources = map.value.getStyle().sources;
+            const savedLayers = map.value.getStyle().layers;
+
             map.value.setStyle(
                 isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS
             );
-            map.value.on("load", () => {
+
+            map.value.once("styledata", () => {
+                for (const sourceId in savedSources) {
+                    if (!map.value.getSource(sourceId)) {
+                        map.value.addSource(sourceId, savedSources[sourceId]);
+                    }
+                }
+
+                savedLayers.forEach((layer) => {
+                    if (!map.value.getLayer(layer.id)) {
+                        map.value.addLayer(layer);
+                    }
+                });
+
                 const attributionControl = document.querySelector(
                     ".maplibregl-ctrl-attrib a"
                 ) as HTMLElement;
                 if (attributionControl) {
                     attributionControl.style.display = "none";
                 }
+
+                const controlElements =
+                    document.getElementsByClassName("maplibregl-ctrl");
+                Array.from(controlElements).forEach((element) => {
+                    const htmlElement = element as HTMLElement;
+                    htmlElement.style.backgroundColor = isDarkMode
+                        ? "#0a0012e3"
+                        : "#fff";
+                    htmlElement.style.color = isDarkMode ? "#fff" : "#000";
+                });
+
+                const controlIcons = document.getElementsByClassName(
+                    "maplibregl-ctrl-icon"
+                );
+                Array.from(controlIcons).forEach((icon) => {
+                    const iconHtml = icon as HTMLElement;
+                    iconHtml.style.filter = isDarkMode
+                        ? "invert(100%)"
+                        : "none";
+                });
             });
-
-            const controlElements =
-                document.getElementsByClassName("maplibregl-ctrl");
-            for (let element of controlElements) {
-                const htmlElement = element as HTMLElement;
-                if (isDarkMode) {
-                    htmlElement.style.backgroundColor = "#0a0012e3";
-                    htmlElement.style.color = "#fff";
-                } else {
-                    htmlElement.style.backgroundColor = "#fff";
-                    htmlElement.style.color = "#000";
-                }
-            }
-
-            const controlIcons = document.getElementsByClassName(
-                "maplibregl-ctrl-icon"
-            );
-            for (let icon of controlIcons) {
-                const iconHtml = icon as HTMLElement;
-                if (isDarkMode) {
-                    iconHtml.style.filter = "invert(100%)";
-                } else {
-                    iconHtml.style.filter = "none";
-                }
-            }
         }
     }
 );
 
+<<<<<<< HEAD
 defineExpose({
   plotPolygon
 });
+=======
+>>>>>>> 68c3cf4bba5c2665be277adfd8d3b5a2996141d4
 
 </script>
 
