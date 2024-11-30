@@ -14,13 +14,14 @@
         <div class="device-user">
           <font-awesome-icon :icon="['fas', 'mobile']" />
           <label>{{ userSelected?.device }}</label>
-          
           <font-awesome-icon
-            :icon="['fas', 'triangle-exclamation']"
-            style="color: #ff0000;"
-            id="warning-device-out"
-            v-if="isOutOfDemarcation"
+          :icon="['fas', 'triangle-exclamation']"
+          style="color: #ff0000;"
+          id="warning-device-out"
+          v-if="isOutOfDemarcation"
+          title="Device is out of demarcation!"
           />
+
         </div>
         
       </div>

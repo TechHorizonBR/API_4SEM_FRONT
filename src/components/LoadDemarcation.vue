@@ -13,10 +13,23 @@
       Select all
       </label>
       <div class="data-list">
-        <div class="demarcation" v-for="(demarcation, index) of demarcations" :key="index" :class="{'demarcation-dark-mode': isDark, 'demarcation-light-mode': !isDark }" >
-          <h4>{{ demarcation.nome }}</h4>
-          <input type="checkbox" v-model="selectedDemarcations[index]" @change="checkIndividualSelection">
-        </div>
+
+        <div
+            class="demarcation"
+            v-for="(demarcation, index) of demarcations"
+            :key="index"
+            :class="{'demarcation-dark-mode': isDark, 'demarcation-light-mode': !isDark }"
+            @click="toggleCheckbox(index)"
+          > 
+            <h4>{{ demarcation.nome }}</h4>
+            <input 
+              type="checkbox" 
+              v-model="selectedDemarcations[index]" 
+              @change="checkIndividualSelection" 
+              @click.stop
+            >
+          </div>
+
       </div>
     </div>
     <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
@@ -39,6 +52,11 @@ const selectedDemarcations = ref<boolean[]>([]);
 onMounted(() => {
   getDemarcationsByUser();
 });
+
+const toggleCheckbox = (index: number) => {
+  selectedDemarcations.value[index] = !selectedDemarcations.value[index];
+  checkIndividualSelection();
+};
 
 const props = defineProps<{
   userCode: string;
