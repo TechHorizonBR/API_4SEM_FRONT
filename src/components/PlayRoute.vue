@@ -6,11 +6,16 @@
         <font-awesome-icon :icon="['fas', 'xmark']" class="icone-button-close" @click="voltarFilter" />
       </div>
       <div class="user-information">
-        <font-awesome-icon :icon="['fas', 'person']" />
-        <label>{{ userSelected?.nome }}</label>
-
-        <font-awesome-icon :icon="['fas', 'mobile']" />
-        <label>{{ userSelected?.device }}</label>
+        <div class="name-user">
+          <font-awesome-icon :icon="['fas', 'person']" />
+          <label>{{ userSelected?.nome }}</label>
+        </div>
+        
+        <div class="device-user">
+          <font-awesome-icon :icon="['fas', 'mobile']" />
+          <label>{{ userSelected?.device }}</label>
+        </div>
+        
       </div>
       <div class="controls">
         <button id="play-pause-btn" @click="togglePlayPause">
@@ -111,7 +116,7 @@ const setupMap = (): void => {
           "line-join": "round",
         },
         paint: {
-          "line-color": "#0f53ff",
+          "line-color": "#ba74f0",
           "line-width": 5,
           "line-opacity": 0.8,
         },
@@ -207,7 +212,7 @@ const addCoordenadasInMapUnMounted = () => {
                 "line-cap": "round",
             },
             paint: {
-                "line-color": "#0f53ff",
+                "line-color": "#ba74f0",
                 "line-width": 4,
             },
         });
@@ -242,11 +247,19 @@ const voltarFilter = (): void => {
   gap: 10px;
 }
 .velocidade,
-.time, .user-information {
+.time{
   display: flex;
   gap: 10px;
   align-items: center;
   margin: 5px 0 0 0;
+}
+
+.name-user, .device-user{
+  display: flex;
+  gap: 10px;
+}
+.device-user{
+  margin: 6px 0;
 }
 .velocidade{
   justify-content: end;
@@ -330,6 +343,9 @@ const voltarFilter = (): void => {
   background-color: #0a0012e3;
   color: white;
 }
+.light-player-container{
+  color: black
+}
 .dark-input-selector{
   background-color: #383838;
   color: white;
@@ -338,7 +354,7 @@ label{
   font-size: 1.2
 }
 .user-information{
-  margin: 3px 0 5px 0;
+  margin: -16px 0 5px 0;
 }
 
 </style>
