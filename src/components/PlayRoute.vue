@@ -45,7 +45,7 @@
           </select>
         </div>
         <div class="demarcacoes">
-          <h3 id="demarcation-label">Include demarcation</h3>
+          <h3 id="demarcation-label">Display demarcations</h3>
           <input type="checkbox" v-model="showDemarcation">
         </div>
       </div>
@@ -63,6 +63,7 @@ import { selectedUsers } from "@/stores/selectedUsers";
 import { showComponents } from "@/stores/showComponents";
 import { ref, watch, onUnmounted, onMounted } from "vue";
 import LoadDemarcation from "./LoadDemarcation.vue";
+import * as turf from '@turf/turf';
 
 const props = defineProps<{
   isDark: boolean;
@@ -154,6 +155,19 @@ const startAnimation = (): void => {
       source.setData({ ...geojson.value });
     }
 
+    // Calculando se o ponto atual está dentro das demarcações
+    const currentPoint = turf.point(coordinates.value[Math.floor(index)]); // ponto atual da animação
+    const isInsideDemarcation = demarcations.value.some(demarcation => {
+    const demarcationPolygon = turf.polygon([demarcation.coordinate]);
+      return turf.booleanPointInPolygon(currentPoint, demarcationPolygon);
+    });
+
+    if (isInsideDemarcation) {
+      console.log(`Ponto ${Math.floor(index)} está dentro das demarcações.`);
+    } else {
+      console.log(`Ponto ${Math.floor(index)} NÃO está dentro das demarcações.`);
+    }
+
     if (index >= coordinates.value.length - 1) {
       stopAnimation();
       return;
@@ -161,7 +175,7 @@ const startAnimation = (): void => {
     animationFrameId = requestAnimationFrame(updateTime);
   };
 
-  animationFrameId = requestAnimationFrame(updateTime);
+  requestAnimationFrame(updateTime);
 };
 
 const stopAnimation = (): void => {
