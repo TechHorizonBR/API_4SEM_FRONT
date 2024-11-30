@@ -26,10 +26,11 @@
           :key="result.nome"
           @click="setSelected(result, 'name')"
           class="dropdown-item"
-          :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000'}"
-          
-          >
+          :style="{
+            backgroundColor: isDark ? '#383838' : '#FFF',
+            color: isDark ? '#FFF' : '#000',
+          }"
+        >
           {{ result.nome }}
         </li>
       </ul>
@@ -60,8 +61,11 @@
           :key="result.codigoDevice"
           @click="setSelected(result, 'code')"
           class="dropdown-item"
-          :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000'}">
+          :style="{
+            backgroundColor: isDark ? '#383838' : '#FFF',
+            color: isDark ? '#FFF' : '#000',
+          }"
+        >
           {{ result.codigoDevice }}
         </li>
       </ul>
@@ -87,7 +91,6 @@ const props = defineProps<{
   modelValueUserCode: string | number;
   isDark: boolean;
 }>();
-
 
 const emit = defineEmits<{
   (e: "update:modelValueFullName", value: string): void;
@@ -161,19 +164,23 @@ const resetFields = () => {
   emit("update:modelValueCodeDevice", "");
   emit("update:modelValueUserCode", "");
 };
-watch(() => props.modelValueFullName, (newValue) => {
-  if (!newValue) {
-    searchName.value = "";
-  }
-});
+watch(
+  () => props.modelValueFullName,
+  (newValue) => {
+    if (!newValue) {
+      searchName.value = "";
+    }
+  },
+);
 
-watch(() => props.modelValueCodeDevice, (newValue) => {
-  if (!newValue) {
-    searchCode.value = "";
-  }
-});
-
-
+watch(
+  () => props.modelValueCodeDevice,
+  (newValue) => {
+    if (!newValue) {
+      searchCode.value = "";
+    }
+  },
+);
 </script>
 
 <style scoped>

@@ -1,16 +1,13 @@
 <template>
-  
   <div class="gray-background">
-    <Login/>
+    <Login />
   </div>
-  <MapBackground/>
-  
-</template> 
+  <MapBackground />
+</template>
 
 <script setup lang="ts">
-import MapBackground from '@/components/MapBackground.vue';
-import Login from '@/components/Login.vue';
-
+import MapBackground from "@/components/MapBackground.vue";
+import Login from "@/components/Login.vue";
 </script>
 
 <style scoped>

@@ -11,6 +11,50 @@
         </div>
 
         <div class="block2">
+          <div class="blockForm" v-if="isVisibleCreateUser">
+            <div class="fline1">
+              <div class="case1">
+                <label for="name">Username:</label>
+                <input
+                  type="text"
+                  id="name"
+                  placeholder="Type the username"
+                  v-model="usuario.username"
+                  @input="usuario.name = usuario.username"
+                />
+              </div>
+              <div class="case2">
+                <label for="role">Role:</label>
+                <select id="role" v-model="usuario.role">
+                  <option disabled selected>Select One Role</option>
+                  <option value="ROLE_ADMIN">Admin</option>
+                  <option value="ROLE_CLIENTE">User</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="fline2">
+              <div class="case3">
+                <label for="password">Password:</label>
+                <input
+                  type="password"
+                  id="password"
+                  placeholder="Type the password"
+                  v-model="usuario.password"
+                />
+              </div>
+              <div class="case3">
+                <label for="confirm-password">Confirm the Password:</label>
+                <input
+                  type="password"
+                  id="confirm-password"
+                  placeholder="Confirm the password"
+                  v-model="confirmPassword"
+                />
+              </div>
+            </div>
+            <a class="create-button" @click="createUser">Cadastrar</a>
+          </div>
           <!-- Tabela de Usuários -->
           <div class="table-container">
             <table :class="{ 'tableDark': isDark, 'tableLight': !isDark }">
@@ -63,61 +107,74 @@
     </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import registros from '@/services/registros';
-import UserSysService from '@/services/UserSys';
-import apiClient from '@/services/axiosConfig';
-import { userStore } from '@/stores/token';
-import { off } from 'process';
+import { ref, onMounted } from "vue";
+import registros from "@/services/registros";
+import UserSysService from "@/services/UserSys";
+import apiClient from "@/services/axiosConfig";
+import { userStore } from "@/stores/token";
+import { off } from "process";
+
+const isVisibleFindByUser = ref<boolean>(false);
+const isVisibleCreateUser = ref<boolean>(false);
+const usuarios = ref<any[]>([]);
+
+const usuario = ref({
+  name: '',
+  username:'',
+  password: '',
+  role: ''
+});
+
+const confirmPassword = ref('');
+
+const toggleIsVisibleCreateUser = () => {
+  isVisibleFindByUser.value = false;
+  isVisibleCreateUser.value = true;
+};
+
+const toggleIsVisibleFindUser = () => {
+  isVisibleCreateUser.value = false;
+  isVisibleFindByUser.value = true;
+};
+
+const toggleIsVisibleAllUsers = () => {
+  isVisibleCreateUser.value = false;
+  isVisibleFindByUser.value = false;
+};
+
+const closeAddUser = () => {
+  // Função para fechar a adição de usuário
+};
+const userId = userStore().user.id;
+
+const userUpdateData = {
+  id: userId,
+};
 
 
-  const isVisibleFindByUser = ref<boolean>(false);
-  const isVisibleCreateUser = ref<boolean>(false);
-  const usuarios = ref<any[]>([]);
-
-  const toggleIsVisibleCreateUser = () => {
-    isVisibleFindByUser.value = false;
-    isVisibleCreateUser.value = true;
-  };
-
-  const toggleIsVisibleFindUser = () => {
-    isVisibleCreateUser.value = false;
-    isVisibleFindByUser.value = true;
-  };
-
-  const toggleIsVisibleAllUsers = () => {
-    isVisibleCreateUser.value = false;
-    isVisibleFindByUser.value = false;
-  };
-  
-  const closeAddUser= () => {
-      // Função para fechar a adição de usuário
-    };
-  const userId = userStore().user.id;
-
-  const userUpdateData = {
-      id: userId
-  };
-
-  const createUser = async () => {
+const createUser = async () => {
   if (usuario.value.password !== confirmPassword.value) {
     alert("Passwords do not match!");
     return;
   }
 
-  if (!usuario.value.username || !usuario.value.password || !usuario.value.role) {
+  if (
+    !usuario.value.name ||
+    !usuario.value.password ||
+    !usuario.value.role
+  ) {
     alert("All fields are required!");
     return;
   }
 
   try {
     const response = await UserSysService.createUser(usuario.value);
-    
+
     if (response) {
       alert("User created successfully!");
       resetForm(); // Reseta o formulário após sucesso
+      getAllUsersSys();
     }
   } catch (error) {
     console.error("Error creating user:", error);
@@ -125,91 +182,91 @@ import { off } from 'process';
   }
 };
 
-  const getAllUsersSys = async () => {
-    try {
-      const todosUsuarios = await registros.getAllUsers();
-      usuarios.value = todosUsuarios.map((usuario: any) => ({
-        ...usuario,
-        isEditing: false,  // Adicionando isEditing a todos os usuários ao carregar
-      }));
-    } catch (error) {
-      console.error(error);
+const getAllUsersSys = async () => {
+  try {
+    const todosUsuarios = await registros.getAllUsers();
+    usuarios.value = todosUsuarios.map((usuario: any) => ({
+      ...usuario,
+      isEditing: false, // Adicionando isEditing a todos os usuários ao carregar
+    }));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const editUser = (usuario: any) => {
+  usuario.isEditing = true; // Ativar modo de edição
+};
+
+const saveUser = async (usuario: any) => {
+  try {
+    // Envia os dados atualizados
+    const userData = {
+      id: usuario.id,
+      name: usuario.name,
+      role: usuario.role,
+    };
+
+    const updatedUser = await UserSysService.updateUser(
+      userUpdateData.id,
+      userData,
+    );
+
+    if (updatedUser) {
+      usuario.isEditing = false; // Desativa o modo de edição
+      alert("Usuário editado com sucesso");
+      getAllUsersSys(); // Recarrega os usuários após atualização
     }
-  };
+  } catch (error) {
+    console.error("Erro ao editar o usuário:", error);
+    alert("Erro ao tentar editar o usuário");
+  }
+};
 
-  const editUser = (usuario: any) => {
-    usuario.isEditing = true; // Ativar modo de edição
-  };
-
-    const saveUser = async (usuario: any) => {
-    try {
-      // Envia os dados atualizados
-      const userData = {
-        id: usuario.id,
-        name: usuario.name,
-        role: usuario.role,
-      };
-      
-      const updatedUser = await UserSysService.updateUser(userUpdateData.id, userData);
-
-      if (updatedUser) {
-        usuario.isEditing = false;  // Desativa o modo de edição
-        alert('Usuário editado com sucesso');
-        getAllUsersSys();  // Recarrega os usuários após atualização
-      }
-    } catch (error) {
-      console.error("Erro ao editar o usuário:", error);
-      alert('Erro ao tentar editar o usuário');
-    }
-  };
-
-
-  const removeUser = async (usuario: any) => {
+const removeUser = async (usuario: any) => {
   if (!confirm(`Are you sure you want to remove user "${usuario.username}"?`)) {
     return;
   }
   try {
     await UserSysService.removeUser(usuario.username);
 
-    usuarios.value = usuarios.value.filter(u => u.username !== usuario.username);
+    usuarios.value = usuarios.value.filter(
+      (u) => u.username !== usuario.username,
+    );
     alert(`User "${usuario.username}" removed successfully!`);
   } catch (error) {
     console.error("Error deleting user:", error);
-    alert('Erro ao tentar remover o usuário');
+    alert("Erro ao tentar remover o usuário");
   }
 };
 
-    const resetForm = () => {
-      //usuario.value.username = '';
-      //user.value.password = '';
-      //user.value.role = '';
-      //confirmPassword.value = '';
-    };
+const resetForm = () => {
+  usuario.value.username = '';
+  usuario.value.password = '';
+  usuario.value.role = '';
+  confirmPassword.value = '';
+};
 
+onMounted(() => {
+  getAllUsersSys();
 
-  onMounted(() => {
-    getAllUsersSys();
+  const getUsuarios = async () => {
+    try {
+      const allUsers = await registros.getAllUsers();
+      console.log("USUARIOS:", allUsers);
+    } catch (error) {
+      console.error("Erro:", error);
+    }
+  };
 
-    const getUsuarios = async() =>{
-        try{
-          const allUsers = await registros.getAllUsers();
-          console.log("USUARIOS:", allUsers);
-        }catch(error){
-          console.error("Erro:", error);
-        }
-      }
+  getUsuarios();
 
-      getUsuarios();
-
-      console.log(userStore().user);
-      getAllUsersSys();
-
-  });
-
+  console.log(userStore().user);
+  getAllUsersSys();
+});
 </script>
 
 <style scoped>
-
 .container {
   display: flex;
   justify-content: center;
@@ -231,6 +288,25 @@ import { off } from 'process';
   position: relative;
   top: 28px;
 }
+.case1 {
+  display: flex;
+  flex-direction: column;
+}
+
+.case2 {
+  display: flex;
+  flex-direction: column;
+}
+
+.case3 {
+  display: flex;
+  flex-direction: column;
+}
+
+.case4 {
+  display: flex;
+  flex-direction: column;
+}
 
 .containerDark {
   background-color: #5c0ea3;
@@ -246,12 +322,14 @@ import { off } from 'process';
 }
 
 .block1 {
-  flex: 1 1 250px; /* Tornando o bloco dos botões flexível, com largura mínima de 250px */
-  padding-right: 20px; /* Espaço entre os botões e a tabela */
+  flex: 1 1 250px 500px; /* Tornando o bloco dos botões flexível, com largura mínima de 250px */
+  padding-right: 20px;
+  margin-right: 50px; /* Espaço entre os botões e a tabela */
 }
 
 .block2 {
   flex: 3; /* O bloco da tabela ocupa o restante do espaço */
+  flex: 1 1 250px 500px;
 }
 
 .table-container {
@@ -263,7 +341,8 @@ import { off } from 'process';
   margin-left: 30px;
 }
 
-.fline1, .fline2 {
+.fline1,
+.fline2 {
   display: grid;
   grid-template-columns: 2fr 2fr;
   gap: 2rem;
@@ -277,7 +356,26 @@ import { off } from 'process';
   border: 1px solid rgb(41, 41, 41);
 }
 
+.blockForm {
+  margin-bottom: 15px;
+}
+
 .sidebar-button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 25%;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  margin-top: 12%;
+  display: block;
+  border-radius: 8px;
+  background-color: #5c0ea3;
+  color: white;
+  cursor: pointer;
+}
+
+.create-button {
   width: 100%;
   padding: 10px;
   margin-bottom: 25%;
@@ -302,7 +400,7 @@ table {
   border: 1px solid rgba(0, 0, 0, 0.265);
 }
 
-label{
+label {
   margin-bottom: 5px;
 }
 
@@ -319,6 +417,13 @@ td {
   text-align: left;
 }
 
+input,
+select {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgb(156, 156, 156);
+}
+
 /* Estilos específicos para o botão "Editar" */
 .edit-button {
   width: auto; /* Ajusta automaticamente o tamanho do botão */
@@ -331,5 +436,3 @@ td {
   background-color: #5c0ea3; /* Cor de hover diferente */
 }
 </style>
-
-
