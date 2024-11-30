@@ -614,6 +614,19 @@ watch(
                     htmlElement.style.color = isDarkMode ? "#fff" : "#000";
                 });
 
+                const applyFilterToIcons = (className: string, isDarkMode: boolean) => {
+                const elements = document.getElementsByClassName(className);
+                Array.from(elements).forEach((icon) => {
+                    const iconElement = icon as HTMLElement;
+                    iconElement.style.filter = isDarkMode ? "invert(100%)" : "none";
+                });
+            };
+
+            // Aplica o filtro para os ícones de desenho e de lixeira
+            applyFilterToIcons("mapbox-gl-draw_polygon", isDarkMode);
+            applyFilterToIcons("mapbox-gl-draw_trash", isDarkMode);
+
+
                 const controlIcons = document.getElementsByClassName(
                     "maplibregl-ctrl-icon"
                 );
