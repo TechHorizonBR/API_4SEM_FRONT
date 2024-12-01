@@ -33,11 +33,11 @@
       </li>
       <li class="navbar-item">
         <button
-          @click="goToAddUser"
+          @click="isAdmin ? goToAddUser() : goToShowUser()"
           :class="{ 'dark-button': isDark, 'light-button': !isDark }"
         >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
-          Add User
+          {{isAdmin ? "Add User" : "Show Information"}}
         </button>
       </li>
       <li class="navbar-item">
@@ -62,14 +62,8 @@
     >
       <font-awesome-icon :icon="['fas', 'user']" />
     </div>
-    <div
-      class="username-label-container"
-      :class="{
-        'username-label-container-dark': isDark,
-        'username-label-container-light': !isDark,
-      }"
-    >
-      <div class="username-label">Username</div>
+    <div class="username-label-container" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
+      <div class="username-label">{{userStr?.user?.name}}</div>
     </div>
   </div>
   <transition name="fade">
@@ -144,34 +138,36 @@ export default {
         this.showComponentsMode.showAddUser();
       }
     },
+    goToShowUser() {
+      if (this.showComponentsMode.showUser) {
+        this.showComponentsMode.esconderComponents();
+      } else {
+        this.showComponentsMode.showShowUser(); //mds que nome é esse
+      }
+    },
     signInOut() {
+      this.showComponentsMode.esconderComponents();
       this.tokenStr.setToken("");
+      // this.userStr.setUser(null);
       this.router.push("/");
     },
   },
   data() {
-    return {
-      showMapMarker: false,
-      showComponentsMode: showComponents(),
-      router: useRouter(),
-      tokenStr: tokenStore(),
-      userStr: userStore(),
+  return {
+    showMapMarker: false,
+    showComponentsMode: showComponents(),
+    router: useRouter(),
+    tokenStr: tokenStore(),
+    userStr: userStore(),
+    isAdmin: false,
     };
   },
-  mounted() {
-    const tkn = tokenStore();
-    const usr = userStore();
-    const nome = decodeToken(tkn.token)?.sub as string;
-    const fetchUser = async () => {
-      try {
-        const user = await RegistroService.getUserByName(nome);
-        usr.setUser(user);
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-    fetchUser();
-  },
+  mounted(){
+    console.log(this.userStr.user);
+    if(this.userStr.user.role == "ROLE_ADMIN"){
+      this.isAdmin = true;
+    }
+  }
 };
 </script>
 

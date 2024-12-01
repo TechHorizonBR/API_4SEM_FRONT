@@ -41,11 +41,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import LoginService from "@/services/login";
-import Alerts from "./Alerts.vue";
-import { tokenStore } from "@/stores/token";
-import { useRouter } from "vue-router";
+import { ref } from 'vue';
+import LoginService from '@/services/login';
+import Alerts from './Alerts.vue';
+import { tokenStore, userStore } from '@/stores/token';
+import { useRouter } from 'vue-router';
+import { decodeToken } from '@/services/decode';
+import RegistrosService from "@/services/registros";
+
 
 const router = useRouter();
 const usuario = ref<string>("");
@@ -53,6 +56,8 @@ const senha = ref<string>("");
 const messageAlert = ref<string>("");
 const showMessage = ref<boolean>(false);
 const tokenStr = tokenStore();
+const userStr = userStore();
+
 const fetchLogin = async () => {
   try {
     if (usuario.value === "") {
@@ -65,13 +70,19 @@ const fetchLogin = async () => {
       return;
     }
 
-    const response = await LoginService.autenticarUsuario(
-      usuario.value,
-      senha.value,
-    );
-    if (response.status === 200) {
+    const response = await LoginService.autenticarUsuario(usuario.value, senha.value);
+    if (response?.status === 200) {
       tokenStr.setToken(response.data.token);
-      router.push({ path: "/map" });
+      const nome = (decodeToken(tokenStr.token)?.sub) as string;
+        try {
+            const user = await RegistrosService.getUserByName(nome);
+            userStr.setUser(user);
+        } catch (error) {
+            console.error("Erro ao buscar usuário:", error);
+        }
+      router.push({path: "/map"});
+    }else{
+      showAlert("Credênciais inválidas.");
     }
   } catch (error) {
     showAlert("Credênciais inválidas.");
