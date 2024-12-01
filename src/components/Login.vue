@@ -74,7 +74,6 @@ const fetchLogin = async () => {
       const nome = (decodeToken(tokenStr.token)?.sub) as string;
         try {
             const user = await RegistrosService.getUserByName(nome);
-            console.log("USER:", user);
             userStr.setUser(user);
         } catch (error) {
             console.error("Erro ao buscar usuário:", error);

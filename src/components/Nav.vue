@@ -54,7 +54,7 @@
       <font-awesome-icon :icon="['fas', 'user']" />
     </div>
     <div class="username-label-container" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
-      <div class="username-label">Username</div>
+      <div class="username-label">{{userStr?.user?.name}}</div>
     </div>
   </div>
   <transition
@@ -133,6 +133,7 @@ export default {
       }
     },
     signInOut() {
+      this.showComponentsMode.esconderComponents();
       this.tokenStr.setToken("");
       // this.userStr.setUser(null);
       this.router.push("/");

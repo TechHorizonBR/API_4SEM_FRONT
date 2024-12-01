@@ -76,6 +76,7 @@
                             </div>
                         </div>
                     </div>
+                    <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
                 </div>
             </template>
             <template v-else>
@@ -182,6 +183,8 @@
 <script>
 import { userStore } from "@/stores/token";
 import RegistrosService from "@/services/registros";
+import Alerts from '@/components/Alerts.vue';
+
 
 export default {
     props: {
@@ -190,7 +193,9 @@ export default {
     data() {
         return {
             userStr: userStore(),
+            showMessage: false,
             isReset: false,
+            messageAlert: "",
             password: "",
             confirmPassword: "",
             strongRules: {
@@ -224,12 +229,12 @@ export default {
         },
         async changePassword() {
             if (this.password !== this.confirmPassword) {
-                alert("Passwords aren't the same");
+                this.showAlert("Passwords aren't the same");
                 return;
             } 
 
             if(!this.isStrong){
-                alert("There are rules not being followed.")
+                this.showAlert("There are rules not being followed.")
                 return;
             }
 
@@ -238,7 +243,6 @@ export default {
                 password: this.password,
                 passwordConfirmation: this.confirmPassword
             }
-            //fazer requisicao
             try {
                 const changed = await RegistrosService.resetPassword(dataPass);
                 console.log(changed);
@@ -246,6 +250,15 @@ export default {
                 console.error("Error resetting password:", error);
             }
         },
+        showAlert(message){
+            this.showMessage = true;
+            this.messageAlert = message;
+
+            setTimeout(() => {
+                this.showMessage = false;
+                this.messageAlert = '';
+            }, 3000);
+        }
     },
     mounted() {
         // console.log("STORE:", (this.userStr).user?.id);
