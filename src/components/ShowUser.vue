@@ -76,7 +76,6 @@
                             </div>
                         </div>
                     </div>
-                    <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
                 </div>
             </template>
             <template v-else>
@@ -178,6 +177,7 @@
             </template>
         </div>
     </div>
+    <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
 </template>
 
 <script>
@@ -257,12 +257,9 @@ export default {
             setTimeout(() => {
                 this.showMessage = false;
                 this.messageAlert = '';
-            }, 3000);
+            }, 1000000);
         }
-    },
-    mounted() {
-        // console.log("STORE:", (this.userStr).user?.id);
-    },
+    }
 };
 </script>
 
