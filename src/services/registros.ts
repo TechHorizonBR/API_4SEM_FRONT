@@ -57,7 +57,7 @@ class RegistrosService {
   async resetPassword(data: { id: number; password: string; passwordConfirmation: string }) {
     const router = useRouter();
     try {
-      const response = await apiClient.patch(`/reset-senha?id=${data.id}`, {
+      const response = await apiClient.put(`/usersys/reset-senha/${data.id}`, {
         id: data.id,
         password: data.password,
         passwordConfirmation: data.passwordConfirmation,
