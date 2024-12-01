@@ -13,10 +13,10 @@
           </div>
 
           <ur class="options-sidebar" :class="{ 'side-bar-dark': isDark, 'side-bar-light': !isDark }">
-            <li><a class="button-page" :class="{ 'button-page-dark': isDark }" @click="toggleIsVisibleCreateUser">
+            <li><a id="button-create-user" class="button-page" :class="{ 'button-page-dark': isDark }" @click="toggleIsVisibleCreateUser">
                 <font-awesome-icon :icon="['fas', 'user-plus']" class="icone-button-close" />
                 Create User</a></li>
-            <li><a class="button-page" :class="{ 'button-page-dark': isDark }" @click="toggleIsVisibleAllUsers">
+            <li><a id="button-see-all-users" class="button-page" :class="{ 'button-page-dark': isDark }" @click="toggleIsVisibleAllUsers">
                 <font-awesome-icon :icon="['fas', 'eye']" class="icone-button-close" />
                 See all users</a></li>
             <li><a class="button-page" :class="{ 'button-page-dark': isDark }" @click="closeAddUser" id="bClose">
@@ -27,6 +27,7 @@
 
         <div class="block2">
           <div class="blockForm" v-if="isVisibleCreateUser">
+            <h3 class="title-pages">Create User - LocalTracker</h3>
             <div class="fline1">
               <div class="case1">
                 <label for="name">Username:</label>
@@ -75,6 +76,7 @@
 
           </div>
           <div class="allusers" v-if="isVisibleAllUsers">
+            <h3 class="title-pages">All Users - LocalTracker</h3>
             <div class="forms-search">
               <label for="name">Username:</label>
               <div class="function">
@@ -753,5 +755,9 @@ ur li {
   color: white;
   background-color: #383838;
   border: none
+}
+.title-pages{
+  font-weight: bold;
+  color: purple
 }
 </style>
