@@ -80,9 +80,8 @@
             <div class="forms-search">
               <label for="name">Username:</label>
               <div class="function">
-                <input type="text" id="name" placeholder="Type the username" v-model="usuario.username"
+                <input type="text" id="name" placeholder="Type the username" v-model="userFound"
                 :class="{ 'input-dark': isDark }" />
-              <a class="search-button">Search</a>
               </div>
               
             </div>
@@ -152,6 +151,8 @@ import apiClient from "@/services/axiosConfig";
 import { userStore } from "@/stores/token";
 import Alerts from "./Alerts.vue";
 import { showComponents } from "@/stores/showComponents";
+import RegistrosService from '@/services/registros';
+
 const showMessage = ref<boolean>(false);
 const messageAlert = ref<string>("");
 
@@ -161,6 +162,8 @@ const isVisibleAllUsers = ref<boolean>(false)
 const usuarios = ref<any[]>([]);
 const passwordMatchMessage = ref<string>('');
 const showPasswordMatch = ref<boolean>(false);
+const listUsersFind = ref<any[]>([]);
+const userFound = ref<string | null>('');
 
 const usuario = ref({
   name: '',
@@ -208,7 +211,7 @@ watch(
       return;
     }
     if (confirmPassword !== usuario.value.password) {
-      passwordMatchMessage.value = "Passwords não correspondem";
+      passwordMatchMessage.value = "Passwords aren't the same.";
       showPasswordMatch.value = true;
     } else {
       passwordMatchMessage.value = "";
@@ -216,7 +219,16 @@ watch(
     }
   }
 );
-
+watch(() => userFound.value, (usernameFind) =>{
+  if(usernameFind == '' || usernameFind == null){
+    usuarios.value = listUsersFind.value;
+    return;
+  }
+  const foundUser = listUsersFind.value.filter(
+      (user) => user.username.includes(usernameFind)
+    );
+  usuarios.value = foundUser ? foundUser : [];
+})
 const createUser = async () => {
 
 
@@ -229,14 +241,23 @@ const createUser = async () => {
     showAlert("All fields are required!");
     return;
   }
+  if(usuario.value.password !== confirmPassword.value){
+    showAlert("Passwords aren't the same.");
+    return
+  }
 
   try {
-    const response = await UserSysService.createUser(usuario.value);
+    const usernameExist = await RegistrosService.getUserByName(usuario.value.username);
 
-    if (response) {
-      showAlert("User created successfully!");
-      resetForm();
-      getAllUsersSys();
+    if(!usernameExist){
+      const response = await UserSysService.createUser(usuario.value);
+      if (response) {
+        showAlert("User created successfully!");
+        resetForm();
+        getAllUsersSys();
+      }
+    }else{
+      showAlert("Username already exists.");
     }
   } catch (error) {
     console.error("Error creating user:", error);
@@ -248,15 +269,18 @@ const getAllUsersSys = async () => {
     const todosUsuarios = await registros.getAllUsers();
     usuarios.value = todosUsuarios.map((usuario: any) => ({
       ...usuario,
-      isEditing: false, // Adicionando isEditing a todos os usuários ao carregar
+      isEditing: false,
     }));
+    usuarios.value.sort((a, b) => a.name.localeCompare(b.name));
+
+    listUsersFind.value = usuarios.value;
   } catch (error) {
     console.error(error);
   }
 };
 
 const editUser = (usuario: any) => {
-  usuario.isEditing = true; // Ativar modo de edição
+  usuario.isEditing = true; 
 };
 
 const saveUser = async (usuario: any) => {
@@ -758,6 +782,5 @@ ur li {
 }
 .title-pages{
   font-weight: bold;
-  color: purple
 }
 </style>

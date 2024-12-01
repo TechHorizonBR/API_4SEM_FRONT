@@ -1,46 +1,42 @@
 <template>
-    <div class="container">
-        <div
-            class="box"
-            :class="{ containerDark: isDark, containerLight: !isDark }"
-        >
-            <template v-if="!isReset">
-                <h1 class="title">User Information</h1>
-                <div class="block0">
-                    <div class="block1">
-                        <button class="sidebar-button" @click="swapIsReset()">
-                            Reset Password
-                        </button>
+    <div class="container" :class="{ 'fundo-dark': isDark, 'fundo-light': !isDark }">
+        <div class="box" :class="{ containerDark: isDark, containerLight: !isDark }">
+            <div class="side-bar">
+                <div class="container-title">
+                    <div class="quadrado">
+                        <font-awesome-icon icon="fa-solid fa-gear" />
                     </div>
+                    <h1 class="title">About me</h1>
+                </div>
 
-                    <div class="block2">
-                        <div class="blockForm">
-                            <div
-                                class="fline1"
-                                :class="{
-                                    blockDark: isDark,
-                                    blockLight: !isDark,
-                                }"
+                <ur class="options-sidebar" :class="{ 'side-bar-dark': isDark, 'side-bar-light': !isDark }">
+                    <li><a id="button-create-user" class="button-page" :class="{ 'button-page-dark': isDark }"
+                            @click="swapIsInformation">
+                            <font-awesome-icon :icon="['fas', 'circle-info']" class="icone-button-close" />
+                            Information</a></li>
+                    <li><a id="button-see-all-users" class="button-page" :class="{ 'button-page-dark': isDark }"
+                            @click="swapIsReset">
+                            <font-awesome-icon :icon="['fas', 'lock']" class="icone-button-close" />
+                            Reset Password</a></li>
+                    <li><a class="button-page" :class="{ 'button-page-dark': isDark }" @click="closeComponent"
                             >
-                                <div class="info-item">
-                                    <label>Creation Date:</label>
-                                    <span>{{
-                                        userStr.user.createdAt
-                                            ? userStr.user.createdAt
-                                            : "Date not available"
-                                    }}</span>
-                                </div>
-                                <div class="info-item">
-                                    <label>Created By:</label>
-                                    <span>{{
-                                        userStr.user.createdBy
-                                            ? userStr.user.createdBy
-                                            : "Information not available"
-                                    }}</span>
-                                </div>
-                            </div>
+                            <font-awesome-icon :icon="['fas', 'xmark']" class="icone-button-close" />
+                            Close</a></li>
+                </ur>
+            </div>
 
+
+
+
+
+            <div v-if="isInformation" class="container-reset">
+                <div class="block0">
+                    <div class="block2">
+                        <div class="container-information">
+                            <h3 class="title-pages">Information about me</h3>
+                            
                             <div class="fline2">
+                                
                                 <div class="info-item">
                                     <label>ID:</label>
                                     <span>{{
@@ -74,109 +70,102 @@
                                     }}</span>
                                 </div>
                             </div>
+                            <div class="fline1" :class="{
+                                blockDark: isDark,
+                                blockLight: !isDark,
+                            }">
+                                <div class="info-item">
+                                    <label>Creation Date:</label>
+                                    <span>{{
+                                        userStr.user.createdAt
+                                            ? userStr.user.createdAt
+                                            : "Date not available"
+                                    }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Created By:</label>
+                                    <span>{{
+                                        userStr.user.createdBy
+                                            ? userStr.user.createdBy
+                                            : "Information not available"
+                                    }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
                 </div>
-            </template>
-            <template v-else>
-                <h1 class="title">Change Password</h1>
+            </div>
+            <div v-if="isReset" class="container-reset">
+                
                 <div class="block0">
-                    <div class="block1">
-                        <button class="sidebar-button" @click="swapIsReset()">
-                            User information
-                        </button>
-                    </div>
 
                     <div class="block2_pass">
                         <div class="all_pass">
+                            <h3 class="title-pages">Change Password</h3>
                             <div class="pass_input">
-                                <span>Type your new password</span>
-                                <input
-                                    type="password"
-                                    v-model="password"
-                                    name="password"
-                                    id="inp_pass"
-                                    placeholder="New password"
-                                    @input="verifyStrong"
-                                />
+                                <label>Type your new password</label>
+                                <input type="password" v-model="password" name="password" id="inp_pass"
+                                    placeholder="New password" @input="verifyStrong"   :class="{ 'input-dark': isDark }"/>
                             </div>
                             <div class="pass_input">
-                                <span>Confirm your new password</span>
-                                <input
-                                    type="password"
-                                    v-model="confirmPassword"
-                                    name="confirm_password"
-                                    id="inp_confirm_pass"
-                                    placeholder="Confirm password"
-                                />
+                                <label>Confirm your new password</label>
+                                <input type="password" v-model="confirmPassword" name="confirm_password"
+                                    id="inp_confirm_pass" placeholder="Confirm password"   :class="{ 'input-dark': isDark }"/>
+                                    <span v-if="(password.length > 0) && (password !== confirmPassword)"
+                                        style="color: red; font-size: small">Passwords aren't the same</span>
                             </div>
-                            <span v-if="(password.length > 0) && (password !== confirmPassword)" style="color: red; font-size: small">Passwords aren't the same</span>
-                            <button
-                                class="pass-button"
-                                @click="changePassword()"
-                            >
-                                Change
-                            </button>
-                        </div>
-                        <div class="strong_rules">
-                            <span
-                                style="font-size: larger; margin-bottom: 10px"
-                            >
+                            
+
+                                <div class="strong_rules">
+                            <span style="font-size: 0.9em;">
                                 Your password must have:
                             </span>
                             <div class="all_rules">
-                                <span
-                                    :class="
-                                        strongRules.minChar
-                                            ? 'icon-check'
-                                            : 'icon-error'
-                                    "
-                                >
+                                <span :class="strongRules.minChar
+                                    ? 'icon-check'
+                                    : 'icon-error'
+                                    ">
                                     Minimum 8 characters
                                 </span>
-                                <span
-                                    :class="
-                                        strongRules.lowerCase
-                                            ? 'icon-check'
-                                            : 'icon-error'
-                                    "
-                                >
+                                <span :class="strongRules.lowerCase
+                                    ? 'icon-check'
+                                    : 'icon-error'
+                                    ">
                                     At least one lowercase letter
                                 </span>
-                                <span
-                                    :class="
-                                        strongRules.upperCase
-                                            ? 'icon-check'
-                                            : 'icon-error'
-                                    "
-                                >
+                                <span :class="strongRules.upperCase
+                                    ? 'icon-check'
+                                    : 'icon-error'
+                                    ">
                                     At least one uppercase letter
                                 </span>
-                                <span
-                                    :class="
-                                        strongRules.number
-                                            ? 'icon-check'
-                                            : 'icon-error'
-                                    "
-                                >
+                                <span :class="strongRules.number
+                                    ? 'icon-check'
+                                    : 'icon-error'
+                                    ">
                                     At least one number
                                 </span>
-                                <span
-                                    :class="
-                                        strongRules.specialChar
-                                            ? 'icon-check'
-                                            : 'icon-error'
-                                    "
-                                >
+                                <span :class="strongRules.specialChar
+                                    ? 'icon-check'
+                                    : 'icon-error'
+                                    ">
                                     At least one special character
                                 </span>
                             </div>
                         </div>
+                        
+                            <button class="pass-button" @click="changePassword()">
+                                Change
+                            </button>
+                        </div>
+                        
                     </div>
                 </div>
-            </template>
+
+            </div>
         </div>
+
     </div>
 </template>
 
@@ -184,20 +173,24 @@
 import { userStore } from "@/stores/token";
 import RegistrosService from "@/services/registros";
 import Alerts from '@/components/Alerts.vue';
+import { showComponents } from "@/stores/showComponents";
 
 
 export default {
     props: {
         isVisible: Boolean,
+        isDark: Boolean
     },
     data() {
         return {
             userStr: userStore(),
             showMessage: false,
             isReset: false,
+            isInformation: true,
             messageAlert: "",
             password: "",
             confirmPassword: "",
+            showComponent: showComponents(),
             strongRules: {
                 minChar: false,
                 lowerCase: false,
@@ -209,9 +202,18 @@ export default {
         };
     },
     methods: {
-        swapIsReset() {
-            this.isReset = !this.isReset;
+        closeComponent(){
+            this.showComponent.esconderComponents();
         },
+        swapIsReset() {
+            this.isInformation = false
+            this.isReset = true;
+        },
+        swapIsInformation(){
+            this.isReset = false;
+            this.isInformation = true;
+        },
+
         verifyStrong() {
             const password = this.password;
 
@@ -231,9 +233,9 @@ export default {
             if (this.password !== this.confirmPassword) {
                 this.showAlert("Passwords aren't the same");
                 return;
-            } 
+            }
 
-            if(!this.isStrong){
+            if (!this.isStrong) {
                 this.showAlert("There are rules not being followed.")
                 return;
             }
@@ -250,7 +252,7 @@ export default {
                 console.error("Error resetting password:", error);
             }
         },
-        showAlert(message){
+        showAlert(message) {
             this.showMessage = true;
             this.messageAlert = message;
 
@@ -268,32 +270,53 @@ export default {
 
 <style scoped>
 /* Estilos para centralizar o retângulo */
+.fundo-light {
+    background-color: #ffffff42;
+}
+
+.fundo-dark {
+    background-color: #1e013542;
+}
+
 .container {
     display: flex;
     justify-content: center;
-    height: 89%;
+    height: 100%;
     width: 100%;
     position: absolute;
     z-index: 10000;
-    top: 0vh;
-    align-items: center;
+    top: 0;
+    align-items: flex-start;
+}
+
+input:focus,
+select:focus {
+    outline: none;
+    border-color: #6f00ff;
+    box-shadow: 0 0 3px rgba(145, 16, 226, 0.636);
 }
 
 .containerDark {
-    background: #0a0012e3;
+    background: #0a0012;
     color: white;
 }
 
 .containerLight {
-    background-color: #f7f7f7cd;
+    background-color: white;
 }
 
 .blockForm {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    margin-bottom: 15px;
     width: 80%;
+}
+.container-information{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    text-align: center;
 }
 
 .fline1,
@@ -303,15 +326,12 @@ export default {
     gap: 1rem;
 }
 
-.fline2 {
-    margin-top: 50px;
-}
-
 .info-item {
     display: flex;
     flex-direction: column;
     text-align: left;
-    min-width: 100px; /* Ajuste conforme necessário */
+    min-width: 100px;
+    /* Ajuste conforme necessário */
 }
 
 .info-item label {
@@ -340,6 +360,7 @@ export default {
 
 .box {
     width: 75%;
+    display: flex;
     height: 72%;
     border-radius: 20px;
     padding: 20px;
@@ -360,19 +381,12 @@ export default {
 .block0 {
     display: flex;
     flex-direction: row;
-    width: 102%;
-    height: 98%;
 }
 
-.block1 {
-    width: 20%;
-    margin-top: 2%;
-}
 
 .block2 {
     display: flex;
     flex-direction: row;
-    margin-left: 100px;
     width: 100%;
     justify-content: space-around;
 }
@@ -380,10 +394,8 @@ export default {
 .block2_pass {
     display: flex;
     flex-direction: row;
-    margin-left: 100px;
-    width: 90%;
     justify-content: space-around;
-    align-items: center;
+    gap: 30px;
 }
 
 .case1 {
@@ -400,14 +412,116 @@ export default {
     display: flex;
     flex-direction: column;
 }
-
+.input-dark {
+  color: white;
+  background-color: #383838;
+  border: none
+}
 .case4 {
     display: flex;
     flex-direction: column;
 }
 
+.container-reset{
+    margin-top: 25px;
+    margin-left: 15px;
+    width: 100%;
+    display: flex
+;
+    justify-content: center;
+}
+.title-pages{
+  font-weight: bold;
+}
 .tableDark {
     border: 1px solid rgba(211, 210, 210, 0.703);
+}
+
+.side-bar {
+  padding-right: 20px;
+  width: 15vw;
+  border-right: #a2a2a29d 1px solid;
+  height: 70vh;
+}
+.options-sidebar {
+  margin: 20px 0 0 0;
+}
+.container-title {
+  display: flex;
+  align-items: center;
+  font-size: 1em;
+  gap: 5px
+}
+
+.quadrado {
+  background-color: #5c0ea3;
+  color: white;
+  padding: 8px;
+  border-radius: 3px;
+}
+
+.title {
+  font-size: 1em;
+  margin: 0
+}
+
+ur {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 250px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+ur li {
+  margin: 0;
+  padding: 0;
+}
+
+
+.button-page {
+  display: flex;
+  align-items: center;
+  padding: 15px 0;
+  text-decoration: none;
+  font-size: 16px;
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+}
+
+
+.button-page .fa-icon {
+  margin-right: 10px;
+}
+
+
+.button-page:hover {
+  background-color: #4007961d;
+  color: #5c38ff;
+}
+
+.button-page-dark:hover {
+  color: white
+}
+.forms-search{
+  display: flex;
+  flex-direction: column;
+}
+
+.icone-button-close {
+  margin-right: 10px;
+}
+
+
+
+.options-sidebar {
+  margin: 20px 0 0 0;
+}
+.function{
+  display: flex;
 }
 
 .sidebar-button {
@@ -426,9 +540,8 @@ export default {
 }
 
 .pass-button {
-    width: 150px;
+    width: 100%;
     padding: 10px;
-    margin-bottom: 25%;
     border: none;
     cursor: pointer;
     font-size: 14px;
@@ -461,6 +574,7 @@ table {
     border-collapse: collapse;
     border: 1px solid rgba(0, 0, 0, 0.265);
 }
+
 th {
     background-color: #000;
     border: 1px solid #fff;
@@ -468,6 +582,7 @@ th {
     text-align: left;
     color: white;
 }
+
 td {
     padding: 8px;
     text-align: left;
@@ -494,11 +609,11 @@ td {
 .all_rules {
     display: flex;
     flex-direction: column;
+    font-size: 0.9em;
 }
 
 .strong_rules {
     width: 300px;
-    margin-bottom: 100px;
 }
 
 .all_rules {
@@ -512,11 +627,13 @@ td {
 .fade-leave-active {
     animation: fadeOutDown 0.3s ease-in forwards;
 }
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -528,6 +645,7 @@ td {
         opacity: 1;
         transform: translateY(0);
     }
+
     to {
         opacity: 0;
         transform: translateY(20px);
@@ -551,6 +669,7 @@ td {
 .icon-error {
     color: red;
 }
+
 /* Ícone de check */
 .icon-check::before {
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="green"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>');

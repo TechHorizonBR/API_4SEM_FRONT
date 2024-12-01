@@ -37,7 +37,7 @@
           :class="{ 'dark-button': isDark, 'light-button': !isDark }"
         >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
-          {{isAdmin ? "Add User" : "Show Information"}}
+          {{isAdmin ? "Add User" : "About me"}}
         </button>
       </li>
       <li class="navbar-item">
