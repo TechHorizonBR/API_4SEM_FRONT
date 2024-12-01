@@ -2,6 +2,7 @@ import { createApp } from "vue";
 import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
+import VTooltip from 'v-tooltip';
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -23,7 +24,7 @@ import {
   faXmark,
   faGear,
   faCircleInfo,
-  faLock,
+  faLock, faPlay, faStop, faPersonRunning, faPerson, faTriangleExclamation
 } from "@fortawesome/free-solid-svg-icons";
 
 import "./styles.css";
@@ -47,7 +48,7 @@ library.add(
   faXmark,
   faGear,
   faCircleInfo,
-  faLock
+  faLock, faPlay, faStop, faPersonRunning, faPerson, faCalendar, faTriangleExclamation
 );
 
 // Cria a aplicação
@@ -58,4 +59,5 @@ app.component("font-awesome-icon", FontAwesomeIcon);
 
 app.use(createPinia());
 app.use(router);
+app.use(VTooltip);
 app.mount("#app");

@@ -1,12 +1,15 @@
 <template>
-  <div class="autocomplete">
+  <div class="autocomplete" :style="{color: isDark ? '#FFF' : '#000'}">
     <div class="autocomplete-fullName div-inputs">
-      <label
-        class="label"
-        for="name"
-        :style="{ color: isDark ? '#fff' : '#000' }"
-        >Username:</label
-      >
+      <div class="labels">
+        <label
+          class="label"
+          for="name"
+          :style="{ color: isDark ? '#fff' : '#000' }"
+          >Username:</label
+        >
+      </div>
+      
       <input
         type="text"
         v-model="searchName"
@@ -37,12 +40,15 @@
     </div>
 
     <div class="autocomplete-codeDevice div-inputs">
-      <label
-        class="label"
-        for="deviceInfo"
-        :style="{ color: isDark ? '#fff' : '#000' }"
-        >Device:</label
-      >
+      <div class="labels">
+        <label
+          class="label"
+          for="deviceInfo"
+          :style="{ color: isDark ? '#fff' : '#000' }"
+          >Device:</label
+        >
+      </div>
+      
       <input
         type="text"
         v-model="searchCode"
@@ -238,5 +244,12 @@ input {
 
 .dropdown-item:last-child {
   border-bottom: none;
+}
+.icones{
+  font-size: 1.4em;
+}
+.labels{
+  display: flex;
+  gap: 10px
 }
 </style>

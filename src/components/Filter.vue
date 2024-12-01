@@ -46,74 +46,62 @@
     <div class="selected-users" v-if="selectedUsers.length !== 0">
       <h3 :class="isDark ? 'labelDark' : 'labelLight'">Selected Users</h3>
       <div class="users-scrool">
-        <SelectedUser
-          v-for="user in selectedUsers"
-          :nameUser="user.nameUser"
-          :isDark="isDark"
-          :cicle-color="user.cicleColor"
-          @removeUser="handleRemoveUser"
-          @send-id="receiveId"
-          :idUser="user.userCode"
-        />
+        <SelectedUser v-for="user in selectedUsers" 
+        :nameUser="user.nameUser"
+        :isDark="isDark" 
+        :cicle-color="user.cicleColor"
+        @removeUser="handleRemoveUser" 
+        @send-id="receiveId"
+        :idUser="user.userCode" />
       </div>
     </div>
-    <Alerts
-      :message="messageEmpty"
-      :show="showMessageEmpty"
-      class="alert-popup"
-    />
+    <Alerts :message="messageEmpty" :show="showMessageEmpty" class="alert-popup" />
+
+   
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, nextTick } from "vue";
-import flatpickr from "flatpickr";
-import "flatpickr/dist/flatpickr.css";
-import Autocomplete from "./autocomplete/Autocomplete.vue";
-import DevicesService from "../services/devices";
-import DateFilters from "../components/DateFilters.vue";
-import SelectedUser from "./SelectedUser.vue";
-import Alerts from "./Alerts.vue";
-import { selectedUsers as selectedUserStore } from "@/stores/selectedUsers";
-// VARIAVEIS
-interface Device {
-  fullName: string;
-  codeDevice: string;
-  userCode: string;
-}
-const devices = ref<Device[]>([]);
-const fullName = ref<string>("");
-const codeDevice = ref<string>("");
-const userCode = ref<string>("");
-const showAutocompleteFilter = ref<boolean>(true);
-const emit = defineEmits([
-  "search",
-  "removeUser",
-  "resetDateFilters",
-  "sendId",
-]);
-const props = defineProps<{
-  isDark: boolean;
-  messageEmpty: string;
-  showMessageEmpty: boolean;
-}>();
-const periods = ref<{ dataInicio: string | null; dataFim: string | null }>({
-  dataInicio: null,
-  dataFim: null,
-});
-const selectedUsers = ref<
-  Array<{
-    nameUser: string;
-    cicleColor: string;
+  import { ref, onMounted, nextTick } from 'vue';
+  import flatpickr from 'flatpickr';
+  import 'flatpickr/dist/flatpickr.css';
+  import Autocomplete from './autocomplete/Autocomplete.vue';
+  import DevicesService from '../services/devices';
+  import DateFilters from '../components/DateFilters.vue';
+  import SelectedUser from './SelectedUser.vue';
+  import Alerts from './Alerts.vue';
+  import { selectedUsers as selectedUserStore} from '@/stores/selectedUsers';
+  import { showComponents } from '@/stores/showComponents';
+  import PlayRoute from './PlayRoute.vue';
+  // VARIAVEIS
+  interface Device {
+    fullName: string;
+    codeDevice: string;
     userCode: string;
-  }>
->([]);
-const dateFilterVariavel = ref<InstanceType<typeof DateFilters> | null>(null);
-const showMessage = ref<boolean>(false); // Variável de controle para exibir a mensagem
-const message = ref<string>(""); // Variável que armazena a mensagem a ser exibida
-const dateRangePicker = ref<HTMLInputElement | null>(null);
-const selectedDate = ref<string | null>(null);
-const selectedUsersStore = selectedUserStore();
+  }
+  const showComponentsStore = showComponents();
+  const devices = ref<Device[]>([]);
+  const fullName = ref<string>('');
+  const codeDevice = ref<string>('');
+  const userCode = ref<string>('');
+  const showAutocompleteFilter = ref<boolean>(true);
+  const emit = defineEmits(['search', 'removeUser', 'resetDateFilters', 'sendId']);
+  const props = defineProps<{isDark : boolean, messageEmpty: string, showMessageEmpty: boolean, map: any}>();
+  const periods = ref<{ dataInicio: string | null, dataFim: string | null }>({
+    dataInicio: null,
+    dataFim: null
+  });
+  const selectedUsers = ref<Array<{
+    nameUser: string,
+    cicleColor: string,
+    userCode: string
+  }>>([]);
+  const dateFilterVariavel = ref<InstanceType<typeof DateFilters> | null>(null);
+  const showMessage = ref<boolean>(false); // Variável de controle para exibir a mensagem
+  const message = ref<string>(''); // Variável que armazena a mensagem a ser exibida
+  const dateRangePicker = ref<HTMLInputElement | null>(null);
+  const selectedDate = ref<string | null>(null);
+  const selectedUsersStore = selectedUserStore();
 
 // MÉTODOS
 const fetchDevices = async () => {
@@ -389,20 +377,7 @@ button:hover {
 .users-scrool::-webkit-scrollbar-track {
   background-color: #f1f1f1;
 }
-.title-filter-dark {
-  color: white;
-}
-.title-filter-light {
-  color: #35005d;
-}
-.title-filter {
-  text-align: center;
-  font-family: "Roboto", sans-serif;
-  font-weight: 700;
-  font-style: normal;
-  font-size: 2.3em;
-}
-h1 {
+h1{
   text-align: center;
 }
 </style>

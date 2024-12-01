@@ -22,37 +22,49 @@
         v-if="map"
       />
 
+      <transition name="fade">
+        <Filter
+          v-show="showComponentsMode.filter"
+          @search="handleSearch"
+          @removeUser="handleDelete"
+          @send-id="receiveId"
+          :isDark="mapModeStore.isDarkMode"
+          :messageEmpty="messageEmpty"
+          :showMessageEmpty="showMessageEmpty"
+          :map="map"
+        />
+      </transition>
 
-            <transition
-                name="fade"
-            >
-                <Filter
-                    v-show="showComponentsMode.filter"
-                    @search="handleSearch"
-                    @removeUser="handleDelete"
-                    @send-id="receiveId"
-                    :isDark="mapModeStore.isDarkMode"
-                    :messageEmpty="messageEmpty"
-                    :showMessageEmpty="showMessageEmpty"
-                />
-            </transition>
-        </div>
-        <transition
-            name="fade">
-            <HistoricoLocalicao :isDark="mapModeStore.isDarkMode" :locations="locations" v-if="showComponentsMode.history" :id="idUsuario" />
-        </transition>
+      <transition name="fade">
+        <HistoricoLocalicao
+          :isDark="mapModeStore.isDarkMode"
+          :locations="locations"
+          v-if="showComponentsMode.history"
+          :id="idUsuario"
+        />
+      </transition>
 
-        <transition
-            name="fade">
-            <AddUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.addUser"/>
-        </transition>
+      <transition name="fade">
+        <AddUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.addUser" />
+      </transition>
 
-        <transition
-            name="fade">
-            <ShowUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.showUser"/>
-        </transition>
-            </div>
+      <transition name="fade">
+        <ShowUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.showUser" />
+      </transition>
+
+      <transition name="fade">
+        <PlayRoute
+          :map="map"
+          :isDark="mapModeStore.isDarkMode"
+          :userCode="idUsuario"
+          v-if="showComponentsMode.playRouter"
+          @remove-route="handleDeleteJustRoute"
+        />
+      </transition>
+    </div>
+  </div>
 </template>
+
 
 <script setup lang="ts">
 import { Map, MapStyle, config, Marker } from "@maptiler/sdk";
@@ -76,11 +88,12 @@ import { selectedUsers } from "@/stores/selectedUsers";
 import HistoricoLocalicao from "./HistoricoLocalicao.vue";
 import { showComponents } from "@/stores/showComponents";
 import AddUser from "./AddUser.vue";
-import ShowUser from "./ShowUser.vue"
+import ShowUser from "@/components/ShowUser.vue"
 import { useRouter } from "vue-router";
 import { tokenStore, userStore } from "@/stores/token";
 import path from "path";
 import { decodeToken } from "@/services/decode";
+import PlayRoute from "./PlayRoute.vue";
 
 const router = useRouter();
 const tokenStr = tokenStore();
@@ -96,8 +109,8 @@ const actualUser = ref(0);
 const messageEmpty = shallowRef("");
 const showMessageEmpty = shallowRef(false);
 const locations = ref<Location[]>([]);
-const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
-const idUsuario = ref<string>("");
+const initialState = { lng: 0, lat: 15, zoom: 1.6 };
+const idUsuario = ref<string>('');
 
 interface SearchParams {
   fullName: string;
@@ -109,17 +122,14 @@ interface SearchParams {
   cicleColor: string;
 }
 
-const receiveId = (idUser: string) => {
-  idUsuario.value = idUser;
-};
-const addSelectedUsersStore = (
-  registers: any,
-  userCode: number,
-  fullName: string,
-) => {
+const receiveId = (idUser : string) => {
+    idUsuario.value = idUser;
+}
+const addSelectedUsersStore = (registers: any, userCode: number, fullName : string, device: string) => {
   const selectedUserStore = selectedUsers();
   const user = ref<User>({
     id: userCode,
+    device: device,
     coordenadas: [],
     nome: fullName,
   });
@@ -214,9 +224,13 @@ const handleDelete = (deleteParams: number, idUser: number) => {
     map.value.removeLayer(routeId);
   }
 
-  if (map.value?.getSource(routeId)) {
-    map.value.removeSource(routeId);
-  }
+    if(map.value?.getLayer("line-animation")){
+        map.value.removeLayer("line-animation")
+    }
+
+    if (map.value?.getSource(routeId)) {
+        map.value.removeSource(routeId);
+    }
 
   if (actualUser.value > deleteParams) {
     actualUser.value--;
@@ -225,33 +239,41 @@ const handleDelete = (deleteParams: number, idUser: number) => {
   }
 };
 
+const handleDeleteJustRoute = (idUser: number) => {
+    const routeId = `route${idUser}`;
+
+    if (map.value?.getLayer(routeId)) {
+        map.value.removeLayer(routeId);
+    }
+
+    if (map.value?.getSource(routeId)) {
+        map.value.removeSource(routeId);
+    }
+};
+
 const getPoints = async (searchParams: SearchParams) => {
-  try {
-    const firstReq: any = await RegistrosService.getRegistros(
-      searchParams.userCode,
-      0,
-      searchParams.dataInicio,
-      searchParams.dataFim,
-    );
-    if (firstReq.registers.length != 0) {
-      const allPages = firstReq.totalPages;
-      allCoords.value.push(firstReq.registers);
-      transformData(firstReq.registers, 0, allPages, searchParams);
-      map.value?.fitBounds([
-        [
-          firstReq.maxMinCoordinates.minLongitude - 0.05,
-          firstReq.maxMinCoordinates.minLatitude - 0.05,
-        ],
-        [
-          firstReq.maxMinCoordinates.maxLongitude + 0.05,
-          firstReq.maxMinCoordinates.maxLatitude + 0.05,
-        ],
-      ]);
-      addSelectedUsersStore(
-        firstReq.registers,
-        searchParams.userCode,
-        searchParams.fullName,
-      );
+    try {
+        const firstReq: any = await RegistrosService.getRegistros(
+            searchParams.userCode,
+            0,
+            searchParams.dataInicio,
+            searchParams.dataFim
+        );
+        if (firstReq.registers.length != 0) {
+            const allPages = firstReq.totalPages;
+            allCoords.value.push(firstReq.registers);
+            transformData(firstReq.registers, 0, allPages, searchParams);
+            map.value?.fitBounds([
+                [
+                    firstReq.maxMinCoordinates.minLongitude - 0.05,
+                    firstReq.maxMinCoordinates.minLatitude - 0.05,
+                ],
+                [
+                    firstReq.maxMinCoordinates.maxLongitude + 0.05,
+                    firstReq.maxMinCoordinates.maxLatitude + 0.05,
+                ],
+            ]);
+            addSelectedUsersStore(firstReq.registers, searchParams.userCode, searchParams.fullName, searchParams.codeDevice);   
 
       for (let page = 1; page <= allPages; page++) {
         const req = await RegistrosService.getRegistros(
@@ -301,19 +323,22 @@ onUnmounted(() => {
 });
 
 function inicializarMapa() {
-  const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
+    
 
-  if (mapContainer.value) {
-    map.value = markRaw(
-      new Map({
-        container: mapContainer.value,
-        style: mapModeStore.isDarkMode
-          ? MapStyle.STREETS.DARK
-          : MapStyle.STREETS,
-        center: [initialState.lng, initialState.lat],
-        zoom: initialState.zoom,
-      }),
-    );
+    if (mapContainer.value) {
+        if(!map.value){
+            map.value = markRaw(
+            new Map({
+                container: mapContainer.value,
+                style: mapModeStore.isDarkMode
+                    ? MapStyle.STREETS.DARK
+                    : MapStyle.STREETS,
+                center: [initialState.lng, initialState.lat],
+                zoom: initialState.zoom,
+            })
+        );
+        }
+        
 
     const drawControls = document.querySelectorAll(
       ".mapboxgl-ctrl-group.mapboxgl-ctrl",
@@ -455,65 +480,50 @@ async function plotPontos(
         .setLngLat([allPoints[fin].longitude, allPoints[fin].latitude])
         .addTo(map.value);
 
-      all_markers.value[actualUser.value].push(finishMark);
+      
+            all_markers.value[actualUser.value].push(finishMark);
+        }
+
+        let flattenedCoords = allCoords.value.flat();
+        let formattedCoords: any[][] | null = flattenedCoords.map((coord) => [
+            coord.longitude,
+            coord.latitude,
+        ]);
+
+        const routeId = `route${elementData.userCode}`;
+        map.value?.addSource(routeId, {
+            type: "geojson",
+            data: {
+                type: "Feature",
+                properties: {},
+                geometry: {
+                    type: "LineString",
+                    coordinates: formattedCoords,
+                },
+            },
+        });
+
+        map.value?.addLayer({
+            id: routeId,
+            type: "line",
+            source: routeId,
+            layout: {
+                "line-join": "round",
+                "line-cap": "round",
+            },
+            paint: {
+                "line-color":"#ba74f0",
+                "line-width": 4,
+            },
+        });
+
+        formattedCoords = null;
+        allCoords.value = [];
+
+        actualUser.value++;
+        changeLoading();
     }
-
-    let flattenedCoords = allCoords.value.flat();
-    let formattedCoords: any[][] | null = flattenedCoords.map((coord) => [
-      coord.longitude,
-      coord.latitude,
-    ]);
-
-    const routeId = `route${elementData.userCode}`;
-    map.value?.addSource(routeId, {
-      type: "geojson",
-      data: {
-        type: "Feature",
-        properties: {},
-        geometry: {
-          type: "LineString",
-          coordinates: formattedCoords,
-        },
-      },
-    });
-
-    map.value?.addLayer({
-      id: routeId,
-      type: "line",
-      source: routeId,
-      layout: {
-        "line-join": "round",
-        "line-cap": "round",
-      },
-      paint: {
-        "line-color": "#0f53ff",
-        "line-width": 4,
-      },
-    });
-
-    formattedCoords = null;
-    allCoords.value = [];
-
-    actualUser.value++;
-    changeLoading();
-  }
 }
-
-// function walkPoints(allPoints) {
-//     allPoints.forEach((point, index) => {
-//         let el_point = createMarkerElement(
-//             elementData.fullName,
-//             createPin("#000", ":)", false)
-//         );
-//         const defaultMark = new Marker({ element: el_point })
-//             .setLngLat([point.longitude, point.latitude])
-//             .addTo(map.value);
-//         all_markers.value[actualUser.value].push(defaultMark);
-//         setTimeout(()=>{
-
-//         },1000);
-//     });
-// }
 
 function createPin(color: string, name: string, isStopped: boolean) {
   let user_pin = document.createElement("div");
@@ -587,48 +597,73 @@ function createMarkerElement(name: string, element: HTMLElement) {
 
   return el;
 }
-
 watch(
-  () => mapModeStore.isDarkMode,
-  (isDarkMode) => {
-    if (map.value) {
-      map.value.setStyle(isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS);
-      map.value.on("load", () => {
-        const attributionControl = document.querySelector(
-          ".maplibregl-ctrl-attrib a",
-        ) as HTMLElement;
-        if (attributionControl) {
-          attributionControl.style.display = "none";
+    () => mapModeStore.isDarkMode,
+    (isDarkMode) => {
+        if (map.value) {
+            const savedSources = map.value.getStyle().sources;
+            const savedLayers = map.value.getStyle().layers;
+
+            map.value.setStyle(
+                isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS
+            );
+
+            map.value.once("styledata", () => {
+                for (const sourceId in savedSources) {
+                    if (!map.value.getSource(sourceId)) {
+                        map.value.addSource(sourceId, savedSources[sourceId]);
+                    }
+                }
+
+                savedLayers.forEach((layer) => {
+                    if (!map.value.getLayer(layer.id)) {
+                        map.value.addLayer(layer);
+                    }
+                });
+
+                const attributionControl = document.querySelector(
+                    ".maplibregl-ctrl-attrib a"
+                ) as HTMLElement;
+                if (attributionControl) {
+                    attributionControl.style.display = "none";
+                }
+
+                const controlElements =
+                    document.getElementsByClassName("maplibregl-ctrl");
+                Array.from(controlElements).forEach((element) => {
+                    const htmlElement = element as HTMLElement;
+                    htmlElement.style.backgroundColor = isDarkMode
+                        ? "#0a0012e3"
+                        : "#fff";
+                    htmlElement.style.color = isDarkMode ? "#fff" : "#000";
+                });
+
+                const applyFilterToIcons = (className: string, isDarkMode: boolean) => {
+                const elements = document.getElementsByClassName(className);
+                Array.from(elements).forEach((icon) => {
+                    const iconElement = icon as HTMLElement;
+                    iconElement.style.filter = isDarkMode ? "invert(100%)" : "none";
+                });
+            };
+
+            // Aplica o filtro para os ícones de desenho e de lixeira
+            applyFilterToIcons("mapbox-gl-draw_polygon", isDarkMode);
+            applyFilterToIcons("mapbox-gl-draw_trash", isDarkMode);
+
+
+                const controlIcons = document.getElementsByClassName(
+                    "maplibregl-ctrl-icon"
+                );
+                Array.from(controlIcons).forEach((icon) => {
+                    const iconHtml = icon as HTMLElement;
+                    iconHtml.style.filter = isDarkMode
+                        ? "invert(100%)"
+                        : "none";
+                });
+            });
         }
       });
 
-      const controlElements =
-        document.getElementsByClassName("maplibregl-ctrl");
-      for (let element of controlElements) {
-        const htmlElement = element as HTMLElement;
-        if (isDarkMode) {
-          htmlElement.style.backgroundColor = "#0a0012e3";
-          htmlElement.style.color = "#fff";
-        } else {
-          htmlElement.style.backgroundColor = "#fff";
-          htmlElement.style.color = "#000";
-        }
-      }
-
-      const controlIcons = document.getElementsByClassName(
-        "maplibregl-ctrl-icon",
-      );
-      for (let icon of controlIcons) {
-        const iconHtml = icon as HTMLElement;
-        if (isDarkMode) {
-          iconHtml.style.filter = "invert(100%)";
-        } else {
-          iconHtml.style.filter = "none";
-        }
-      }
-    }
-  },
-);
 </script>
 
 <style scoped>

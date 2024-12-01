@@ -1,23 +1,21 @@
 <template>
-  <div
-    class="container"
-    :class="{
-      'container-dark': props.isDark,
-      'container-light': !props.isDark,
-    }"
-  >
-    <div class="close">
-      <font-awesome-icon
-        :icon="['fas', 'xmark']"
-        class="icone-button-close"
-        @click="voltarFilter"
-      />
-    </div>
-    <div class="header" :style="{ color: isDark ? 'white' : '#373737' }">
-      <h1>Location History</h1>
-      <div class="user-icon-name">
-        <h2>User: {{ username }}</h2>
-      </div>
+    <div class="container" :class="{ 'container-dark': props.isDark, 'container-light': !props.isDark }">
+        <div class="close">
+            <font-awesome-icon :icon="['fas', 'xmark']" class="icone-button-close"
+            @click="voltarFilter"/>
+        </div>
+        <div class="header-location" :style="{ color: isDark ? 'white' : '#373737' }">
+            <h1>Location History</h1>
+            <div class="user-icon-name">
+                <h2>User: {{ username }}</h2>
+            </div>
+        </div>
+        
+        <h2 v-if="locations?.length === 0">User does not have registers.</h2>
+
+        <div class="localizacoes-usuarios">
+            <LocationBlock :isDark="props.isDark" v-for="location of locations" :location="location"/>
+        </div>
     </div>
 
     <h2 v-if="locations?.length === 0">User does not have registers.</h2>
@@ -29,7 +27,6 @@
         :location="location"
       />
     </div>
-  </div>
 </template>
 
 <script lang="ts" setup>
@@ -152,8 +149,8 @@ h2 {
   background-color: #8f8f8f;
 }
 
-.header {
-  margin: 0 0 7% 0;
+.header-location {
+    margin: 0 0 7% 0;
 }
 .fade-enter-active {
   animation: fadeInUp 0.3s ease-out;

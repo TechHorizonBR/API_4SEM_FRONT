@@ -26,21 +26,12 @@
       Demarcations:
     </h3>
 
-    <div class="data-list" v-if="demarcations.length > 0">
-      <BlockDemarcacao
-        v-for="demarcation of demarcations"
-        :isDark="isDark"
-        :name="demarcation.nome"
-        :id="demarcation.id"
-        :coordinates="demarcation.coordinate"
-        @updateList="updateDemarcations"
-        @sendCoordinates="setPolygon"
-      />
+    <div class="data-list"  v-if="demarcations.length > 0">
+      <BlockDemarcacao v-for="demarcation of demarcations" 
+      :isDark="isDark" :name="demarcation.nome" :id="demarcation.id" :coordinates="demarcation.coordinate"
+      @updateList="updateDemarcations"
+      @sendCoordinates="setPolygon"/>
     </div>
-    <div
-      class="title2"
-      :class="{ 'title2-Dark': isDark, 'title2-Light': !isDark }"
-    ></div>
 
     <div class="data-marker">
       <div

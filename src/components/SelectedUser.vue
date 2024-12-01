@@ -1,30 +1,13 @@
 <template>
-  <div
-    :class="isDark ? 'selected-user-dark' : 'selected-user-light'"
-    class="selected-user"
-  >
-    <p
-      id="iniciais"
-      :style="{ backgroundColor: props.cicleColor, color: 'white' }"
-    >
-      {{ workingOnName.iniciais }}
-    </p>
-    <p class="name">{{ workingOnName.name }}</p>
-    <div class="buttons-options">
-      <font-awesome-icon
-        :icon="['fas', 'trash']"
-        class="icones-buttons"
-        title="Remove User"
-        @click="removeUser"
-      />
-      <font-awesome-icon
-        :icon="['fas', 'map']"
-        class="icones-buttons"
-        title="See location history"
-        @click="showHistoryPanelFunction"
-      />
+    <div :class="isDark ? 'selected-user-dark' : 'selected-user-light'" class="selected-user">
+        <p id="iniciais" :style="{backgroundColor: props.cicleColor, color: 'white'}">{{ workingOnName.iniciais }}</p>
+        <p class="name">{{ workingOnName.name }}</p>
+        <div class="buttons-options">
+          <font-awesome-icon :icon="['fas', 'trash']" class="icones-buttons" title="Remove User" @click="removeUser"/>
+          <font-awesome-icon :icon="['fas', 'map']" class="icones-buttons" title="See location history" @click="showHistoryPanelFunction"/>
+          <font-awesome-icon :icon="['fas', 'play']" class="icones-buttons" title="Play Route" @click="showPlayer" />
+        </div>
     </div>
-  </div>
 </template>
 
 <script lang="ts" setup>
@@ -45,20 +28,20 @@ const showHistoryPanelFunction = () => {
 };
 const emit = defineEmits(["removeUser", "sendId"]);
 
-const removeUser = () => {
-  emit("removeUser", props.nameUser);
-};
-
-const workingOnName = computed(() => {
-  const nameParts = props.nameUser.split(" ");
-  const names = props.nameUser.split(" ");
-  const firstName = names[0];
-  const secondName = names[1];
-
-  return {
-    name: nameParts.slice(0, 2).join(" "),
-    iniciais: firstName[0] + secondName[0],
-  };
+ const removeUser = () => {
+    emit('removeUser', props.nameUser)
+ }
+ const showPlayer = () => {
+  emit('sendId', props.idUser);
+  showComponentsMode.showPlayRouter();
+ }
+ const workingOnName = computed(() => {
+    const nameParts = props.nameUser.split(' ');
+    const names = props.nameUser.split(' ');
+    const firstName = names[0];
+    const secondName = names[1];
+   
+    return {name: nameParts.slice(0, 2).join(' '), iniciais: firstName[0]+secondName[0]};
 });
 </script>
 

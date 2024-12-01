@@ -25,8 +25,12 @@ export const selectedUsers = defineStore("selectedUser", {
         }
       }
     },
-    findById(idUser: number) {
-      return this.users.find((user) => user.id == idUser);
+    findById(idUser : number){
+      return this.users.find(user => user.id == idUser);
     },
+    findAllIds(){
+      return this.users;
+    }
+    
   },
 });
