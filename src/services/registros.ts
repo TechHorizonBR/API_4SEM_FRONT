@@ -63,13 +63,19 @@ class RegistrosService {
         passwordConfirmation: data.passwordConfirmation,
       });
       if (response.status === 200) {
-        return "Password has been reset successfully.";
+        return {
+          status: true,
+          message: "Password changed successfully!"
+        };
       } else if (response.status == 401) {
         alert("Session expired! Please log in again.");
         const router = useRouter();
         router.push({ path: "/" });
       } else {
-        return "Unable to reset password.";
+        return {
+          status: false,
+          message: "Unable to reset password."
+        };
       }
     } catch (error: any) {
       if (error.response && error.response.status === 401) {

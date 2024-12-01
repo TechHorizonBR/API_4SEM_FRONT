@@ -190,6 +190,9 @@ export default {
     props: {
         isVisible: Boolean,
     },
+    components: {
+        Alerts,
+    },
     data() {
         return {
             userStr: userStore(),
@@ -245,7 +248,13 @@ export default {
             }
             try {
                 const changed = await RegistrosService.resetPassword(dataPass);
-                console.log(changed);
+                if(changed.status){
+                    this.showAlert("Password changed successfully!");
+                    this.password = "";
+                    this.confirmPassword = "";
+                }else{
+                    this.showAlert("An error occurred to change the password");
+                }
             } catch (error) {
                 console.error("Error resetting password:", error);
             }
@@ -257,7 +266,7 @@ export default {
             setTimeout(() => {
                 this.showMessage = false;
                 this.messageAlert = '';
-            }, 1000000);
+            }, 3000);
         }
     }
 };
