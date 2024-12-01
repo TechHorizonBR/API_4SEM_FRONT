@@ -21,8 +21,6 @@
       @updateList="updateDemarcations"
       @sendCoordinates="setPolygon"/>
     </div>
-    <div class="title2" :class="{'title2-Dark': isDark, 'title2-Light': !isDark}" >
-    </div>
 
     <div class="data-marker">
       <div class="text-label" :class="{'textL-Dark': isDark, 'textL-Light': !isDark}" >
@@ -275,7 +273,7 @@ button:hover {
 .mode-dark-title{
   color: white;
 }
-.mode-light-tile{
+.mode-light-title{
   color: black;
 }
 

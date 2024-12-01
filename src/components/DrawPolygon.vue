@@ -3,32 +3,40 @@
 
 <script lang="ts" setup>
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useMapModeStore } from "@/stores/useMapMode";
 
 const props = defineProps<{
   map: MapboxDraw
 }>();
 
+const mapModeStore = useMapModeStore();
 const draw = ref<MapboxDraw | null>(null);
 const coordenadas = ref<any[]>([]);
-const emit = defineEmits( ["enviarCoordenadas"] );
+const listCoordinates = ref<any[]>([]); 
+const emit = defineEmits<{
+  (event: 'enviarCoordenadas', coords: any[], drawInstance: MapboxDraw | null): void;
+}>();
 
-function enviarCoordenadas(){
+function enviarCoordenadas() {
   emit('enviarCoordenadas', listCoordinates.value, draw.value);
-} 
+}
 
 function addCoordenadas(coord: any) {
   coordenadas.value = coord;
 }
 
-const listCoordinates = ref<[]>([]);
-
-function parseCoordinates( coordinates:any ){
-  listCoordinates.value = [];
-  for(let i = 0; i<coordinates.length; i++){
-    listCoordinates.value.push(coordinates[i].geometry.coordinates[0]);
-  }
+function parseCoordinates(coordinates: any) {
+  listCoordinates.value = coordinates.map((item: any) => item.geometry.coordinates[0]);
 }
+
+const applyFilterToIcons = (className: string, isDarkMode: boolean) => {
+  const elements = document.getElementsByClassName(className);
+  Array.from(elements).forEach((icon) => {
+    const iconElement = icon as HTMLElement;
+    iconElement.style.filter = isDarkMode ? "invert(100%)" : "none";
+  });
+};
 
 function drawInit() {
   draw.value = new MapboxDraw({
@@ -38,11 +46,12 @@ function drawInit() {
       trash: true,
     },
   });
-  
+
+  applyFilterToIcons("mapbox-gl-draw_polygon", mapModeStore.isDarkMode);
+  applyFilterToIcons("mapbox-gl-draw_trash", mapModeStore.isDarkMode);
 
   function updateArea(event: any) {
     const data = draw.value?.getAll();
-
     if (data && data.features.length > 0) {
       addCoordenadas(data.features);
       parseCoordinates(coordenadas.value);
@@ -57,18 +66,25 @@ function drawInit() {
   props.map.addControl(draw.value);
 
   const drawControls = document.querySelectorAll('.mapboxgl-ctrl-group.mapboxgl-ctrl');
-
   drawControls.forEach((elem) => {
     elem.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group');
   });
 }
 
 function drawEnd() {
-  if ( props.map.hasControl(draw.value) ) {
+  if (props.map.hasControl(draw.value)) {
     props.map.removeControl(draw.value);
     draw.value = null;
   }
 }
+
+watch(
+  () => mapModeStore.isDarkMode,
+  (isDarkMode) => {
+    applyFilterToIcons("mapbox-gl-draw_polygon", isDarkMode);
+    applyFilterToIcons("mapbox-gl-draw_trash", isDarkMode);
+  }
+);
 
 onMounted(() => drawInit());
 onBeforeUnmount(() => drawEnd());
@@ -92,4 +108,11 @@ onBeforeUnmount(() => drawEnd());
 .mapboxgl-ctrl-trash {
   background-color: #d9534f !important;  /* Cor de fundo específica */
   color: white;  /* Cor do texto */
-}</style>
+}
+
+.mapboxgl-ctrl-group , .maplibregl-ctrl-group  {
+    height: 33px;
+    width: 33px;
+    color: white;
+}
+</style>

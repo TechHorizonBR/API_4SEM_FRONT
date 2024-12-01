@@ -31,6 +31,7 @@
                     :isDark="mapModeStore.isDarkMode"
                     :messageEmpty="messageEmpty"
                     :showMessageEmpty="showMessageEmpty"
+                    :map="map"
                 />
             </transition>
         </div>
@@ -43,6 +44,13 @@
             name="fade">
             <AddUser :isDark="mapModeStore.isDarkMode" v-if="showComponentsMode.addUser"/>
         </transition>
+
+        <transition 
+            name="fade">
+            <PlayRoute :map="map" :isDark="mapModeStore.isDarkMode" :userCode="idUsuario" v-if="showComponentsMode.playRouter"
+            @remove-route="handleDeleteJustRoute"/>
+        </transition>
+
     </div>
 </template>
 
@@ -62,7 +70,7 @@ import { showComponents } from "@/stores/showComponents";
 import AddUser from "./AddUser.vue";
 import { useRouter } from "vue-router";
 import { tokenStore } from "@/stores/token";
-import path from "path";
+import PlayRoute from "./PlayRoute.vue";
 
 const router = useRouter();
 const tokenStr = tokenStore();
@@ -78,7 +86,7 @@ const actualUser = ref(0);
 const messageEmpty = shallowRef('');
 const showMessageEmpty = shallowRef(false);
 const locations = ref<Location[]>([]);
-const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
+const initialState = { lng: 0, lat: 15, zoom: 1.6 };
 const idUsuario = ref<string>('');
 
 interface SearchParams {
@@ -94,10 +102,11 @@ interface SearchParams {
 const receiveId = (idUser : string) => {
     idUsuario.value = idUser;
 }
-const addSelectedUsersStore = (registers: any, userCode: number, fullName : string) => {
+const addSelectedUsersStore = (registers: any, userCode: number, fullName : string, device: string) => {
   const selectedUserStore = selectedUsers();
   const user = ref<User>({
     id: userCode,
+    device: device,
     coordenadas: [],
     nome: fullName
   });
@@ -190,6 +199,10 @@ const handleDelete = (deleteParams: number, idUser: number) => {
         map.value.removeLayer(routeId);
     }
 
+    if(map.value?.getLayer("line-animation")){
+        map.value.removeLayer("line-animation")
+    }
+
     if (map.value?.getSource(routeId)) {
         map.value.removeSource(routeId);
     }
@@ -198,6 +211,18 @@ const handleDelete = (deleteParams: number, idUser: number) => {
         actualUser.value--;
     } else if (actualUser.value === deleteParams) {
         actualUser.value = Math.max(0, actualUser.value - 1);
+    }
+};
+
+const handleDeleteJustRoute = (idUser: number) => {
+    const routeId = `route${idUser}`;
+
+    if (map.value?.getLayer(routeId)) {
+        map.value.removeLayer(routeId);
+    }
+
+    if (map.value?.getSource(routeId)) {
+        map.value.removeSource(routeId);
     }
 };
 
@@ -223,7 +248,7 @@ const getPoints = async (searchParams: SearchParams) => {
                     firstReq.maxMinCoordinates.maxLatitude + 0.05,
                 ],
             ]);
-            addSelectedUsersStore(firstReq.registers, searchParams.userCode, searchParams.fullName);   
+            addSelectedUsersStore(firstReq.registers, searchParams.userCode, searchParams.fullName, searchParams.codeDevice);   
 
             for (let page = 1; page <= allPages; page++) {
                 const req = await RegistrosService.getRegistros(
@@ -270,10 +295,11 @@ onUnmounted(() => {
 });
 
 function inicializarMapa() {
-    const initialState = { lng: -60.6714, lat: 2.81954, zoom: 1 };
+    
 
     if (mapContainer.value) {
-        map.value = markRaw(
+        if(!map.value){
+            map.value = markRaw(
             new Map({
                 container: mapContainer.value,
                 style: mapModeStore.isDarkMode
@@ -283,6 +309,8 @@ function inicializarMapa() {
                 zoom: initialState.zoom,
             })
         );
+        }
+        
 
 
     const drawControls = document.querySelectorAll(".mapboxgl-ctrl-group.mapboxgl-ctrl");
@@ -460,7 +488,7 @@ async function plotPontos(
                 "line-cap": "round",
             },
             paint: {
-                "line-color": "#0f53ff",
+                "line-color":"#ba74f0",
                 "line-width": 4,
             },
         });
@@ -472,22 +500,6 @@ async function plotPontos(
         changeLoading();
     }
 }
-
-// function walkPoints(allPoints) {
-//     allPoints.forEach((point, index) => {
-//         let el_point = createMarkerElement(
-//             elementData.fullName,
-//             createPin("#000", ":)", false)
-//         );
-//         const defaultMark = new Marker({ element: el_point })
-//             .setLngLat([point.longitude, point.latitude])
-//             .addTo(map.value);
-//         all_markers.value[actualUser.value].push(defaultMark);
-//         setTimeout(()=>{
-
-//         },1000);
-//     });
-// }
 
 function createPin(color: string, name: string, isStopped: boolean) {
     let user_pin = document.createElement("div");
@@ -561,50 +573,74 @@ function createMarkerElement(name: string, element: HTMLElement) {
 
     return el;
 }
-
 watch(
     () => mapModeStore.isDarkMode,
     (isDarkMode) => {
         if (map.value) {
+            const savedSources = map.value.getStyle().sources;
+            const savedLayers = map.value.getStyle().layers;
+
             map.value.setStyle(
                 isDarkMode ? MapStyle.STREETS.DARK : MapStyle.STREETS
             );
-            map.value.on("load", () => {
+
+            map.value.once("styledata", () => {
+                for (const sourceId in savedSources) {
+                    if (!map.value.getSource(sourceId)) {
+                        map.value.addSource(sourceId, savedSources[sourceId]);
+                    }
+                }
+
+                savedLayers.forEach((layer) => {
+                    if (!map.value.getLayer(layer.id)) {
+                        map.value.addLayer(layer);
+                    }
+                });
+
                 const attributionControl = document.querySelector(
                     ".maplibregl-ctrl-attrib a"
                 ) as HTMLElement;
                 if (attributionControl) {
                     attributionControl.style.display = "none";
                 }
+
+                const controlElements =
+                    document.getElementsByClassName("maplibregl-ctrl");
+                Array.from(controlElements).forEach((element) => {
+                    const htmlElement = element as HTMLElement;
+                    htmlElement.style.backgroundColor = isDarkMode
+                        ? "#0a0012e3"
+                        : "#fff";
+                    htmlElement.style.color = isDarkMode ? "#fff" : "#000";
+                });
+
+                const applyFilterToIcons = (className: string, isDarkMode: boolean) => {
+                const elements = document.getElementsByClassName(className);
+                Array.from(elements).forEach((icon) => {
+                    const iconElement = icon as HTMLElement;
+                    iconElement.style.filter = isDarkMode ? "invert(100%)" : "none";
+                });
+            };
+
+            // Aplica o filtro para os ícones de desenho e de lixeira
+            applyFilterToIcons("mapbox-gl-draw_polygon", isDarkMode);
+            applyFilterToIcons("mapbox-gl-draw_trash", isDarkMode);
+
+
+                const controlIcons = document.getElementsByClassName(
+                    "maplibregl-ctrl-icon"
+                );
+                Array.from(controlIcons).forEach((icon) => {
+                    const iconHtml = icon as HTMLElement;
+                    iconHtml.style.filter = isDarkMode
+                        ? "invert(100%)"
+                        : "none";
+                });
             });
-
-            const controlElements =
-                document.getElementsByClassName("maplibregl-ctrl");
-            for (let element of controlElements) {
-                const htmlElement = element as HTMLElement;
-                if (isDarkMode) {
-                    htmlElement.style.backgroundColor = "#0a0012e3";
-                    htmlElement.style.color = "#fff";
-                } else {
-                    htmlElement.style.backgroundColor = "#fff";
-                    htmlElement.style.color = "#000";
-                }
-            }
-
-            const controlIcons = document.getElementsByClassName(
-                "maplibregl-ctrl-icon"
-            );
-            for (let icon of controlIcons) {
-                const iconHtml = icon as HTMLElement;
-                if (isDarkMode) {
-                    iconHtml.style.filter = "invert(100%)";
-                } else {
-                    iconHtml.style.filter = "none";
-                }
-            }
         }
     }
 );
+
 
 </script>
 

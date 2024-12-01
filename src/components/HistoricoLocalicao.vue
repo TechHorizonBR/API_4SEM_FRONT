@@ -4,7 +4,7 @@
             <font-awesome-icon :icon="['fas', 'xmark']" class="icone-button-close"
             @click="voltarFilter"/>
         </div>
-        <div class="header" :style="{ color: isDark ? 'white' : '#373737' }">
+        <div class="header-location" :style="{ color: isDark ? 'white' : '#373737' }">
             <h1>Location History</h1>
             <div class="user-icon-name">
                 <h2>User: {{ username }}</h2>
@@ -141,7 +141,7 @@ h2 {
     background-color: #8f8f8f;
 }
 
-.header {
+.header-location {
     margin: 0 0 7% 0;
 }
 .fade-enter-active {

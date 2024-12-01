@@ -5,7 +5,7 @@
         <div class="buttons-options">
           <font-awesome-icon :icon="['fas', 'trash']" class="icones-buttons" title="Remove User" @click="removeUser"/>
           <font-awesome-icon :icon="['fas', 'map']" class="icones-buttons" title="See location history" @click="showHistoryPanelFunction"/>
-         
+          <font-awesome-icon :icon="['fas', 'play']" class="icones-buttons" title="Play Route" @click="showPlayer" />
         </div>
     </div>
 
@@ -32,7 +32,10 @@ import { showComponents } from '@/stores/showComponents';
  const removeUser = () => {
     emit('removeUser', props.nameUser)
  }
- 
+ const showPlayer = () => {
+  emit('sendId', props.idUser);
+  showComponentsMode.showPlayRouter();
+ }
  const workingOnName = computed(() => {
     const nameParts = props.nameUser.split(' ');
     const names = props.nameUser.split(' ');
