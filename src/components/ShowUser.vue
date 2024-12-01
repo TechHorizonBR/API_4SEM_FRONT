@@ -359,17 +359,15 @@ select:focus {
 }
 
 .box {
-    width: 75%;
-    display: flex;
-    height: 72%;
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: relative;
-    top: 28px;
-    box-shadow:
-        0 1px 2px rgba(60, 64, 67, 0.3),
-        0 2px 6px 2px rgba(60, 64, 67, 0.15);
+display: flex;
+  min-width: 70vw;
+  height: 70vh;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  top: 8vh;
+
 }
 
 /* Título no canto superior esquerdo */
