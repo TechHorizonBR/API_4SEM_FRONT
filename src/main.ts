@@ -21,6 +21,7 @@ import {
   faMap,
   faEye,
   faXmark,
+  faGear,
 } from "@fortawesome/free-solid-svg-icons";
 
 import "./styles.css";
@@ -42,6 +43,7 @@ library.add(
   faMap,
   faEye,
   faXmark,
+  faGear
 );
 
 // Cria a aplicação

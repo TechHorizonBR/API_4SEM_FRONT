@@ -20,7 +20,7 @@ const props = defineProps<{ message: string; show: boolean }>();
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   z-index: 1000000000;
-  animation: fadeInOut 3s ease-in-out; /* Animação de aparecer/desaparecer */
+  animation: fadeInOut 3s ease-in-out; 
   width: 20vw;
 }
 

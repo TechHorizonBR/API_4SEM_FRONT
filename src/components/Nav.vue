@@ -176,7 +176,7 @@ export default {
 </script>
 
 <style scoped>
-/* Navbar na parte inferior */
+
 .navbar {
   position: fixed;
   margin-bottom: 20px;
@@ -195,7 +195,7 @@ export default {
 .navbar-list {
   list-style: none;
   display: flex;
-  gap: 20px; /* Espaçamento entre os itens */
+  gap: 20px; 
   padding: 0;
   margin: 0;
 }
@@ -218,7 +218,7 @@ export default {
   color: #7d009b;
 }
 
-/* Container do botão de Username no topo */
+
 .username-container {
   position: fixed;
   top: 20px;

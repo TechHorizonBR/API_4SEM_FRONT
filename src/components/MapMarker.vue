@@ -268,7 +268,7 @@ const showAlert = (message: string) => {
   padding: 9px;
   border-radius: 8px;
   font-size: 13px;
-  border: 1px solid #ccc; /* Exemplo de estilo para borda */
+  border: 1px solid #ccc; 
   margin-bottom: 6px;
 }
 

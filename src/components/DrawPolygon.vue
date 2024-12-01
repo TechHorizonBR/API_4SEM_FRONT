@@ -75,22 +75,22 @@ onBeforeUnmount(() => drawEnd());
 </script>
 
 <style scoped>
-/* Estilo para o grupo de controles */
+
 .mapboxgl-ctrl-group {
-  background-color: #f0f0f0 !important; /* Cor de fundo */
-  border-radius: 5px; /* Borda arredondada */
-  padding: 10px; /* Espaçamento interno */
+  background-color: #f0f0f0 !important; 
+  border-radius: 5px; 
+  padding: 10px; 
 }
 
-/* Estilo para o controle específico de desenho (polygon) */
+
 .mapboxgl-ctrl-polygon {
-  background-color: #ff5733 !important; /* Cor de fundo específica */
-  color: white; /* Cor do texto */
+  background-color: #ff5733 !important; 
+  color: white; 
 }
 
-/* Estilo para o controle de lixo (trash) */
+
 .mapboxgl-ctrl-trash {
-  background-color: #d9534f !important; /* Cor de fundo específica */
-  color: white; /* Cor do texto */
+  background-color: #d9534f !important; 
+  color: white; 
 }
 </style>
