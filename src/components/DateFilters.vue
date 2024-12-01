@@ -8,19 +8,43 @@
       Information Date:
     </label>
 
-    <div class="periods" :class="{ 'dark-mode-radios': isDark, 'light-mode-radios': !isDark }">
+    <div
+      class="periods"
+      :class="{ 'dark-mode-radios': isDark, 'light-mode-radios': !isDark }"
+    >
       <div class="radios">
-        <input type="radio" name="today-radio" id="today-radio" value="1" v-model="value" @change="updatePeriod">
+        <input
+          type="radio"
+          name="today-radio"
+          id="today-radio"
+          value="1"
+          v-model="value"
+          @change="updatePeriod"
+        />
         <label for="today-radio">Last Day</label>
       </div>
 
       <div class="radios">
-        <input type="radio" name="week-radio" id="week-radio" value="7" v-model="value" @change="updatePeriod">
+        <input
+          type="radio"
+          name="week-radio"
+          id="week-radio"
+          value="7"
+          v-model="value"
+          @change="updatePeriod"
+        />
         <label for="week-radio">Last Week</label>
       </div>
 
       <div class="radios">
-        <input type="radio" name="month-radio" id="month-radio" value="30" v-model="value" @change="updatePeriod">
+        <input
+          type="radio"
+          name="month-radio"
+          id="month-radio"
+          value="30"
+          v-model="value"
+          @change="updatePeriod"
+        />
         <label for="month-radio">Last Month</label>
       </div>
     </div>
@@ -34,9 +58,11 @@ const props = defineProps<{
   isDark: boolean;
 }>();
 const emit = defineEmits(["updatePeriod", "resetDateFilters"]);
-defineExpose({ clearField: () => {
+defineExpose({
+  clearField: () => {
     value.value = undefined;
-  } })
+  },
+});
 const value = ref<string | undefined>(undefined);
 const dataInicio = ref<string | null>(null);
 const dataFim = ref<string | null>(null);
@@ -46,7 +72,7 @@ const today = ref<string | null>(null);
 const updatePeriod = () => {
   today.value = new Date().toISOString().split("T")[0];
   const dateObject = new Date(today.value);
-  
+
   if (value.value === "1") {
     dateObject.setDate(dateObject.getDate() - 1);
   } else if (value.value === "7") {
@@ -55,28 +81,30 @@ const updatePeriod = () => {
     dateObject.setDate(dateObject.getDate() - 30);
   }
 
-  dataInicio.value = dateObject.toISOString().split('T')[0];
+  dataInicio.value = dateObject.toISOString().split("T")[0];
   dataFim.value = today.value;
-  
+
   emit("updatePeriod", {
     dataInicio: dataInicio.value,
     dataFim: dataFim.value,
   });
 };
 
-
 // Escuta o evento de reset e redefine o valor do rádio
-watch(() => emit('resetDateFilters'), () => {
-  value.value = undefined;
-});
+watch(
+  () => emit("resetDateFilters"),
+  () => {
+    value.value = undefined;
+  },
+);
 </script>
 
 <style scoped>
-.periods{
+.periods {
   display: flex;
   justify-content: space-around;
 }
-.radios{
+.radios {
   display: flex;
   align-items: flex-start;
 }

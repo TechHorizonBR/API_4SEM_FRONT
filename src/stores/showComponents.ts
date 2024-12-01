@@ -7,6 +7,7 @@ export const showComponents = defineStore("showComponents", {
     history: false,
     mapMarker: false,
     addUser: false,
+    showUser: false,
     playRouter: false,
   }),
   actions: {
@@ -31,6 +32,8 @@ export const showComponents = defineStore("showComponents", {
     showHistory() {
       this.filter = false;
       this.mapMarker = false;
+      this.addUser = false; // Garantir que addUser esteja fechado
+      this.showUser = false; // Garantir que showUser esteja fechado
       this.addUser = false;
       this.playRouter = false;
       setTimeout(() => {
@@ -38,6 +41,11 @@ export const showComponents = defineStore("showComponents", {
       }, 500);
     },
     showAddUser() {
+      // Adicionando ação para mostrar o addUser
+      this.filter = false;
+      this.history = false;
+      this.mapMarker = false;
+      this.showUser = false; // Garantir que showUser esteja fechado
       this.filter = false;
       this.history = false;
       this.mapMarker = false;
@@ -46,6 +54,16 @@ export const showComponents = defineStore("showComponents", {
         this.addUser = true;
       }, 400);
     },
+    showShowUser() { // mds que nome é esse
+      this.filter = false;
+      this.history = false;
+      this.mapMarker = false;
+      this.addUser = false; // Garantir que addUser esteja fechado
+      setTimeout(() => {
+        this.showUser = true;
+      })
+
+},
     showPlayRouter(){
       this.filter = false;
       this.history = false;
@@ -59,6 +77,8 @@ export const showComponents = defineStore("showComponents", {
       this.filter = false;
       this.history = false;
       this.mapMarker = false;
+      this.addUser = false; // Garantir que addUser esteja fechado
+      this.showUser = false; // Garantir que showUser esteja fechado
       this.addUser = false;
       this.playRouter = false;
     }

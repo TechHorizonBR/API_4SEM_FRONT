@@ -1,5 +1,8 @@
 <template>
-  <nav class="navbar" :style="{ backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd' }">
+  <nav
+    class="navbar"
+    :style="{ backgroundColor: isDark ? '#0a0012e3' : '#f7f7f7cd' }"
+  >
     <ul class="navbar-list">
       <li class="navbar-item">
         <button
@@ -20,21 +23,21 @@
         </button>
       </li>
       <li class="navbar-item logo">
-        <img 
-          src="../assets/localTracker.ico" 
-          alt="Logo" 
-          class="logo-image" 
-          @click="resetMap" 
-          style="cursor: pointer;" 
+        <img
+          src="../assets/localTracker.ico"
+          alt="Logo"
+          class="logo-image"
+          @click="resetMap"
+          style="cursor: pointer"
         />
       </li>
       <li class="navbar-item">
         <button
-          @click="goToAddUser"
+          @click="isAdmin ? goToAddUser() : goToShowUser()"
           :class="{ 'dark-button': isDark, 'light-button': !isDark }"
         >
           <font-awesome-icon :icon="['fas', 'user-plus']" />
-          Add User
+          {{isAdmin ? "Add User" : "About me"}}
         </button>
       </li>
       <li class="navbar-item">
@@ -44,35 +47,45 @@
         >
           <font-awesome-icon :icon="['fas', 'sign-in-alt']" />
           Sign in/out
-        </button> 
+        </button>
       </li>
     </ul>
   </nav>
 
   <div class="username-container">
-    <div class="user-icon" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
+    <div
+      class="user-icon"
+      :class="{
+        'username-label-container-dark': isDark,
+        'username-label-container-light': !isDark,
+      }"
+    >
       <font-awesome-icon :icon="['fas', 'user']" />
     </div>
     <div class="username-label-container" :class="{'username-label-container-dark': isDark, 'username-label-container-light': !isDark}">
-      <div class="username-label">Username</div>
+      <div class="username-label">{{userStr?.user?.name}}</div>
     </div>
   </div>
-  <transition
-  name="fade">
-    <MapMarker @mapEmit="sendPolygon" @deleteEmit="deletePolygon" v-if="showComponentsMode.mapMarker" :isDark="isDark" :map="$props.map" />
+  <transition name="fade">
+    <MapMarker
+      @mapEmit="sendPolygon"
+      @deleteEmit="deletePolygon"
+      v-if="showComponentsMode.mapMarker"
+      :isDark="isDark"
+      :map="$props.map"
+    />
   </transition>
 </template>
 
 <script lang="ts">
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import MapMarker from './MapMarker.vue';
-import AddUser from './AddUser.vue'
-import { showComponents } from '@/stores/showComponents';
-import { useRouter } from 'vue-router';
-import { tokenStore, userStore } from '@/stores/token';
-import { decodeToken } from '@/services/decode';
-import RegistroService from '@/services/registros';
-
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import MapMarker from "./MapMarker.vue";
+import AddUser from "./AddUser.vue";
+import { showComponents } from "@/stores/showComponents";
+import { useRouter } from "vue-router";
+import { tokenStore, userStore } from "@/stores/token";
+import { decodeToken } from "@/services/decode";
+import RegistroService from "@/services/registros";
 
 export default {
   name: "Navbar",
@@ -83,8 +96,8 @@ export default {
     },
     map: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
     FontAwesomeIcon,
@@ -92,10 +105,10 @@ export default {
     AddUser,
   },
   emits: [
-    'toggleFilter',
-    'resetMap',
-    'setPolygon',
-    'deleteArea'
+    "toggleFilter",
+    "resetMap",
+    "setPolygon",
+    "deleteArea",
     // Evento para resetar o mapa
   ],
   methods: {
@@ -105,16 +118,16 @@ export default {
     resetMap() {
       this.$emit("resetMap"); // Emitir evento resetMap
     },
-    sendPolygon(coordinates: [], user_id:number){
+    sendPolygon(coordinates: [], user_id: number) {
       this.$emit("setPolygon", coordinates, user_id);
     },
-    deletePolygon(user_id: number){
-      this.$emit("deleteArea", user_id)
+    deletePolygon(user_id: number) {
+      this.$emit("deleteArea", user_id);
     },
     goToMapMarker() {
-      if(this.showComponentsMode.mapMarker){
+      if (this.showComponentsMode.mapMarker) {
         this.showComponentsMode.esconderComponents();
-      }else{
+      } else {
         this.showComponentsMode.showMapMaker();
       }
     },
@@ -125,8 +138,17 @@ export default {
         this.showComponentsMode.showAddUser();
       }
     },
+    goToShowUser() {
+      if (this.showComponentsMode.showUser) {
+        this.showComponentsMode.esconderComponents();
+      } else {
+        this.showComponentsMode.showShowUser(); //mds que nome é esse
+      }
+    },
     signInOut() {
+      this.showComponentsMode.esconderComponents();
       this.tokenStr.setToken("");
+      // this.userStr.setUser(null);
       this.router.push("/");
     },
   },
@@ -137,25 +159,20 @@ export default {
     router: useRouter(),
     tokenStr: tokenStore(),
     userStr: userStore(),
+    isAdmin: false,
     };
   },
   mounted(){
-    const nome = (decodeToken(this.tokenStr.token)?.sub) as string;
-    const fetchUser = async () => {
-    try {
-        const user = await RegistroService.getUserByName(nome);
-        this.userStr.setUser(user);
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-      }
-    };
-    fetchUser();
+    console.log(this.userStr.user);
+    if(this.userStr.user.role == "ROLE_ADMIN"){
+      this.isAdmin = true;
+    }
   }
 };
 </script>
 
 <style scoped>
-/* Navbar na parte inferior */
+
 .navbar {
   position: fixed;
   margin-bottom: 20px;
@@ -174,7 +191,7 @@ export default {
 .navbar-list {
   list-style: none;
   display: flex;
-  gap: 20px; /* Espaçamento entre os itens */
+  gap: 20px; 
   padding: 0;
   margin: 0;
 }
@@ -197,7 +214,7 @@ export default {
   color: #7d009b;
 }
 
-/* Container do botão de Username no topo */
+
 .username-container {
   position: fixed;
   top: 20px;

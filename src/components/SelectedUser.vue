@@ -8,26 +8,25 @@
           <font-awesome-icon :icon="['fas', 'play']" class="icones-buttons" title="Play Route" @click="showPlayer" />
         </div>
     </div>
-
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
-import { showComponents } from '@/stores/showComponents';
+import { computed, ref } from "vue";
+import { showComponents } from "@/stores/showComponents";
 
- const props = defineProps<{
-    nameUser: string,
-    isDark: boolean,
-    cicleColor: string, 
-    idUser: string
- }>();
- const showComponentsMode = showComponents();
+const props = defineProps<{
+  nameUser: string;
+  isDark: boolean;
+  cicleColor: string;
+  idUser: string;
+}>();
+const showComponentsMode = showComponents();
 
- const showHistoryPanelFunction = () => {
-  emit('sendId', props.idUser);
+const showHistoryPanelFunction = () => {
+  emit("sendId", props.idUser);
   showComponentsMode.showHistory();
- }
- const emit = defineEmits(['removeUser', 'sendId']);
+};
+const emit = defineEmits(["removeUser", "sendId"]);
 
  const removeUser = () => {
     emit('removeUser', props.nameUser)
@@ -44,58 +43,56 @@ import { showComponents } from '@/stores/showComponents';
    
     return {name: nameParts.slice(0, 2).join(' '), iniciais: firstName[0]+secondName[0]};
 });
-
-
- </script>
+</script>
 
 <style scoped>
- .selected-user-dark{
+.selected-user-dark {
   color: white;
-   background-color: #383838;
- }
- .selected-user-light{
-   background-color: white;
- }
- .selected-user{
-   display: flex;
-   justify-content: space-evenly;   
-   border-radius: 1em; 
-   margin: 0 0 3% 0;
- }
- .selected-user-dark > button{
-   background-color: #383838;
-   color: white
- }
- .selected-user-light > button{
-   background-color: white;
- }
- .buttons-options{
+  background-color: #383838;
+}
+.selected-user-light {
+  background-color: white;
+}
+.selected-user {
+  display: flex;
+  justify-content: space-evenly;
+  border-radius: 1em;
+  margin: 0 0 3% 0;
+}
+.selected-user-dark > button {
+  background-color: #383838;
+  color: white;
+}
+.selected-user-light > button {
+  background-color: white;
+}
+.buttons-options {
   display: flex;
   align-items: center;
   font-size: 1.2em;
- }
- .icones-buttons{
+}
+.icones-buttons {
   margin: 0 15%;
- }
- .icones-buttons:hover{
+}
+.icones-buttons:hover {
   cursor: pointer;
   color: #35005d;
- }
- .name{
-   font-size: 1em;
-   max-width: 130px;
-   min-width: 130px;
-   text-align: left;
-   white-space: nowrap;
-   overflow: hidden;
-   text-overflow: ellipsis;
- }
- #iniciais{
-   background: blue;
-   padding: 0.2em;
-   border-radius: 50%;
-   width: 20px;
-   text-align: center;
-   height: 20px;
- }
+}
+.name {
+  font-size: 1em;
+  max-width: 130px;
+  min-width: 130px;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#iniciais {
+  background: blue;
+  padding: 0.2em;
+  border-radius: 50%;
+  width: 20px;
+  text-align: center;
+  height: 20px;
+}
 </style>

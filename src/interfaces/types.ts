@@ -9,10 +9,10 @@ export interface Coordinate{
     lng: number;
   }
 export interface Location {
-    dataInicio: string,
-    dataFim: string,
-    longitudeInicio: number,
-    longitudeFim: number,
-    latitudeInicio: number
-    latitudeFim: number
+  dataInicio: string;
+  dataFim: string;
+  longitudeInicio: number;
+  longitudeFim: number;
+  latitudeInicio: number;
+  latitudeFim: number;
 }

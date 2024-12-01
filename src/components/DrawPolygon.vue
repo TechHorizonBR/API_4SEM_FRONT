@@ -1,5 +1,4 @@
-<template>
-</template>
+<template></template>
 
 <script lang="ts" setup>
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
@@ -7,7 +6,7 @@ import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useMapModeStore } from "@/stores/useMapMode";
 
 const props = defineProps<{
-  map: MapboxDraw
+  map: MapboxDraw;
 }>();
 
 const mapModeStore = useMapModeStore();
@@ -59,15 +58,15 @@ function drawInit() {
     }
   }
 
-  props.map.on('draw.create', updateArea);
-  props.map.on('draw.delete', updateArea);
-  props.map.on('draw.update', updateArea);
+  props.map.on("draw.create", updateArea);
+  props.map.on("draw.delete", updateArea);
+  props.map.on("draw.update", updateArea);
 
   props.map.addControl(draw.value);
 
   const drawControls = document.querySelectorAll('.mapboxgl-ctrl-group.mapboxgl-ctrl');
   drawControls.forEach((elem) => {
-    elem.classList.add('maplibregl-ctrl', 'maplibregl-ctrl-group');
+    elem.classList.add("maplibregl-ctrl", "maplibregl-ctrl-group");
   });
 }
 
@@ -91,20 +90,20 @@ onBeforeUnmount(() => drawEnd());
 </script>
 
 <style scoped>
-/* Estilo para o grupo de controles */
+
 .mapboxgl-ctrl-group {
-  background-color: #f0f0f0 !important;  /* Cor de fundo */
-  border-radius: 5px;  /* Borda arredondada */
-  padding: 10px; /* Espaçamento interno */
+  background-color: #f0f0f0 !important; 
+  border-radius: 5px; 
+  padding: 10px; 
 }
 
-/* Estilo para o controle específico de desenho (polygon) */
+
 .mapboxgl-ctrl-polygon {
-  background-color: #ff5733 !important;  /* Cor de fundo específica */
-  color: white;  /* Cor do texto */
+  background-color: #ff5733 !important; 
+  color: white; 
 }
 
-/* Estilo para o controle de lixo (trash) */
+
 .mapboxgl-ctrl-trash {
   background-color: #d9534f !important;  /* Cor de fundo específica */
   color: white;  /* Cor do texto */

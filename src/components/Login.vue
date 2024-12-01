@@ -32,7 +32,9 @@
       <div>
         <button class="login-button" @click="fetchLogin">GET STARTED</button>
       </div>
-      <p class="rights-reserved">© Copyright - All Rights Reserved - Tech Horizon 2024</p>
+      <p class="rights-reserved">
+        © Copyright - All Rights Reserved - Tech Horizon 2024
+      </p>
     </div>
     <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
   </div>
@@ -42,34 +44,48 @@
 import { ref } from 'vue';
 import LoginService from '@/services/login';
 import Alerts from './Alerts.vue';
-import { tokenStore } from '@/stores/token';
+import { tokenStore, userStore } from '@/stores/token';
 import { useRouter } from 'vue-router';
+import { decodeToken } from '@/services/decode';
+import RegistrosService from "@/services/registros";
+
 
 const router = useRouter();
 const usuario = ref<string>("");
 const senha = ref<string>("");
-const messageAlert = ref<string>('');
+const messageAlert = ref<string>("");
 const showMessage = ref<boolean>(false);
 const tokenStr = tokenStore();
+const userStr = userStore();
+
 const fetchLogin = async () => {
   try {
-    if(usuario.value === ''){
+    if (usuario.value === "") {
       showAlert("Please enter the username.");
       return;
     }
 
-    if(senha.value === ''){
+    if (senha.value === "") {
       showAlert("Please enter the password.");
       return;
     }
 
     const response = await LoginService.autenticarUsuario(usuario.value, senha.value);
-    if (response.status === 200) {
+    if (response?.status === 200) {
       tokenStr.setToken(response.data.token);
+      const nome = (decodeToken(tokenStr.token)?.sub) as string;
+        try {
+            const user = await RegistrosService.getUserByName(nome);
+            userStr.setUser(user);
+        } catch (error) {
+            console.error("Erro ao buscar usuário:", error);
+        }
       router.push({path: "/map"});
+    }else{
+      showAlert("Credênciais inválidas.");
     }
   } catch (error) {
-    showAlert("Invalid username or password.");
+    showAlert("Credênciais inválidas.");
   }
 };
 
@@ -79,35 +95,33 @@ const showAlert = (message: string) => {
 
   setTimeout(() => {
     showMessage.value = false;
-    messageAlert.value = '';
+    messageAlert.value = "";
   }, 3000);
 };
 </script>
-
 
 <style>
 body {
   overflow: hidden;
 }
 
-.body-content{
+.body-content {
   display: flex;
   flex-direction: column;
-  justify-content: center; 
-  align-items: center; 
-  height: 80vh; 
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
   width: 100%;
   position: relative;
 }
-.header{
+.header {
   position: absolute;
-  top: -20px; 
+  top: -20px;
   left: 20px;
 }
 .header img {
   width: 100px;
   height: auto;
-
 }
 .login-content {
   width: 450px;
@@ -116,27 +130,27 @@ body {
   flex-direction: column;
   align-items: center;
 }
-.rights-reserved{
+.rights-reserved {
   color: rgb(111, 111, 111);
   font-size: 0.7em;
   margin: 30px 0 0 0;
 }
 
-.inputs::placeholder{
+.inputs::placeholder {
   color: white;
 }
-.input-group{
+.input-group {
   padding-bottom: 16px;
   display: flex;
   flex-direction: column;
 }
 
-.inputs{
+.inputs {
   margin-bottom: 16px;
   border-radius: 20px;
   height: 35px;
   width: 280px;
-  background-color: rgba(255,255,255,0.1);
+  background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
   font-weight: 250;
   font-size: medium;
@@ -145,18 +159,17 @@ body {
   outline-color: #4b0076;
 }
 .image-input img {
-  width: 250px; 
+  width: 250px;
   height: auto;
   border-radius: 8px;
 }
-
 
 .login-button {
   width: 290px;
   height: 50px;
   background-color: #4b0076;
-  color: #fff; 
-  border: none; 
+  color: #fff;
+  border: none;
   border-radius: 20px;
   padding: 10px 20px;
   font-size: 16px;
@@ -173,6 +186,6 @@ body {
 
 .login-button:active {
   transform: scale(0.97);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 </style>
