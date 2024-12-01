@@ -1,5 +1,5 @@
-import apiClient from '@/services/axiosConfig';
-import { useRouter } from 'vue-router';
+import apiClient from "@/services/axiosConfig";
+import { useRouter } from "vue-router";
 
 class Demarcacoes {
   async deleteById(id: number) {
@@ -10,27 +10,27 @@ class Demarcacoes {
       if (response.status == 204) {
         return "Demarcation has been deleted";
       } else if (response.status == 401) {
-        alert("Session expired! Please log in again.");
+        alert("Your session has expired. Please log in again.");
         router.push({ path: "/" });
       } else {
         return "Error";
       }
     } catch (error: any) {
       if (error.status === 401) {
-        alert("Session expired! Please log in again.");
-        router.push({ path: '/' });
+        alert("Your session has expired. Please log in again.");
+        router.push({ path: "/" });
       }
     }
   }
 
-  async create(data: { nome: string, usuarioId: number, coordinates: [] }) {
+  async create(data: { nome: string; usuarioId: number; coordinates: [] }) {
     const router = useRouter();
     try {
       const response = await apiClient.post("/demarcacoes", data);
       if (response.status === 201) {
         return "Demarcation has been created.";
       } else if (response.status == 401) {
-        alert("Session expired! Please log in again.");
+        alert("Your session has expired. Please log in again.");
         const router = useRouter();
         router.push({ path: "/" });
       } else {
@@ -38,8 +38,8 @@ class Demarcacoes {
       }
     } catch (error: any) {
       if (error.status === 401) {
-        alert("Session expired! Please log in again.");
-        router.push({ path: '/' });
+        alert("Your session has expired. Please log in again.");
+        router.push({ path: "/" });
       }
     }
   }
@@ -52,15 +52,15 @@ class Demarcacoes {
         return response.data;
       } else if (response.status == 401) {
         const router = useRouter();
-        alert("Session expired! Please log in again.");
+        alert("Your session has expired. Please log in again.");
         router.push({ path: "/" });
       } else {
         return "Error";
       }
     } catch (error: any) {
       if (error.status === 401) {
-        alert("Session expired! Please log in again.");
-        router.push({ path: '/' });
+        alert("Your session has expired. Please log in again.");
+        router.push({ path: "/" });
       }
     }
   }
