@@ -1,15 +1,22 @@
-import axios from "axios";
+import apiClient from "@/services/axiosConfig";
+import { useRouter } from "vue-router";
 
 class DevicesService {
-  async getDevices(): Promise<Device[]> {
+  async getDevices() {
+    const router = useRouter();
     try {
-      const response: axios<Device[]> = await axios.get(
-        "http://localhost:8080/api/filters/user-device",
-      );
+      const response = await apiClient.get("/api/filters/user-device");
+
+      if (response.status == 401) {
+        alert("Your session has expired. Please log in again.");
+        router.push({ path: "/" });
+      }
       return response.data;
-    } catch (error) {
-      console.error("Erro ao buscar os dispositivos:", error);
-      throw error;
+    } catch (error: any) {
+      if (error.status === 401) {
+        alert("Your session has expired. Please log in again.");
+        router.push({ path: "/" });
+      }
     }
   }
 }

@@ -1,12 +1,15 @@
 <template>
-  <div class="autocomplete">
+  <div class="autocomplete" :style="{color: isDark ? '#FFF' : '#000'}">
     <div class="autocomplete-fullName div-inputs">
-      <label
-        class="label"
-        for="name"
-        :style="{ color: isDark ? '#fff' : '#000' }"
-        >Username:</label
-      >
+      <div class="labels">
+        <label
+          class="label"
+          for="name"
+          :style="{ color: isDark ? '#fff' : '#000' }"
+          >Username:</label
+        >
+      </div>
+      
       <input
         type="text"
         v-model="searchName"
@@ -26,22 +29,26 @@
           :key="result.nome"
           @click="setSelected(result, 'name')"
           class="dropdown-item"
-          :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000'}"
-          
-          >
+          :style="{
+            backgroundColor: isDark ? '#383838' : '#FFF',
+            color: isDark ? '#FFF' : '#000',
+          }"
+        >
           {{ result.nome }}
         </li>
       </ul>
     </div>
 
     <div class="autocomplete-codeDevice div-inputs">
-      <label
-        class="label"
-        for="deviceInfo"
-        :style="{ color: isDark ? '#fff' : '#000' }"
-        >Device:</label
-      >
+      <div class="labels">
+        <label
+          class="label"
+          for="deviceInfo"
+          :style="{ color: isDark ? '#fff' : '#000' }"
+          >Device:</label
+        >
+      </div>
+      
       <input
         type="text"
         v-model="searchCode"
@@ -60,8 +67,11 @@
           :key="result.codigoDevice"
           @click="setSelected(result, 'code')"
           class="dropdown-item"
-          :style="{backgroundColor: isDark ? '#383838' : '#FFF', 
-                color: isDark ? '#FFF' : '#000'}">
+          :style="{
+            backgroundColor: isDark ? '#383838' : '#FFF',
+            color: isDark ? '#FFF' : '#000',
+          }"
+        >
           {{ result.codigoDevice }}
         </li>
       </ul>
@@ -87,7 +97,6 @@ const props = defineProps<{
   modelValueUserCode: string | number;
   isDark: boolean;
 }>();
-
 
 const emit = defineEmits<{
   (e: "update:modelValueFullName", value: string): void;
@@ -161,19 +170,23 @@ const resetFields = () => {
   emit("update:modelValueCodeDevice", "");
   emit("update:modelValueUserCode", "");
 };
-watch(() => props.modelValueFullName, (newValue) => {
-  if (!newValue) {
-    searchName.value = "";
-  }
-});
+watch(
+  () => props.modelValueFullName,
+  (newValue) => {
+    if (!newValue) {
+      searchName.value = "";
+    }
+  },
+);
 
-watch(() => props.modelValueCodeDevice, (newValue) => {
-  if (!newValue) {
-    searchCode.value = "";
-  }
-});
-
-
+watch(
+  () => props.modelValueCodeDevice,
+  (newValue) => {
+    if (!newValue) {
+      searchCode.value = "";
+    }
+  },
+);
 </script>
 
 <style scoped>
@@ -231,5 +244,12 @@ input {
 
 .dropdown-item:last-child {
   border-bottom: none;
+}
+.icones{
+  font-size: 1.4em;
+}
+.labels{
+  display: flex;
+  gap: 10px
 }
 </style>
