@@ -93,7 +93,6 @@
                             </div>
                         </div>
                     </div>
-                    <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
                 </div>
             </div>
             <div v-if="isReset" class="container-reset">
@@ -167,6 +166,7 @@
         </div>
 
     </div>
+    <Alerts :message="messageAlert" :show="showMessage" v-if="showMessage" />
 </template>
 
 <script>
@@ -180,6 +180,9 @@ export default {
     props: {
         isVisible: Boolean,
         isDark: Boolean
+    },
+    components: {
+        Alerts,
     },
     data() {
         return {
@@ -247,7 +250,13 @@ export default {
             }
             try {
                 const changed = await RegistrosService.resetPassword(dataPass);
-                console.log(changed);
+                if(changed.status){
+                    this.showAlert("Password changed successfully!");
+                    this.password = "";
+                    this.confirmPassword = "";
+                }else{
+                    this.showAlert("An error occurred to change the password");
+                }
             } catch (error) {
                 console.error("Error resetting password:", error);
             }
@@ -261,10 +270,7 @@ export default {
                 this.messageAlert = '';
             }, 3000);
         }
-    },
-    mounted() {
-        // console.log("STORE:", (this.userStr).user?.id);
-    },
+    }
 };
 </script>
 
